@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "site": "freechess",
+    "public": "out",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "predeploy": ["npm run lint", "npm run build"]
+  }
+}
