@@ -1,7 +1,7 @@
 import { useState } from "react";
 import InputGame from "./inputGame";
 import SelectGameAccount from "./selectGameAccount";
-import { GameOrigin } from "@/types";
+import { GameOrigin } from "@/types/enums";
 
 export default function SelectGameOrigin() {
   const [gameOrigin, setGameOrigin] = useState(GameOrigin.Pgn);

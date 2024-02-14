@@ -1,4 +1,4 @@
-import { GameOrigin } from "@/types";
+import { GameOrigin } from "@/types/enums";
 
 interface Props {
   gameOrigin: GameOrigin;

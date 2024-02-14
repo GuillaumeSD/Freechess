@@ -1,5 +1,6 @@
 .white {
   color: white;
+  margin: 10px 0 0 0;
 }
 
 @media (min-width: 1000px) and (min-height: 860px) {
@@ -134,6 +135,7 @@
 .profile {
   color: white;
   font-size: 20px;
+  margin: 5px 0;
 }
 
 #board-outer-container {
@@ -147,6 +149,7 @@
 #evaluation-bar {
   background-color: white;
   border: 2px solid var(--border-color);
+  border-radius: var(--rounded-radius);
 }
 
 #board {
@@ -156,6 +159,7 @@
 
   border: 2px solid var(--border-color);
   border-radius: 10px;
+  border-radius: var(--rounded-radius);
 }
 
 /* 
@@ -285,6 +289,7 @@
   background-color: var(--secondary-color);
 
   border: 2px solid var(--border-color);
+  border-radius: var(--rounded-radius);
 }
 
 @media (min-width: 1264px) {
@@ -348,7 +353,7 @@
   GAME LOAD TYPE DROPDOWN
 */
 #load-type-dropdown-container {
-  margin-bottom: 5px;
+  margin-bottom: 20px;
 }
 
 #load-type-dropdown {
@@ -366,8 +371,10 @@
   height: 130px;
   resize: none;
 
-  border-radius: 10px;
+  border-radius: var(--rounded-radius);
   background-color: var(--border-color);
+  outline: none;
+  padding: 10px;
 }
 
 /*
@@ -453,6 +460,7 @@
 #status-message {
   text-align: center;
   color: rgb(255, 53, 53);
+  margin: 10px 0;
 }
 
 /*
@@ -481,18 +489,22 @@
 
 #review-panel-toolbar-buttons {
   margin: 10px;
-  gap: 10px;
+  gap: 15px;
   flex-wrap: wrap;
   transition: gap 0.5s ease;
 }
 
 #review-panel-toolbar-buttons img {
   cursor: pointer;
-  transition: transform 0.5s ease;
+  width: 30px;
 }
 
 #review-panel-toolbar-buttons img:hover {
-  transform: translateY(-3px);
+  opacity: 0.7;
+}
+
+#review-panel-toolbar-buttons img:active {
+  opacity: 0.5;
 }
 
 #announcement {
