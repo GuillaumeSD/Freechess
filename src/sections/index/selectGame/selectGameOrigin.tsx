@@ -5,6 +5,7 @@ import { GameOrigin } from "@/types/enums";
 
 export default function SelectGameOrigin() {
   const [gameOrigin, setGameOrigin] = useState(GameOrigin.Pgn);
+
   return (
     <>
       <div id="load-type-dropdown-container" className="white">
@@ -37,9 +38,13 @@ const gameOriginLabel: Record<GameOrigin, string> = {
 const renderSelectGameInfo = (gameOrigin: GameOrigin) => {
   switch (gameOrigin) {
     case GameOrigin.Pgn:
-      return <InputGame placeholder="Enter PGN here..." />;
+      return (
+        <InputGame gameOrigin={gameOrigin} placeholder="Enter PGN here..." />
+      );
     case GameOrigin.Json:
-      return <InputGame placeholder="Enter JSON here..." />;
+      return (
+        <InputGame gameOrigin={gameOrigin} placeholder="Enter JSON here..." />
+      );
     default:
       return <SelectGameAccount gameOrigin={gameOrigin} />;
   }

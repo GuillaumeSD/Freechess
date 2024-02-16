@@ -1,14 +1,14 @@
-interface MoveEval {
+export interface MoveEval {
   bestMove: string;
   lines: LineEval[];
 }
 
-interface LineEval {
+export interface LineEval {
   pv: string[];
   score?: number;
   mate?: number;
 }
 
-interface GameEval {
+export interface GameEval {
   moves: MoveEval[];
 }

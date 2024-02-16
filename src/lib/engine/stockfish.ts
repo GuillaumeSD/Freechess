@@ -1,13 +1,15 @@
+import { GameEval, MoveEval } from "@/types/eval";
+
 export class Stockfish {
   private worker: Worker;
+  private ready: boolean = false;
 
   constructor() {
     this.worker = new Worker(
-      this.isWasmSupported() ? "./stockfish.wasm.js" : "./stockfish.js"
+      this.isWasmSupported()
+        ? "engines/stockfish.wasm.js"
+        : "engines/stockfish.js"
     );
-
-    this.sendCommands(["uci"], "uciok");
-    this.sendCommands(["setoption name MultiPV value 2", "isready"], "readyok");
 
     console.log("Stockfish created");
   }
@@ -19,6 +21,25 @@ export class Stockfish {
         Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00)
       )
     );
+  }
+
+  public async init(): Promise<void> {
+    await this.sendCommands(["uci"], "uciok");
+    await this.sendCommands(
+      ["setoption name MultiPV value 2", "isready"],
+      "readyok"
+    );
+    this.ready = true;
+  }
+
+  public shutdown(): void {
+    this.ready = false;
+    this.worker.postMessage("quit");
+    this.worker.terminate();
+  }
+
+  public isReady(): boolean {
+    return this.ready;
   }
 
   private async sendCommands(
@@ -42,15 +63,20 @@ export class Stockfish {
   }
 
   public async evaluateGame(fens: string[], depth = 16): Promise<GameEval> {
+    this.ready = false;
+    console.log("Evaluating game");
     await this.sendCommands(["ucinewgame", "isready"], "readyok");
     this.worker.postMessage("position startpos");
 
     const moves: MoveEval[] = [];
     for (const fen of fens) {
+      console.log(`Evaluating position: ${fen}`);
       const result = await this.evaluatePosition(fen, depth);
       moves.push(result);
     }
 
+    this.ready = true;
+    console.log("Game evaluated");
     return { moves };
   }
 
