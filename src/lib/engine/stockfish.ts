@@ -1,4 +1,4 @@
-import { GameEval, MoveEval } from "@/types/eval";
+import { GameEval, LineEval, MoveEval } from "@/types/eval";
 
 export class Stockfish {
   private worker: Worker;
@@ -26,16 +26,18 @@ export class Stockfish {
   public async init(): Promise<void> {
     await this.sendCommands(["uci"], "uciok");
     await this.sendCommands(
-      ["setoption name MultiPV value 2", "isready"],
+      ["setoption name MultiPV value 3", "isready"],
       "readyok"
     );
     this.ready = true;
+    console.log("Stockfish initialized");
   }
 
   public shutdown(): void {
     this.ready = false;
     this.worker.postMessage("quit");
     this.worker.terminate();
+    console.log("Stockfish shutdown");
   }
 
   public isReady(): boolean {
@@ -68,16 +70,59 @@ export class Stockfish {
     await this.sendCommands(["ucinewgame", "isready"], "readyok");
     this.worker.postMessage("position startpos");
 
+    let whiteCpVsBestMove = 0;
+    let blackCpVsBestMove = 0;
     const moves: MoveEval[] = [];
     for (const fen of fens) {
       console.log(`Evaluating position: ${fen}`);
       const result = await this.evaluatePosition(fen, depth);
+
+      const bestLine = result.lines[0];
+      const beforeMoveBestLine: LineEval = moves.at(-1)?.lines[0] ?? {
+        pv: [],
+        cp: 0,
+      };
+      const wasWhiteMove = fen.split(" ")[1] === "b";
+      const cpVsBestMove = this.calculateCpVsBestMove(
+        bestLine,
+        beforeMoveBestLine
+      );
+      if (wasWhiteMove) {
+        whiteCpVsBestMove += cpVsBestMove;
+      } else {
+        blackCpVsBestMove += cpVsBestMove;
+      }
+
       moves.push(result);
     }
 
     this.ready = true;
     console.log("Game evaluated");
-    return { moves };
+    console.log(moves);
+    const whiteAccuracy = this.calculateAccuracy(
+      whiteCpVsBestMove,
+      moves.length
+    );
+    const blackAccuracy = this.calculateAccuracy(
+      blackCpVsBestMove,
+      moves.length
+    );
+    return { moves, whiteAccuracy, blackAccuracy };
+  }
+
+  private calculateAccuracy(cpVsBestMove: number, movesNb: number): number {
+    return 100 - (cpVsBestMove / movesNb) * 100;
+  }
+
+  private calculateCpVsBestMove(
+    bestLine: LineEval,
+    beforeMoveBestLine: LineEval
+  ): number {
+    if (bestLine.cp === undefined || beforeMoveBestLine.cp === undefined) {
+      return 0;
+    }
+
+    return bestLine.cp - beforeMoveBestLine.cp;
   }
 
   public async evaluatePosition(fen: string, depth = 16): Promise<MoveEval> {
@@ -93,6 +138,7 @@ export class Stockfish {
       bestMove: "",
       lines: [],
     };
+    const tempResults: Record<string, LineEval> = {};
 
     for (const result of results) {
       if (result.startsWith("bestmove")) {
@@ -104,20 +150,38 @@ export class Stockfish {
 
       if (result.startsWith("info")) {
         const pv = this.getResultPv(result);
-        const score = this.getResultProperty(result, "cp");
+        const multiPv = this.getResultProperty(result, "multipv");
+        if (!pv || !multiPv) continue;
+        const cp = this.getResultProperty(result, "cp");
         const mate = this.getResultProperty(result, "mate");
 
-        if (pv) {
-          parsedResults.lines.push({
-            pv,
-            score: score ? parseInt(score) : undefined,
-            mate: mate ? parseInt(mate) : undefined,
-          });
-        }
+        tempResults[multiPv] = {
+          pv,
+          cp: cp ? parseInt(cp) : undefined,
+          mate: mate ? parseInt(mate) : undefined,
+        };
       }
     }
 
+    parsedResults.lines = Object.values(tempResults).sort(this.sortLines);
+
     return parsedResults;
+  }
+
+  private sortLines(a: LineEval, b: LineEval): number {
+    if (a.mate !== undefined && b.mate !== undefined) {
+      return a.mate - b.mate;
+    }
+
+    if (a.mate !== undefined) {
+      return -a.mate;
+    }
+
+    if (b.mate !== undefined) {
+      return b.mate;
+    }
+
+    return (b.cp ?? 0) - (a.cp ?? 0);
   }
 
   private getResultProperty(

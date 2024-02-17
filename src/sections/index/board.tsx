@@ -1,21 +1,26 @@
 import { drawBoard } from "@/lib/board";
 import { drawEvaluationBar } from "@/lib/evalBar";
+import { useAtomValue } from "jotai";
 import { useEffect, useRef } from "react";
+import { boardPgnAtom } from "./index.state";
+import { getLastFen } from "@/lib/chess";
 
 export default function Board() {
   const boardRef = useRef<HTMLCanvasElement>(null);
   const evalBarRef = useRef<HTMLCanvasElement>(null);
+  const boardPgn = useAtomValue(boardPgnAtom);
+  const boardFen = getLastFen(boardPgn);
 
   useEffect(() => {
     const ctx = boardRef.current?.getContext("2d");
     if (!ctx) return;
 
-    drawBoard(ctx);
+    drawBoard(ctx, boardFen);
 
     const evalCtx = evalBarRef.current?.getContext("2d");
     if (!evalCtx) return;
     drawEvaluationBar(evalCtx);
-  }, []);
+  }, [boardFen]);
 
   return (
     <div id="board-outer-container" className="center">

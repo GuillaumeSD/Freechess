@@ -1,8 +1,6 @@
 import { GameOrigin } from "@/types/enums";
-import { useSetAtom } from "jotai";
-import { gameFensAtom } from "./gameOrigin.state";
-import { useEffect, useState } from "react";
-import { Chess } from "chess.js";
+import { useAtom } from "jotai";
+import { gamePgnAtom } from "../index.state";
 
 interface Props {
   gameOrigin: GameOrigin;
@@ -10,17 +8,7 @@ interface Props {
 }
 
 export default function InputGame({ placeholder }: Props) {
-  const [gamePgn, setGamePgn] = useState("");
-  const setGameFens = useSetAtom(gameFensAtom);
-
-  useEffect(() => {
-    const chess = new Chess();
-    chess.loadPgn(gamePgn);
-    const fens = chess.history({ verbose: true }).map((move) => {
-      return move.after;
-    });
-    setGameFens(fens);
-  }, [gamePgn]);
+  const [gamePgn, setGamePgn] = useAtom(gamePgnAtom);
 
   return (
     <textarea
@@ -31,7 +19,9 @@ export default function InputGame({ placeholder }: Props) {
       spellCheck="false"
       placeholder={placeholder}
       value={gamePgn}
-      onChange={(e) => setGamePgn(e.target.value)}
+      onChange={(e) => {
+        setGamePgn(e.target.value);
+      }}
     />
   );
 }

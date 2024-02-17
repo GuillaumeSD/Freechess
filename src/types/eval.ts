@@ -5,10 +5,12 @@ export interface MoveEval {
 
 export interface LineEval {
   pv: string[];
-  score?: number;
+  cp?: number;
   mate?: number;
 }
 
 export interface GameEval {
   moves: MoveEval[];
+  whiteAccuracy: number;
+  blackAccuracy: number;
 }

@@ -1,4 +1,11 @@
+import { useAtom, useAtomValue } from "jotai";
+import { boardPgnAtom, gamePgnAtom } from "./index.state";
+import { addNextMove, initPgn, undoLastMove } from "@/lib/chess";
+
 export default function ReviewPanelToolBar() {
+  const [boardPgn, setBoardPgn] = useAtom(boardPgnAtom);
+  const gamePgn = useAtomValue(gamePgnAtom);
+
   return (
     <div id="review-panel-toolbar">
       <div id="review-panel-toolbar-buttons" className="center">
@@ -13,9 +20,27 @@ export default function ReviewPanelToolBar() {
           src="back_to_start.png"
           alt="Back to start"
           title="Back to start"
+          onClick={() => setBoardPgn(initPgn)}
         />
-        <img id="back-move-button" src="back.png" alt="Back" title="Back" />
-        <img id="next-move-button" src="next.png" alt="Next" title="Next" />
+        <img
+          id="back-move-button"
+          src="back.png"
+          alt="Back"
+          title="Back"
+          onClick={() => {
+            setBoardPgn(undoLastMove(boardPgn));
+          }}
+        />
+        <img
+          id="next-move-button"
+          src="next.png"
+          alt="Next"
+          title="Next"
+          onClick={() => {
+            const nextBoardPgn = addNextMove(boardPgn, gamePgn);
+            setBoardPgn(nextBoardPgn);
+          }}
+        />
         <img
           id="go-end-move-button"
           src="go_to_end.png"
