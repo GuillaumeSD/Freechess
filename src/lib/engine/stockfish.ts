@@ -70,27 +70,22 @@ export class Stockfish {
     await this.sendCommands(["ucinewgame", "isready"], "readyok");
     this.worker.postMessage("position startpos");
 
-    let whiteCpVsBestMove = 0;
-    let blackCpVsBestMove = 0;
+    let whiteCpSum = 0;
+    let whiteCpMax = 0;
+    let blackCpSum = 0;
+    let blackCpMax = 0;
     const moves: MoveEval[] = [];
     for (const fen of fens) {
       console.log(`Evaluating position: ${fen}`);
       const result = await this.evaluatePosition(fen, depth);
 
-      const bestLine = result.lines[0];
-      const beforeMoveBestLine: LineEval = moves.at(-1)?.lines[0] ?? {
-        pv: [],
-        cp: 0,
-      };
-      const wasWhiteMove = fen.split(" ")[1] === "b";
-      const cpVsBestMove = this.calculateCpVsBestMove(
-        bestLine,
-        beforeMoveBestLine
-      );
-      if (wasWhiteMove) {
-        whiteCpVsBestMove += cpVsBestMove;
+      const bestLineEval = result.lines[0].cp ?? 0;
+      if (this.isWhiteToMove(fen)) {
+        whiteCpMax += bestLineEval;
+        blackCpSum += bestLineEval;
       } else {
-        blackCpVsBestMove += cpVsBestMove;
+        blackCpMax += bestLineEval;
+        whiteCpSum += bestLineEval;
       }
 
       moves.push(result);
@@ -99,30 +94,17 @@ export class Stockfish {
     this.ready = true;
     console.log("Game evaluated");
     console.log(moves);
-    const whiteAccuracy = this.calculateAccuracy(
-      whiteCpVsBestMove,
-      moves.length
-    );
-    const blackAccuracy = this.calculateAccuracy(
-      blackCpVsBestMove,
-      moves.length
-    );
+    const whiteAccuracy = this.calculateAccuracy(whiteCpSum, whiteCpMax);
+    const blackAccuracy = this.calculateAccuracy(blackCpSum, blackCpMax);
     return { moves, whiteAccuracy, blackAccuracy };
   }
 
-  private calculateAccuracy(cpVsBestMove: number, movesNb: number): number {
-    return 100 - (cpVsBestMove / movesNb) * 100;
+  private calculateAccuracy(sum: number, max: number): number {
+    return (sum / max) * 100;
   }
 
-  private calculateCpVsBestMove(
-    bestLine: LineEval,
-    beforeMoveBestLine: LineEval
-  ): number {
-    if (bestLine.cp === undefined || beforeMoveBestLine.cp === undefined) {
-      return 0;
-    }
-
-    return bestLine.cp - beforeMoveBestLine.cp;
+  private isWhiteToMove(fen: string): boolean {
+    return fen.split(" ")[1] === "w";
   }
 
   public async evaluatePosition(fen: string, depth = 16): Promise<MoveEval> {

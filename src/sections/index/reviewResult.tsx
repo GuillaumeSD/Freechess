@@ -16,8 +16,8 @@ export default function ReviewResult() {
         Accuracies
       </h2>
       <div id="accuracies">
-        <b id="white-accuracy">{gameEval.whiteAccuracy}%</b>
-        <b id="black-accuracy">{gameEval.blackAccuracy}%</b>
+        <b id="white-accuracy">{gameEval.whiteAccuracy.toFixed(1)}%</b>
+        <b id="black-accuracy">{gameEval.blackAccuracy.toFixed(1)}%</b>
       </div>
 
       <div id="classification-message-container">
@@ -36,7 +36,7 @@ export default function ReviewResult() {
         {moveEval?.lines.map((line) => (
           <div key={line.pv[0]} style={{ color: "white" }}>
             <span style={{ marginRight: "2em" }}>
-              {line.cp ? line.cp / 100 : `Mate in ${line.mate}`}
+              {line.cp ? line.cp / 100 : `Mate in ${Math.abs(line.mate ?? 0)}`}
             </span>
             <span>{line.pv.slice(0, 7).join(", ")}</span>
           </div>
