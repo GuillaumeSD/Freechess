@@ -36,7 +36,9 @@ export default function ReviewResult() {
         {moveEval?.lines.map((line) => (
           <div key={line.pv[0]} style={{ color: "white" }}>
             <span style={{ marginRight: "2em" }}>
-              {line.cp ? line.cp / 100 : `Mate in ${Math.abs(line.mate ?? 0)}`}
+              {line.cp !== undefined
+                ? line.cp / 100
+                : `Mate in ${Math.abs(line.mate ?? 0)}`}
             </span>
             <span>{line.pv.slice(0, 7).join(", ")}</span>
           </div>
