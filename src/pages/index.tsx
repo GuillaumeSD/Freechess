@@ -1,24 +1,53 @@
-import TopBar from "@/sections/index/topBar";
-import Board from "@/sections/index/board";
-import ReviewPanelBody from "@/sections/index/reviewPanelBody";
-import ReviewPanelToolBar from "@/sections/index/reviewPanelToolbar";
+import Board from "@/sections/gameReport/board";
+import ReviewPanelBody from "@/sections/gameReport/reviewPanelBody";
+import ReviewPanelHeader from "@/sections/gameReport/reviewPanelHeader";
+import ReviewPanelToolBar from "@/sections/gameReport/reviewPanelToolbar";
+import { Grid } from "@mui/material";
 
-export default function HomePage() {
+export default function GameReport() {
   return (
-    <>
-      <TopBar />
+    <Grid
+      container
+      rowGap={2}
+      justifyContent="center"
+      alignItems="center"
+      marginTop={1}
+    >
+      <Board />
 
-      <div className="center">
-        <div id="review-container">
-          <Board />
+      <Grid
+        item
+        container
+        rowGap={2}
+        paddingLeft={{ xs: 0, md: 6 }}
+        justifyContent="center"
+        alignItems="center"
+        xs={12}
+        md={6}
+      >
+        <Grid
+          container
+          item
+          rowGap={3}
+          columnGap={1}
+          justifyContent="center"
+          alignItems="center"
+          borderRadius={2}
+          border={1}
+          borderColor={"secondary.main"}
+          xs={12}
+          sx={{
+            backgroundColor: "secondary.main",
+          }}
+          paddingY={3}
+        >
+          <ReviewPanelHeader />
 
-          <div id="review-panel">
-            <ReviewPanelBody />
+          <ReviewPanelBody />
 
-            <ReviewPanelToolBar />
-          </div>
-        </div>
-      </div>
-    </>
+          <ReviewPanelToolBar />
+        </Grid>
+      </Grid>
+    </Grid>
   );
 }

@@ -2,7 +2,7 @@ import { GameEval, LineEval, MoveEval } from "@/types/eval";
 
 export class Stockfish {
   private worker: Worker;
-  private ready: boolean = false;
+  private ready = false;
 
   constructor() {
     this.worker = new Worker(
@@ -14,7 +14,7 @@ export class Stockfish {
     console.log("Stockfish created");
   }
 
-  public isWasmSupported(): boolean {
+  public isWasmSupported() {
     return (
       typeof WebAssembly === "object" &&
       WebAssembly.validate(
