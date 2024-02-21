@@ -38,6 +38,9 @@ export default function GameReport() {
           xs={12}
           sx={{
             backgroundColor: "secondary.main",
+            borderRadius: 2,
+            borderColor: "primary.main",
+            borderWidth: 2,
           }}
           paddingY={3}
         >

@@ -15,13 +15,18 @@ export default function Layout({ children }: PropsWithChildren) {
           error: {
             main: red[400],
           },
+          primary: {
+            main: "#5d9948",
+          },
           secondary: {
-            main: useDarkMode ? "#424242" : "#90caf9",
+            main: useDarkMode ? "#424242" : "#ffffff",
           },
         },
       }),
     [useDarkMode]
   );
+
+  if (useDarkMode === null) return null;
 
   return (
     <ThemeProvider theme={theme}>

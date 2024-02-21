@@ -13,6 +13,11 @@ import {
 
 const MenuOptions = [
   { text: "Game Report", icon: "streamline:magnifying-glass-solid", href: "/" },
+  {
+    text: "Game Database",
+    icon: "streamline:database-solid",
+    href: "/game-database",
+  },
 ];
 
 interface Props {

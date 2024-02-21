@@ -42,5 +42,4 @@ const gameOriginLabel: Record<GameOrigin, string> = {
   [GameOrigin.Pgn]: "PGN",
   [GameOrigin.ChessCom]: "Chess.com",
   [GameOrigin.Lichess]: "Lichess",
-  [GameOrigin.Json]: "JSON",
 };

@@ -1,4 +1,4 @@
-import { GameEval, LineEval, MoveEval } from "@/types/eval";
+import { GameEval, LineEval, MoveEval } from "@/types/game";
 
 export class Stockfish {
   private worker: Worker;
