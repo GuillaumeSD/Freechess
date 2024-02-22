@@ -114,12 +114,14 @@ export default function GameDatabase() {
           <LoadGameButton />
         </Grid>
       </Grid>
+
       <Grid item container xs={12} justifyContent="center" alignItems="center">
         <Typography variant="subtitle2">
           You have {0} games in your database
         </Typography>
       </Grid>
-      <Grid item maxWidth="100%" sx={{ minWidth: "50px" }}>
+
+      <Grid item maxWidth="100%" minWidth="50px">
         <DataGrid
           aria-label="Games list"
           rows={games}

@@ -19,7 +19,9 @@ export default function Board() {
       <Typography variant="h4" align="center">
         White Player (?)
       </Typography>
+
       <Chessboard id="BasicBoard" position={board.fen()} />
+
       <Typography variant="h4" align="center">
         Black Player (?)
       </Typography>

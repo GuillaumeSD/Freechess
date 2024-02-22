@@ -16,14 +16,16 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Chess } from "chess.js";
 import { useState } from "react";
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  setGame?: (game: Chess) => void;
 }
 
-export default function NewGameDialog({ open, onClose }: Props) {
+export default function NewGameDialog({ open, onClose, setGame }: Props) {
   const [pgn, setPgn] = useState("");
   const [parsingError, setParsingError] = useState("");
   const { addGame } = useGameDatabase();
@@ -34,7 +36,13 @@ export default function NewGameDialog({ open, onClose }: Props) {
 
     try {
       const gameToAdd = getGameFromPgn(pgn);
-      addGame(gameToAdd);
+
+      if (setGame) {
+        setGame(gameToAdd);
+      } else {
+        addGame(gameToAdd);
+      }
+
       handleClose();
     } catch (error) {
       console.error(error);

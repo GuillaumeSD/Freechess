@@ -1,4 +1,4 @@
-import { GameEval } from "@/types/game";
+import { GameEval } from "@/types/eval";
 import { Chess } from "chess.js";
 import { atom } from "jotai";
 

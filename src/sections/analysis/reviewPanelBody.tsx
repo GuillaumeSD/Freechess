@@ -1,20 +1,14 @@
 import { Icon } from "@iconify/react";
-import {
-  Divider,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-} from "@mui/material";
+import { Divider, Grid, List, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameEvalAtom } from "./states";
+import LineEvaluation from "./lineEvaluation";
 
 export default function ReviewPanelBody() {
-  const board = useAtomValue(boardAtom);
   const gameEval = useAtomValue(gameEvalAtom);
   if (!gameEval) return null;
 
+  const board = useAtomValue(boardAtom);
   const evalIndex = board.history().length;
   const moveEval = gameEval.moves[evalIndex];
 
@@ -36,7 +30,7 @@ export default function ReviewPanelBody() {
           height={30}
         />
         <Typography variant="h5" align="center">
-          Bilan de la partie
+          Game Review
         </Typography>
       </Grid>
 
@@ -47,17 +41,7 @@ export default function ReviewPanelBody() {
       <Grid item container xs={12} justifyContent="center" alignItems="center">
         <List>
           {moveEval?.lines.map((line) => (
-            <ListItem disablePadding key={line.pv[0]}>
-              <ListItemText
-                primary={
-                  line.cp !== undefined
-                    ? line.cp / 100
-                    : `Mate in ${Math.abs(line.mate ?? 0)}`
-                }
-                sx={{ marginRight: 2 }}
-              />
-              <Typography>{line.pv.slice(0, 7).join(", ")}</Typography>
-            </ListItem>
+            <LineEvaluation key={line.pv[0]} line={line} />
           ))}
         </List>
       </Grid>

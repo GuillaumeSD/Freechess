@@ -1,7 +1,7 @@
-import Board from "@/sections/gameReport/board";
-import ReviewPanelBody from "@/sections/gameReport/reviewPanelBody";
-import ReviewPanelHeader from "@/sections/gameReport/reviewPanelHeader";
-import ReviewPanelToolBar from "@/sections/gameReport/reviewPanelToolbar";
+import Board from "@/sections/analysis/board";
+import ReviewPanelBody from "@/sections/analysis/reviewPanelBody";
+import ReviewPanelHeader from "@/sections/analysis/reviewPanelHeader";
+import ReviewPanelToolBar from "@/sections/analysis/reviewPanelToolbar";
 import { Grid } from "@mui/material";
 
 export default function GameReport() {

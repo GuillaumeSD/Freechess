@@ -1,17 +1,26 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
 import NewGameDialog from "./loadGameDialog";
+import { Chess } from "chess.js";
 
-export default function LoadGameButton() {
+interface Props {
+  setGame?: (game: Chess) => void;
+}
+
+export default function LoadGameButton({ setGame }: Props) {
   const [openDialog, setOpenDialog] = useState(false);
 
   return (
     <>
       <Button variant="contained" onClick={() => setOpenDialog(true)}>
-        Add a game
+        Add game
       </Button>
 
-      <NewGameDialog open={openDialog} onClose={() => setOpenDialog(false)} />
+      <NewGameDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        setGame={setGame}
+      />
     </>
   );
 }

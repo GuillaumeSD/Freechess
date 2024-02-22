@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type SetValue<T> = Dispatch<SetStateAction<T>>;
 
-export function useLocalStorage<T>(
+export function useLocalStorage<T = string | number | boolean | undefined>(
   key: string,
   initialValue: T
 ): [T | null, SetValue<T>] {
@@ -15,7 +15,7 @@ export function useLocalStorage<T>(
     } else {
       setStoredValue(initialValue);
     }
-  }, [key]);
+  }, [key, initialValue]);
 
   const setValue: SetValue<T> = (value) => {
     if (storedValue === null)

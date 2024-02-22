@@ -12,11 +12,11 @@ import {
 } from "@mui/material";
 
 const MenuOptions = [
-  { text: "Game Report", icon: "streamline:magnifying-glass-solid", href: "/" },
+  { text: "Analysis", icon: "streamline:magnifying-glass-solid", href: "/" },
   {
-    text: "Game Database",
+    text: "Database",
     icon: "streamline:database-solid",
-    href: "/game-database",
+    href: "/database",
   },
 ];
 
@@ -32,7 +32,7 @@ export default function NavMenu({ open, onClose }: Props) {
       <Box sx={{ width: 250 }}>
         <List>
           {MenuOptions.map(({ text, icon, href }) => (
-            <ListItem key={text} disablePadding>
+            <ListItem key={text} disablePadding sx={{ margin: 0.7 }}>
               <NavLink href={href}>
                 <ListItemButton onClick={onClose}>
                   <ListItemIcon style={{ paddingLeft: "0.5em" }}>

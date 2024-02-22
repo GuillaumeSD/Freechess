@@ -1,4 +1,4 @@
-import { GameEval, LineEval, MoveEval } from "@/types/game";
+import { GameEval, LineEval, MoveEval } from "@/types/eval";
 
 export class Stockfish {
   private worker: Worker;
@@ -80,7 +80,7 @@ export class Stockfish {
     this.ready = true;
     console.log("Game evaluated");
     console.log(moves);
-    return { moves, whiteAccuracy: 82.34, blackAccuracy: 67.49 };
+    return { moves, accuracy: { white: 82.34, black: 67.49 } }; // TODO: Calculate accuracy
   }
 
   public async evaluatePosition(fen: string, depth = 16): Promise<MoveEval> {

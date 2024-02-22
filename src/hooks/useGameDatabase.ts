@@ -1,4 +1,7 @@
-import { Game, GameEval } from "@/types/game";
+import { formatGameToDatabase } from "@/lib/chess";
+import { GameEval } from "@/types/eval";
+import { Game } from "@/types/game";
+import { Chess } from "chess.js";
 import { openDB, DBSchema, IDBPDatabase } from "idb";
 import { atom, useAtom } from "jotai";
 import { useCallback, useEffect, useState } from "react";
@@ -48,10 +51,11 @@ export const useGameDatabase = (shouldFetchGames?: boolean) => {
     loadGames();
   }, [loadGames]);
 
-  const addGame = async (game: Omit<Game, "id">) => {
+  const addGame = async (game: Chess) => {
     if (!db) throw new Error("Database not initialized");
 
-    await db.add("games", game as Game);
+    const gameToAdd = formatGameToDatabase(game);
+    await db.add("games", gameToAdd as Game);
 
     loadGames();
   };
