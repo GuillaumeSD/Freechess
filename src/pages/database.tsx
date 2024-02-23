@@ -12,6 +12,7 @@ import { useCallback, useMemo } from "react";
 import { red } from "@mui/material/colors";
 import LoadGameButton from "@/sections/loadGame/loadGameButton";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
+import { useRouter } from "next/router";
 
 const gridLocaleText: GridLocaleText = {
   ...GRID_DEFAULT_LOCALE_TEXT,
@@ -20,6 +21,9 @@ const gridLocaleText: GridLocaleText = {
 
 export default function GameDatabase() {
   const { games, deleteGame } = useGameDatabase(true);
+  const router = useRouter();
+
+  console.log(games);
 
   const handleDeleteGameRow = useCallback(
     (id: GridRowId) => async () => {
@@ -77,7 +81,29 @@ export default function GameDatabase() {
         align: "center",
       },
       {
-        field: "actions",
+        field: "openEvaluation",
+        type: "actions",
+        headerName: "Analyze",
+        width: 100,
+        cellClassName: "actions",
+        getActions: ({ id }) => {
+          return [
+            <GridActionsCellItem
+              icon={
+                <Icon icon="streamline:magnifying-glass-solid" width="20px" />
+              }
+              label="Open Evaluation"
+              onClick={() =>
+                router.push({ pathname: "/", query: { gameId: id } })
+              }
+              color="inherit"
+              key={`${id}-open-eval-button`}
+            />,
+          ];
+        },
+      },
+      {
+        field: "delete",
         type: "actions",
         headerName: "Delete",
         width: 100,
@@ -88,7 +114,7 @@ export default function GameDatabase() {
               icon={
                 <Icon icon="mdi:delete-outline" color={red[400]} width="20px" />
               }
-              label="Supprimer"
+              label="Delete"
               onClick={handleDeleteGameRow(id)}
               color="inherit"
               key={`${id}-delete-button`}
@@ -97,7 +123,7 @@ export default function GameDatabase() {
         },
       },
     ],
-    [handleDeleteGameRow]
+    [handleDeleteGameRow, router]
   );
 
   return (

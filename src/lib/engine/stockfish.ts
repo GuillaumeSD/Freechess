@@ -1,3 +1,4 @@
+import { Engine } from "@/types/enums";
 import { GameEval, LineEval, MoveEval } from "@/types/eval";
 
 export class Stockfish {
@@ -25,12 +26,30 @@ export class Stockfish {
 
   public async init(): Promise<void> {
     await this.sendCommands(["uci"], "uciok");
-    await this.sendCommands(
-      ["setoption name MultiPV value 3", "isready"],
-      "readyok"
-    );
+    await this.setMultiPv(3, false);
     this.ready = true;
     console.log("Stockfish initialized");
+  }
+
+  public async setMultiPv(multiPv: number, checkIsReady = true) {
+    if (checkIsReady) {
+      this.throwErrorIfNotReady();
+    }
+
+    if (multiPv < 1 || multiPv > 6) {
+      throw new Error(`Invalid MultiPV value : ${multiPv}`);
+    }
+
+    await this.sendCommands(
+      [`setoption name MultiPV value ${multiPv}`, "isready"],
+      "readyok"
+    );
+  }
+
+  private throwErrorIfNotReady() {
+    if (!this.ready) {
+      throw new Error("Stockfish is not ready");
+    }
   }
 
   public shutdown(): void {
@@ -64,30 +83,53 @@ export class Stockfish {
     });
   }
 
-  public async evaluateGame(fens: string[], depth = 16): Promise<GameEval> {
+  public async evaluateGame(
+    fens: string[],
+    depth = 16,
+    multiPv = 3
+  ): Promise<GameEval> {
+    this.throwErrorIfNotReady();
     this.ready = false;
-    console.log("Evaluating game");
+
+    await this.setMultiPv(multiPv, false);
     await this.sendCommands(["ucinewgame", "isready"], "readyok");
     this.worker.postMessage("position startpos");
 
     const moves: MoveEval[] = [];
     for (const fen of fens) {
       console.log(`Evaluating position: ${fen}`);
-      const result = await this.evaluatePosition(fen, depth);
+      const result = await this.evaluatePosition(fen, depth, false);
       moves.push(result);
     }
 
     this.ready = true;
-    console.log("Game evaluated");
     console.log(moves);
-    return { moves, accuracy: { white: 82.34, black: 67.49 } }; // TODO: Calculate accuracy
+    return {
+      moves,
+      accuracy: { white: 82.34, black: 67.49 }, // TODO: Calculate accuracy
+      settings: {
+        name: Engine.Stockfish16,
+        date: new Date().toISOString(),
+        depth,
+        multiPv,
+      },
+    };
   }
 
-  public async evaluatePosition(fen: string, depth = 16): Promise<MoveEval> {
+  public async evaluatePosition(
+    fen: string,
+    depth = 16,
+    checkIsReady = true
+  ): Promise<MoveEval> {
+    if (checkIsReady) {
+      this.throwErrorIfNotReady();
+    }
+
     const results = await this.sendCommands(
       [`position fen ${fen}`, `go depth ${depth}`],
       "bestmove"
     );
+
     return this.parseResults(results);
   }
 

@@ -26,10 +26,8 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
     <Box sx={{ flexGrow: 1, display: "flex" }}>
       <AppBar
         position="static"
-        sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: "primary.main",
-        }}
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        enableColorOnDark
       >
         <Toolbar>
           <IconButton

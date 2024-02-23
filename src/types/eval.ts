@@ -1,3 +1,5 @@
+import { Engine } from "./enums";
+
 export interface MoveEval {
   bestMove: string;
   lines: LineEval[];
@@ -14,7 +16,15 @@ export interface Accuracy {
   black: number;
 }
 
+export interface EngineSettings {
+  name: Engine;
+  depth: number;
+  multiPv: number;
+  date: string;
+}
+
 export interface GameEval {
   moves: MoveEval[];
   accuracy: Accuracy;
+  settings: EngineSettings;
 }

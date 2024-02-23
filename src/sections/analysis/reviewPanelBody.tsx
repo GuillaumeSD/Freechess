@@ -1,16 +1,31 @@
 import { Icon } from "@iconify/react";
 import { Divider, Grid, List, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom, gameEvalAtom } from "./states";
+import { boardAtom, gameAtom } from "./states";
 import LineEvaluation from "./lineEvaluation";
+import { useCurrentMove } from "@/hooks/useCurrentMove";
 
 export default function ReviewPanelBody() {
-  const gameEval = useAtomValue(gameEvalAtom);
-  if (!gameEval) return null;
-
+  const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
-  const evalIndex = board.history().length;
-  const moveEval = gameEval.moves[evalIndex];
+
+  const move = useCurrentMove();
+
+  const getBestMoveLabel = () => {
+    const bestMove = move?.lastEval?.bestMove;
+    if (bestMove) {
+      return `${bestMove} was the best move`;
+    }
+
+    const boardHistory = board.history();
+    const gameHistory = game.history();
+
+    if (game.isGameOver() && boardHistory.join() === gameHistory.join()) {
+      return "Game is over";
+    }
+
+    return null;
+  };
 
   return (
     <>
@@ -35,12 +50,12 @@ export default function ReviewPanelBody() {
       </Grid>
 
       <Typography variant="h6" align="center">
-        {moveEval ? `${moveEval.bestMove} is the best move` : "Game is over"}
+        {getBestMoveLabel()}
       </Typography>
 
       <Grid item container xs={12} justifyContent="center" alignItems="center">
         <List>
-          {moveEval?.lines.map((line) => (
+          {move?.eval?.lines.map((line) => (
             <LineEvaluation key={line.pv[0]} line={line} />
           ))}
         </List>

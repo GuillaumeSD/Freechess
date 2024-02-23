@@ -55,9 +55,11 @@ export const useGameDatabase = (shouldFetchGames?: boolean) => {
     if (!db) throw new Error("Database not initialized");
 
     const gameToAdd = formatGameToDatabase(game);
-    await db.add("games", gameToAdd as Game);
+    const gameId = await db.add("games", gameToAdd as Game);
 
     loadGames();
+
+    return gameId;
   };
 
   const setGameEval = async (gameId: number, evaluation: GameEval) => {

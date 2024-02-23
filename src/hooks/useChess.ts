@@ -1,4 +1,4 @@
-import { Chess } from "chess.js";
+import { Chess, Move } from "chess.js";
 import { PrimitiveAtom, useAtom } from "jotai";
 
 export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
@@ -20,10 +20,16 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
     return newGame;
   };
 
-  const move = (move: { from: string; to: string; promotion?: string }) => {
+  const move = (move: {
+    from: string;
+    to: string;
+    promotion?: string;
+  }): Move | null => {
     const newGame = copyGame();
-    newGame.move(move);
+    const result = newGame.move(move);
     setGame(newGame);
+
+    return result;
   };
 
   const undo = () => {
