@@ -6,16 +6,13 @@ import { gameAtom, gameEvalAtom } from "./states";
 import { useAtomValue, useSetAtom } from "jotai";
 import { getFens } from "@/lib/chess";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
-import { useRouter } from "next/router";
 
 export default function AnalyzeButton() {
   const [engine, setEngine] = useState<Stockfish | null>(null);
   const [evaluationInProgress, setEvaluationInProgress] = useState(false);
-  const { setGameEval } = useGameDatabase();
+  const { setGameEval, gameFromUrl } = useGameDatabase();
   const setEval = useSetAtom(gameEvalAtom);
   const game = useAtomValue(gameAtom);
-  const router = useRouter();
-  const { gameId } = router.query;
 
   useEffect(() => {
     const engine = new Stockfish();
@@ -43,9 +40,8 @@ export default function AnalyzeButton() {
 
     setEvaluationInProgress(false);
 
-    if (typeof gameId === "string") {
-      setGameEval(parseInt(gameId), newGameEval);
-      console.log("Game Eval saved to database");
+    if (gameFromUrl) {
+      setGameEval(gameFromUrl.id, newGameEval);
     }
   };
 

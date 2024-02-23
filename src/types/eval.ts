@@ -9,6 +9,8 @@ export interface LineEval {
   pv: string[];
   cp?: number;
   mate?: number;
+  depth: number;
+  multiPv: number;
 }
 
 export interface Accuracy {

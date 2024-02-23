@@ -3,22 +3,23 @@ import { Icon } from "@iconify/react";
 import { IconButton } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { useRouter } from "next/router";
-import { gameAtom, gameEvalAtom } from "../states";
+import { boardAtom, gameAtom, gameEvalAtom } from "../states";
+import { getGameToSave } from "@/lib/chess";
 
 export default function SaveButton() {
   const game = useAtomValue(gameAtom);
+  const board = useAtomValue(boardAtom);
   const gameEval = useAtomValue(gameEvalAtom);
-  const { addGame, setGameEval } = useGameDatabase();
+  const { addGame, setGameEval, gameFromUrl } = useGameDatabase();
 
   const router = useRouter();
-  const { gameId } = router.query;
-
-  const isButtonEnabled = router.isReady && typeof gameId === undefined;
 
   const handleSave = async () => {
-    if (!isButtonEnabled) return;
+    if (gameFromUrl) return;
 
-    const gameId = await addGame(game);
+    const gameToSave = getGameToSave(game, board);
+
+    const gameId = await addGame(gameToSave);
     if (gameEval) {
       await setGameEval(gameId, gameEval);
     }
@@ -34,7 +35,7 @@ export default function SaveButton() {
   };
 
   return (
-    <IconButton onClick={handleSave} disabled={!isButtonEnabled}>
+    <IconButton onClick={handleSave} disabled={!!gameFromUrl}>
       <Icon icon="ri:save-3-line" />
     </IconButton>
   );

@@ -81,6 +81,15 @@ export default function GameDatabase() {
         align: "center",
       },
       {
+        field: "eval",
+        headerName: "Evaluation",
+        type: "boolean",
+        headerAlign: "center",
+        align: "center",
+        width: 100,
+        valueGetter: (params) => !!params.row.eval,
+      },
+      {
         field: "openEvaluation",
         type: "actions",
         headerName: "Analyze",

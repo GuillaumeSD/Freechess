@@ -1,6 +1,5 @@
 import { Grid } from "@mui/material";
 import LoadGameButton from "../loadGame/loadGameButton";
-import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
 import { useChessActions } from "@/hooks/useChess";
 import {
@@ -14,12 +13,10 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { Chess } from "chess.js";
 
 export default function LoadGame() {
-  const router = useRouter();
-  const { gameId } = router.query;
   const game = useAtomValue(gameAtom);
   const gameActions = useChessActions(gameAtom);
   const boardActions = useChessActions(boardAtom);
-  const { getGame } = useGameDatabase();
+  const { gameFromUrl } = useGameDatabase();
   const setEval = useSetAtom(gameEvalAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
 
@@ -35,23 +32,20 @@ export default function LoadGame() {
 
   useEffect(() => {
     const loadGame = async () => {
-      if (typeof gameId !== "string") return;
-
-      const gamefromDb = await getGame(parseInt(gameId));
-      if (!gamefromDb) return;
+      if (!gameFromUrl) return;
 
       const gamefromDbChess = new Chess();
-      gamefromDbChess.loadPgn(gamefromDb.pgn);
+      gamefromDbChess.loadPgn(gameFromUrl.pgn);
       if (game.history().join() === gamefromDbChess.history().join()) return;
 
-      resetAndSetGamePgn(gamefromDb.pgn);
-      setEval(gamefromDb.eval);
+      resetAndSetGamePgn(gameFromUrl.pgn);
+      setEval(gameFromUrl.eval);
     };
 
     loadGame();
-  }, [gameId, getGame, game, resetAndSetGamePgn, setEval]);
+  }, [gameFromUrl, resetAndSetGamePgn, setEval]);
 
-  if (!router.isReady || gameId) return null;
+  if (gameFromUrl) return null;
 
   return (
     <Grid item container xs={12} justifyContent="center" alignItems="center">

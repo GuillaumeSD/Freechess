@@ -20,6 +20,7 @@ export const useCurrentMove = () => {
       return;
 
     const evalIndex = board.history().length;
+
     return {
       ...board.history({ verbose: true }).at(-1),
       eval: gameEval.moves[evalIndex],

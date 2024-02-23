@@ -26,3 +26,26 @@ export const formatGameToDatabase = (game: Chess): Omit<Game, "id"> => {
     result: headers.Result,
   };
 };
+
+export const getGameToSave = (game: Chess, board: Chess): Chess => {
+  if (game.history().length) return game;
+
+  const headers = board.header();
+
+  if (!headers.Event) {
+    board.header("Event", "Freechess Game");
+  }
+
+  if (!headers.Site) {
+    board.header("Site", "Freechess");
+  }
+
+  if (!headers.Date) {
+    board.header(
+      "Date",
+      new Date().toISOString().split("T")[0].replaceAll("-", ".")
+    );
+  }
+
+  return board;
+};

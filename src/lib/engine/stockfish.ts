@@ -130,7 +130,23 @@ export class Stockfish {
       "bestmove"
     );
 
-    return this.parseResults(results);
+    const parsedResults = this.parseResults(results);
+
+    const whiteToPlay = fen.split(" ")[1] === "w";
+
+    if (!whiteToPlay) {
+      const lines = parsedResults.lines.map((line) => ({
+        ...line,
+        cp: line.cp ? -line.cp : line.cp,
+      }));
+
+      return {
+        ...parsedResults,
+        lines,
+      };
+    }
+
+    return parsedResults;
   }
 
   private parseResults(results: string[]): MoveEval {
@@ -151,7 +167,16 @@ export class Stockfish {
       if (result.startsWith("info")) {
         const pv = this.getResultPv(result);
         const multiPv = this.getResultProperty(result, "multipv");
-        if (!pv || !multiPv) continue;
+        const depth = this.getResultProperty(result, "depth");
+        if (!pv || !multiPv || !depth) continue;
+
+        if (
+          tempResults[multiPv] &&
+          parseInt(depth) < tempResults[multiPv].depth
+        ) {
+          continue;
+        }
+
         const cp = this.getResultProperty(result, "cp");
         const mate = this.getResultProperty(result, "mate");
 
@@ -159,6 +184,8 @@ export class Stockfish {
           pv,
           cp: cp ? parseInt(cp) : undefined,
           mate: mate ? parseInt(mate) : undefined,
+          depth: parseInt(depth),
+          multiPv: parseInt(multiPv),
         };
       }
     }

@@ -4,6 +4,7 @@ import { Game } from "@/types/game";
 import { Chess } from "chess.js";
 import { openDB, DBSchema, IDBPDatabase } from "idb";
 import { atom, useAtom } from "jotai";
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
 interface GameDatabaseSchema extends DBSchema {
@@ -20,6 +21,7 @@ export const useGameDatabase = (shouldFetchGames?: boolean) => {
   const [db, setDb] = useState<IDBPDatabase<GameDatabaseSchema> | null>(null);
   const [games, setGames] = useAtom(gamesAtom);
   const [fetchGames, setFetchGames] = useAtom(fetchGamesAtom);
+  const [gameFromUrl, setGameFromUrl] = useState<Game | undefined>(undefined);
 
   useEffect(() => {
     if (shouldFetchGames !== undefined) {
@@ -50,6 +52,17 @@ export const useGameDatabase = (shouldFetchGames?: boolean) => {
   useEffect(() => {
     loadGames();
   }, [loadGames]);
+
+  const router = useRouter();
+  const { gameId } = router.query;
+
+  useEffect(() => {
+    if (typeof gameId === "string") {
+      getGame(parseInt(gameId)).then((game) => {
+        setGameFromUrl(game);
+      });
+    }
+  }, [gameId, games]);
 
   const addGame = async (game: Chess) => {
     if (!db) throw new Error("Database not initialized");
@@ -89,5 +102,13 @@ export const useGameDatabase = (shouldFetchGames?: boolean) => {
 
   const isReady = db !== null;
 
-  return { addGame, setGameEval, getGame, deleteGame, games, isReady };
+  return {
+    addGame,
+    setGameEval,
+    getGame,
+    deleteGame,
+    games,
+    isReady,
+    gameFromUrl,
+  };
 };
