@@ -5,10 +5,11 @@ export abstract class UciEngine {
   private worker: Worker;
   private ready = false;
   private engineName: EngineName;
-  private multiPv = 3;
+  private multiPv: number;
 
-  constructor(engineName: EngineName, enginePath: string) {
+  constructor(engineName: EngineName, enginePath: string, multiPv: number) {
     this.engineName = engineName;
+    this.multiPv = multiPv;
 
     this.worker = new Worker(enginePath);
 
@@ -17,7 +18,7 @@ export abstract class UciEngine {
 
   public async init(): Promise<void> {
     await this.sendCommands(["uci"], "uciok");
-    await this.setMultiPv(3, false);
+    await this.setMultiPv(this.multiPv, false);
     this.ready = true;
     console.log(`${this.engineName} initialized`);
   }
@@ -81,24 +82,21 @@ export abstract class UciEngine {
   public async evaluateGame(
     fens: string[],
     depth = 16,
-    multiPv = 3
+    multiPv = this.multiPv
   ): Promise<GameEval> {
     this.throwErrorIfNotReady();
     this.ready = false;
 
-    await this.setMultiPv(multiPv, false);
     await this.sendCommands(["ucinewgame", "isready"], "readyok");
     this.worker.postMessage("position startpos");
 
     const moves: MoveEval[] = [];
     for (const fen of fens) {
-      console.log(`Evaluating position: ${fen}`);
-      const result = await this.evaluatePosition(fen, depth, false);
+      const result = await this.evaluatePosition(fen, depth, multiPv, false);
       moves.push(result);
     }
 
     this.ready = true;
-    console.log(moves);
     return {
       moves,
       accuracy: { white: 82.34, black: 67.49 }, // TODO: Calculate accuracy
@@ -114,12 +112,16 @@ export abstract class UciEngine {
   public async evaluatePosition(
     fen: string,
     depth = 16,
+    multiPv = this.multiPv,
     checkIsReady = true
   ): Promise<MoveEval> {
     if (checkIsReady) {
       this.throwErrorIfNotReady();
     }
 
+    await this.setMultiPv(multiPv, checkIsReady);
+
+    console.log(`Evaluating position: ${fen}`);
     const results = await this.sendCommands(
       [`position fen ${fen}`, `go depth ${depth}`],
       "bestmove"

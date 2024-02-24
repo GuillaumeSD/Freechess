@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@mui/material";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { useAtomValue } from "jotai";
-import { gameAtom } from "../states";
+import { gameAtom } from "../../states";
 import PlayerInfo from "./playerInfo";
 
 export default function GamePanel() {
@@ -12,7 +12,14 @@ export default function GamePanel() {
 
   if (!hasGameInfo) {
     return (
-      <Grid item container xs={12} justifyContent="center" alignItems="center">
+      <Grid
+        item
+        container
+        xs={12}
+        justifyContent="center"
+        alignItems="center"
+        marginY={1}
+      >
         <Typography variant="h6">No game loaded</Typography>
       </Grid>
     );

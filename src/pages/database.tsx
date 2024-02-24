@@ -60,11 +60,15 @@ export default function GameDatabase() {
         width: 150,
       },
       {
-        field: "white",
+        field: "whiteLabel",
         headerName: "White",
-        width: 150,
+        width: 200,
         headerAlign: "center",
         align: "center",
+        valueGetter: (params) =>
+          `${params.row.white.name ?? "Unknown"} (${
+            params.row.white.rating ?? "?"
+          })`,
       },
       {
         field: "result",
@@ -74,11 +78,15 @@ export default function GameDatabase() {
         width: 100,
       },
       {
-        field: "black",
+        field: "blackLabel",
         headerName: "Black",
-        width: 150,
+        width: 200,
         headerAlign: "center",
         align: "center",
+        valueGetter: (params) =>
+          `${params.row.black.name ?? "Unknown"} (${
+            params.row.black.rating ?? "?"
+          })`,
       },
       {
         field: "eval",
@@ -136,15 +144,14 @@ export default function GameDatabase() {
   );
 
   return (
-    <Grid container rowSpacing={3} justifyContent="center" alignItems="center">
-      <Grid
-        item
-        container
-        xs={12}
-        justifyContent="center"
-        alignItems="center"
-        spacing={4}
-      >
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      gap={4}
+      marginTop={6}
+    >
+      <Grid item container xs={12} justifyContent="center" alignItems="center">
         <Grid item container justifyContent="center" sx={{ maxWidth: "250px" }}>
           <LoadGameButton />
         </Grid>
@@ -152,7 +159,7 @@ export default function GameDatabase() {
 
       <Grid item container xs={12} justifyContent="center" alignItems="center">
         <Typography variant="subtitle2">
-          You have {0} games in your database
+          You have {games.length} games in your database
         </Typography>
       </Grid>
 

@@ -1,7 +1,7 @@
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { gameAtom } from "../states";
+import { gameAtom } from "../../states";
 
 interface Props {
   color: "white" | "black";

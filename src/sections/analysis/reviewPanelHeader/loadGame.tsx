@@ -54,7 +54,7 @@ export default function LoadGame() {
       <LoadGameButton
         label={isGameLoaded ? "Load another game" : "Load game"}
         setGame={async (game) => {
-          await router.push("");
+          await router.push("/");
           resetAndSetGamePgn(game.pgn());
         }}
       />

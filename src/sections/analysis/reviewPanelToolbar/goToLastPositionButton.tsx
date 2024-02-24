@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { IconButton } from "@mui/material";
+import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom } from "../states";
 import { useChessActions } from "@/hooks/useChess";
@@ -15,14 +15,18 @@ export default function GoToLastPositionButton() {
   const isButtonDisabled = boardHistory >= gameHistory;
 
   return (
-    <IconButton
-      onClick={() => {
-        if (isButtonDisabled) return;
-        boardActions.setPgn(game.pgn());
-      }}
-      disabled={isButtonDisabled}
-    >
-      <Icon icon="ri:skip-forward-line" />
-    </IconButton>
+    <Tooltip title="Go to final position">
+      <Grid>
+        <IconButton
+          onClick={() => {
+            if (isButtonDisabled) return;
+            boardActions.setPgn(game.pgn());
+          }}
+          disabled={isButtonDisabled}
+        >
+          <Icon icon="ri:skip-forward-line" />
+        </IconButton>
+      </Grid>
+    </Tooltip>
   );
 }

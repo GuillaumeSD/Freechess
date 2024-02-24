@@ -1,10 +1,37 @@
+import { useChessActions } from "@/hooks/useChess";
 import Board from "@/sections/analysis/board";
 import ReviewPanelBody from "@/sections/analysis/reviewPanelBody";
 import ReviewPanelHeader from "@/sections/analysis/reviewPanelHeader";
 import ReviewPanelToolBar from "@/sections/analysis/reviewPanelToolbar";
+import {
+  boardAtom,
+  boardOrientationAtom,
+  gameAtom,
+  gameEvalAtom,
+} from "@/sections/analysis/states";
 import { Grid } from "@mui/material";
+import { Chess } from "chess.js";
+import { useSetAtom } from "jotai";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function GameReport() {
+  const boardActions = useChessActions(boardAtom);
+  const gameActions = useChessActions(gameAtom);
+  const setEval = useSetAtom(gameEvalAtom);
+  const setBoardOrientation = useSetAtom(boardOrientationAtom);
+  const router = useRouter();
+  const { gameId } = router.query;
+
+  useEffect(() => {
+    if (!gameId) {
+      boardActions.reset();
+      setEval(undefined);
+      setBoardOrientation(true);
+      gameActions.setPgn(new Chess().pgn());
+    }
+  }, [gameId]);
+
   return (
     <Grid
       container

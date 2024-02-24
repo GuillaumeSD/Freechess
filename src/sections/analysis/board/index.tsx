@@ -1,7 +1,12 @@
 import { Grid } from "@mui/material";
 import { Chessboard } from "react-chessboard";
 import { useAtomValue } from "jotai";
-import { boardAtom, boardOrientationAtom } from "../states";
+import {
+  boardAtom,
+  boardOrientationAtom,
+  showBestMoveArrowAtom,
+  showPlayerMoveArrowAtom,
+} from "../states";
 import { Arrow, Square } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChess";
 import { useCurrentMove } from "@/hooks/useCurrentMove";
@@ -11,6 +16,8 @@ import PlayerInfo from "./playerInfo";
 export default function Board() {
   const board = useAtomValue(boardAtom);
   const boardOrientation = useAtomValue(boardOrientationAtom);
+  const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
+  const showPlayerMoveArrow = useAtomValue(showPlayerMoveArrowAtom);
   const boardActions = useChessActions(boardAtom);
   const currentMove = useCurrentMove();
 
@@ -29,25 +36,37 @@ export default function Board() {
   };
 
   const customArrows: Arrow[] = useMemo(() => {
-    if (!currentMove?.lastEval) return [];
+    const arrows: Arrow[] = [];
 
-    const bestMoveArrow = [
-      currentMove.lastEval.bestMove.slice(0, 2),
-      currentMove.lastEval.bestMove.slice(2, 4),
-      "#3aab18",
-    ] as Arrow;
+    if (currentMove?.lastEval && showBestMoveArrow) {
+      const bestMoveArrow = [
+        currentMove.lastEval.bestMove.slice(0, 2),
+        currentMove.lastEval.bestMove.slice(2, 4),
+        "#3aab18",
+      ] as Arrow;
 
-    if (
-      !currentMove.from ||
-      !currentMove.to ||
-      (currentMove.from === bestMoveArrow[0] &&
-        currentMove.to === bestMoveArrow[1])
-    ) {
-      return [bestMoveArrow];
+      arrows.push(bestMoveArrow);
     }
 
-    return [[currentMove.from, currentMove.to, "#ffaa00"], bestMoveArrow];
-  }, [currentMove]);
+    if (currentMove.from && currentMove.to && showPlayerMoveArrow) {
+      const playerMoveArrow: Arrow = [
+        currentMove.from,
+        currentMove.to,
+        "#ffaa00",
+      ];
+
+      if (
+        arrows.every(
+          (arrow) =>
+            arrow[0] !== playerMoveArrow[0] || arrow[1] !== playerMoveArrow[1]
+        )
+      ) {
+        arrows.push(playerMoveArrow);
+      }
+    }
+
+    return arrows;
+  }, [currentMove, showBestMoveArrow, showPlayerMoveArrow]);
 
   return (
     <Grid
@@ -69,7 +88,7 @@ export default function Board() {
         maxWidth={"80vh"}
       >
         <Chessboard
-          id="BasicBoard"
+          id="AnalysisBoard"
           position={board.fen()}
           onPieceDrop={onPieceDrop}
           boardOrientation={boardOrientation ? "white" : "black"}

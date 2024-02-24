@@ -1,6 +1,6 @@
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { Icon } from "@iconify/react";
-import { IconButton } from "@mui/material";
+import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { useRouter } from "next/router";
 import { boardAtom, gameAtom, gameEvalAtom } from "../states";
@@ -39,13 +39,21 @@ export default function SaveButton() {
   return (
     <>
       {gameFromUrl ? (
-        <IconButton disabled={true}>
-          <Icon icon="ri:folder-check-line" />
-        </IconButton>
+        <Tooltip title="Game saved in database">
+          <Grid>
+            <IconButton disabled={true}>
+              <Icon icon="ri:folder-check-line" />
+            </IconButton>
+          </Grid>
+        </Tooltip>
       ) : (
-        <IconButton onClick={handleSave} disabled={!enableSave}>
-          <Icon icon="ri:save-3-line" />
-        </IconButton>
+        <Tooltip title="Save game">
+          <Grid>
+            <IconButton onClick={handleSave} disabled={!enableSave}>
+              <Icon icon="ri:save-3-line" />
+            </IconButton>
+          </Grid>
+        </Tooltip>
       )}
     </>
   );

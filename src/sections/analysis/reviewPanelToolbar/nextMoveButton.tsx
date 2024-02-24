@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { IconButton } from "@mui/material";
+import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom } from "../states";
 import { useChessActions } from "@/hooks/useChess";
@@ -32,11 +32,15 @@ export default function NextMoveButton() {
   };
 
   return (
-    <IconButton
-      onClick={() => addNextGameMoveToBoard()}
-      disabled={!isButtonEnabled}
-    >
-      <Icon icon="ri:arrow-right-s-line" height={30} />
-    </IconButton>
+    <Tooltip title="Go to next move">
+      <Grid>
+        <IconButton
+          onClick={() => addNextGameMoveToBoard()}
+          disabled={!isButtonEnabled}
+        >
+          <Icon icon="ri:arrow-right-s-line" height={30} />
+        </IconButton>
+      </Grid>
+    </Tooltip>
   );
 }
