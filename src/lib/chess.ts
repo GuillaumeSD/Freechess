@@ -21,9 +21,17 @@ export const formatGameToDatabase = (game: Chess): Omit<Game, "id"> => {
     site: headers.Site,
     date: headers.Date,
     round: headers.Round,
-    white: headers.White,
-    black: headers.Black,
+    white: {
+      name: headers.White,
+      rating: headers.WhiteElo ? Number(headers.WhiteElo) : undefined,
+    },
+    black: {
+      name: headers.Black,
+      rating: headers.BlackElo ? Number(headers.BlackElo) : undefined,
+    },
     result: headers.Result,
+    termination: headers.Termination,
+    timeControl: headers.TimeControl,
   };
 };
 

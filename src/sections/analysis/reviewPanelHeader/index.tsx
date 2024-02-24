@@ -1,7 +1,8 @@
 import { Icon } from "@iconify/react";
-import { Grid, Typography } from "@mui/material";
-import LoadGame from "./loadGame";
+import { Divider, Grid, Typography } from "@mui/material";
 import AnalyzePanel from "./analyzePanel";
+import GamePanel from "./gamePanel";
+import LoadGame from "./loadGame";
 
 export default function ReviewPanelHeader() {
   return (
@@ -27,7 +28,19 @@ export default function ReviewPanelHeader() {
         </Typography>
       </Grid>
 
-      <LoadGame />
+      <Grid
+        item
+        container
+        xs={12}
+        justifyContent="center"
+        alignItems="center"
+        gap={4}
+      >
+        <GamePanel />
+        <LoadGame />
+      </Grid>
+
+      <Divider sx={{ width: "90%", marginY: 3 }} />
 
       <AnalyzePanel />
     </Grid>

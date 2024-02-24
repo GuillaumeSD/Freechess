@@ -1,4 +1,4 @@
-import { Engine } from "./enums";
+import { EngineName } from "./enums";
 
 export interface MoveEval {
   bestMove: string;
@@ -19,7 +19,7 @@ export interface Accuracy {
 }
 
 export interface EngineSettings {
-  name: Engine;
+  engine: EngineName;
   depth: number;
   multiPv: number;
   date: string;

@@ -1,15 +1,15 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import { Chessboard } from "react-chessboard";
 import { useAtomValue } from "jotai";
-import { boardAtom, boardOrientationAtom, gameAtom } from "./states";
+import { boardAtom, boardOrientationAtom } from "../states";
 import { Arrow, Square } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChess";
 import { useCurrentMove } from "@/hooks/useCurrentMove";
 import { useMemo } from "react";
+import PlayerInfo from "./playerInfo";
 
 export default function Board() {
   const board = useAtomValue(boardAtom);
-  const game = useAtomValue(gameAtom);
   const boardOrientation = useAtomValue(boardOrientationAtom);
   const boardActions = useChessActions(boardAtom);
   const currentMove = useCurrentMove();
@@ -49,9 +49,6 @@ export default function Board() {
     return [[currentMove.from, currentMove.to, "#ffaa00"], bestMoveArrow];
   }, [currentMove]);
 
-  const whiteLabel = game.header()["White"] || "White Player (?)";
-  const blackLabel = game.header()["Black"] || "Black Player (?)";
-
   return (
     <Grid
       item
@@ -62,11 +59,7 @@ export default function Board() {
       xs={12}
       md={6}
     >
-      <Grid item container xs={12} justifyContent="center" alignItems="center">
-        <Typography variant="h4" align="center">
-          {boardOrientation ? blackLabel : whiteLabel}
-        </Typography>
-      </Grid>
+      <PlayerInfo color={boardOrientation ? "black" : "white"} />
 
       <Grid
         item
@@ -84,11 +77,7 @@ export default function Board() {
         />
       </Grid>
 
-      <Grid item container xs={12} justifyContent="center" alignItems="center">
-        <Typography variant="h4" align="center">
-          {boardOrientation ? whiteLabel : blackLabel}
-        </Typography>
-      </Grid>
+      <PlayerInfo color={boardOrientation ? "white" : "black"} />
     </Grid>
   );
 }

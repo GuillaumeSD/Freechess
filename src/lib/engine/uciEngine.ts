@@ -1,37 +1,30 @@
-import { Engine } from "@/types/enums";
+import { EngineName } from "@/types/enums";
 import { GameEval, LineEval, MoveEval } from "@/types/eval";
 
-export class Stockfish {
+export abstract class UciEngine {
   private worker: Worker;
   private ready = false;
+  private engineName: EngineName;
+  private multiPv = 3;
 
-  constructor() {
-    this.worker = new Worker(
-      this.isWasmSupported()
-        ? "engines/stockfish-wasm/stockfish-nnue-16-single.js"
-        : "engines/stockfish.js"
-    );
+  constructor(engineName: EngineName, enginePath: string) {
+    this.engineName = engineName;
 
-    console.log("Stockfish created");
-  }
+    this.worker = new Worker(enginePath);
 
-  public isWasmSupported() {
-    return (
-      typeof WebAssembly === "object" &&
-      WebAssembly.validate(
-        Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00)
-      )
-    );
+    console.log(`${engineName} created`);
   }
 
   public async init(): Promise<void> {
     await this.sendCommands(["uci"], "uciok");
     await this.setMultiPv(3, false);
     this.ready = true;
-    console.log("Stockfish initialized");
+    console.log(`${this.engineName} initialized`);
   }
 
   public async setMultiPv(multiPv: number, checkIsReady = true) {
+    if (multiPv === this.multiPv) return;
+
     if (checkIsReady) {
       this.throwErrorIfNotReady();
     }
@@ -44,11 +37,13 @@ export class Stockfish {
       [`setoption name MultiPV value ${multiPv}`, "isready"],
       "readyok"
     );
+
+    this.multiPv = multiPv;
   }
 
   private throwErrorIfNotReady() {
     if (!this.ready) {
-      throw new Error("Stockfish is not ready");
+      throw new Error(`${this.engineName} is not ready`);
     }
   }
 
@@ -56,7 +51,7 @@ export class Stockfish {
     this.ready = false;
     this.worker.postMessage("quit");
     this.worker.terminate();
-    console.log("Stockfish shutdown");
+    console.log(`${this.engineName} shutdown`);
   }
 
   public isReady(): boolean {
@@ -108,7 +103,7 @@ export class Stockfish {
       moves,
       accuracy: { white: 82.34, black: 67.49 }, // TODO: Calculate accuracy
       settings: {
-        name: Engine.Stockfish16,
+        engine: this.engineName,
         date: new Date().toISOString(),
         depth,
         multiPv,

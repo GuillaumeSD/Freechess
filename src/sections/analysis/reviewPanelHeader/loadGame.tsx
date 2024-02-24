@@ -11,8 +11,10 @@ import {
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { useAtomValue, useSetAtom } from "jotai";
 import { Chess } from "chess.js";
+import { useRouter } from "next/router";
 
 export default function LoadGame() {
+  const router = useRouter();
   const game = useAtomValue(gameAtom);
   const gameActions = useChessActions(gameAtom);
   const boardActions = useChessActions(boardAtom);
@@ -45,11 +47,17 @@ export default function LoadGame() {
     loadGame();
   }, [gameFromUrl, game, resetAndSetGamePgn, setEval]);
 
-  if (gameFromUrl) return null;
+  const isGameLoaded = gameFromUrl !== undefined || !!game.header().White;
 
   return (
     <Grid item container xs={12} justifyContent="center" alignItems="center">
-      <LoadGameButton setGame={(game) => resetAndSetGamePgn(game.pgn())} />
+      <LoadGameButton
+        label={isGameLoaded ? "Load another game" : "Load game"}
+        setGame={async (game) => {
+          await router.push("");
+          resetAndSetGamePgn(game.pgn());
+        }}
+      />
     </Grid>
   );
 }

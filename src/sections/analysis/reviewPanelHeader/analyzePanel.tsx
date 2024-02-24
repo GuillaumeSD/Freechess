@@ -1,7 +1,6 @@
-import { Stockfish } from "@/lib/engine/stockfish";
 import { Icon } from "@iconify/react";
 import { Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   engineDepthAtom,
   engineMultiPvAtom,
@@ -13,9 +12,11 @@ import { getFens } from "@/lib/chess";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { LoadingButton } from "@mui/lab";
 import Slider from "@/components/slider";
+import { useEngine } from "@/hooks/useEngine";
+import { EngineName } from "@/types/enums";
 
 export default function AnalyzePanel() {
-  const [engine, setEngine] = useState<Stockfish | null>(null);
+  const engine = useEngine(EngineName.Stockfish16);
   const [evaluationInProgress, setEvaluationInProgress] = useState(false);
   const engineDepth = useAtomValue(engineDepthAtom);
   const engineMultiPv = useAtomValue(engineMultiPvAtom);
@@ -23,24 +24,14 @@ export default function AnalyzePanel() {
   const setEval = useSetAtom(gameEvalAtom);
   const game = useAtomValue(gameAtom);
 
-  useEffect(() => {
-    const engine = new Stockfish();
-    engine.init().then(() => {
-      setEngine(engine);
-    });
-
-    return () => {
-      engine.shutdown();
-    };
-  }, []);
-
   const readyToAnalyse =
     engine?.isReady() && game.history().length > 0 && !evaluationInProgress;
 
   const handleAnalyze = async () => {
     const gameFens = getFens(game);
-    if (!engine?.isReady() || gameFens.length === 0 || evaluationInProgress)
+    if (!engine?.isReady() || gameFens.length === 0 || evaluationInProgress) {
       return;
+    }
 
     setEvaluationInProgress(true);
 
@@ -67,7 +58,13 @@ export default function AnalyzePanel() {
       alignItems="center"
       rowGap={4}
     >
-      <Slider label="Maximum depth" atom={engineDepthAtom} min={10} max={30} />
+      <Slider
+        label="Maximum depth"
+        atom={engineDepthAtom}
+        min={10}
+        max={30}
+        marksFilter={2}
+      />
 
       <Slider
         label="Number of lines"

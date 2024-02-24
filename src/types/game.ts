@@ -7,8 +7,15 @@ export interface Game {
   site?: string;
   date?: string;
   round?: string;
-  white?: string;
-  black?: string;
+  white: Player;
+  black: Player;
   result?: string;
   eval?: GameEval;
+  termination?: string;
+  timeControl?: string;
+}
+
+export interface Player {
+  name?: string;
+  rating?: number;
 }

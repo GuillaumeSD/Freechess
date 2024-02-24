@@ -7,9 +7,17 @@ interface Props {
   max: number;
   label: string;
   xs?: number;
+  marksFilter?: number;
 }
 
-export default function Slider({ min, max, label, atom, xs }: Props) {
+export default function Slider({
+  min,
+  max,
+  label,
+  atom,
+  xs,
+  marksFilter = 1,
+}: Props) {
   const [value, setValue] = useAtom(atom);
 
   return (
@@ -28,13 +36,15 @@ export default function Slider({ min, max, label, atom, xs }: Props) {
       >
         {label}
       </Typography>
+
       <MuiSlider
         min={min}
         max={max}
         marks={Array.from({ length: max - min + 1 }, (_, i) => ({
           value: i + min,
           label: `${i + min}`,
-        }))}
+        })).filter((_, i) => i % marksFilter === 0)}
+        step={1}
         valueLabelDisplay="off"
         value={value}
         onChange={(_, value) => setValue(value as number)}

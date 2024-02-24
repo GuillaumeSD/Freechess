@@ -4,6 +4,6 @@ export enum GameOrigin {
   Lichess = "lichess",
 }
 
-export enum Engine {
+export enum EngineName {
   Stockfish16 = "stockfish_16",
 }

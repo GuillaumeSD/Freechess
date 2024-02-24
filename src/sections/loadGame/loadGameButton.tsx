@@ -5,15 +5,16 @@ import { Chess } from "chess.js";
 
 interface Props {
   setGame?: (game: Chess) => void;
+  label?: string;
 }
 
-export default function LoadGameButton({ setGame }: Props) {
+export default function LoadGameButton({ setGame, label }: Props) {
   const [openDialog, setOpenDialog] = useState(false);
 
   return (
     <>
       <Button variant="contained" onClick={() => setOpenDialog(true)}>
-        Add game
+        {label || "Add game"}
       </Button>
 
       <NewGameDialog

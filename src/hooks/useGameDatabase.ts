@@ -105,10 +105,14 @@ export const useGameDatabase = (shouldFetchGames?: boolean) => {
   const { gameId } = router.query;
 
   useEffect(() => {
-    if (typeof gameId === "string") {
-      getGame(parseInt(gameId)).then((game) => {
-        setGameFromUrl(game);
-      });
+    switch (typeof gameId) {
+      case "string":
+        getGame(parseInt(gameId)).then((game) => {
+          setGameFromUrl(game);
+        });
+        break;
+      default:
+        setGameFromUrl(undefined);
     }
   }, [gameId, setGameFromUrl, getGame]);
 
