@@ -1,3 +1,4 @@
+import { LineEval } from "@/types/eval";
 import { Game } from "@/types/game";
 import { Chess } from "chess.js";
 
@@ -76,4 +77,31 @@ export const moveLineUciToSan = (
       return moveUci;
     }
   };
+};
+
+export const getEvaluationBarValue = (
+  bestLine: LineEval,
+  whiteToPlay: boolean
+): { whiteBarPercentage: number; label: string } => {
+  if (bestLine.mate) {
+    return {
+      whiteBarPercentage: whiteToPlay ? 100 : 0,
+      label: `M${bestLine.mate}`,
+    };
+  }
+
+  if (!bestLine.cp) {
+    return { whiteBarPercentage: 50, label: "0.0" };
+  }
+
+  const cp = bestLine.cp;
+  const whiteBarPercentage = Math.min(50 + cp / 20, 98);
+
+  const label = (cp / 100).toFixed(1);
+
+  if (label.toString().length > 3) {
+    return { whiteBarPercentage, label: (cp / 100).toFixed(0) };
+  }
+
+  return { whiteBarPercentage, label: (cp / 100).toFixed(1) };
 };

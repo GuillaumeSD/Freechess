@@ -40,7 +40,16 @@ export default function GameReport() {
       alignItems="center"
       marginTop={1}
     >
-      <Board />
+      <Grid
+        item
+        container
+        justifyContent="center"
+        alignItems="center"
+        xs={12}
+        md={6}
+      >
+        <Board />
+      </Grid>
 
       <Grid
         item

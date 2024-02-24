@@ -17,9 +17,9 @@ export type CurrentMove = Partial<Move> & {
   lastEval?: MoveEval;
 };
 
-export const useCurrentMove = () => {
+export const useCurrentMove = (engineName?: EngineName) => {
   const [currentMove, setCurrentMove] = useState<CurrentMove>({});
-  const engine = useEngine(EngineName.Stockfish16);
+  const engine = useEngine(engineName);
   const gameEval = useAtomValue(gameEvalAtom);
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);

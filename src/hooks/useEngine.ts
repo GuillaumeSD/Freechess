@@ -5,7 +5,7 @@ import { EngineName } from "@/types/enums";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 
-export const useEngine = (engineName: EngineName) => {
+export const useEngine = (engineName: EngineName | undefined) => {
   const [engine, setEngine] = useState<UciEngine | null>(null);
   const multiPv = useAtomValue(engineMultiPvAtom);
 
@@ -17,6 +17,8 @@ export const useEngine = (engineName: EngineName) => {
   };
 
   useEffect(() => {
+    if (!engineName) return;
+
     const engine = pickEngine(engineName);
     engine.init().then(() => {
       setEngine(engine);

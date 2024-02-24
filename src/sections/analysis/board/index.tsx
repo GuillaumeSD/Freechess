@@ -10,10 +10,12 @@ import {
 import { Arrow, Square } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChess";
 import { useCurrentMove } from "@/hooks/useCurrentMove";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import PlayerInfo from "./playerInfo";
+import EvaluationBar from "./evaluationBar";
 
 export default function Board() {
+  const boardRef = useRef<HTMLDivElement>(null);
   const board = useAtomValue(boardAtom);
   const boardOrientation = useAtomValue(boardOrientationAtom);
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
@@ -69,34 +71,38 @@ export default function Board() {
   }, [currentMove, showBestMoveArrow, showPlayerMoveArrow]);
 
   return (
-    <Grid
-      item
-      container
-      rowGap={2}
-      justifyContent="center"
-      alignItems="center"
-      xs={12}
-      md={6}
-    >
-      <PlayerInfo color={boardOrientation ? "black" : "white"} />
+    <Grid item container justifyContent="center" alignItems="center" xs={12}>
+      <EvaluationBar height={boardRef?.current?.offsetWidth} />
 
       <Grid
         item
         container
+        rowGap={2}
         justifyContent="center"
         alignItems="center"
-        maxWidth={"80vh"}
+        xs={11}
       >
-        <Chessboard
-          id="AnalysisBoard"
-          position={board.fen()}
-          onPieceDrop={onPieceDrop}
-          boardOrientation={boardOrientation ? "white" : "black"}
-          customArrows={customArrows}
-        />
-      </Grid>
+        <PlayerInfo color={boardOrientation ? "black" : "white"} />
 
-      <PlayerInfo color={boardOrientation ? "white" : "black"} />
+        <Grid
+          item
+          container
+          justifyContent="center"
+          alignItems="center"
+          ref={boardRef}
+        >
+          <Chessboard
+            id="AnalysisBoard"
+            position={board.fen()}
+            onPieceDrop={onPieceDrop}
+            boardOrientation={boardOrientation ? "white" : "black"}
+            customArrows={customArrows}
+            customBoardStyle={{ borderRadius: "5px" }}
+          />
+        </Grid>
+
+        <PlayerInfo color={boardOrientation ? "white" : "black"} />
+      </Grid>
     </Grid>
   );
 }

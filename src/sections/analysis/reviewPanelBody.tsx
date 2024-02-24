@@ -5,10 +5,11 @@ import { boardAtom, engineMultiPvAtom, gameAtom } from "./states";
 import LineEvaluation from "./lineEvaluation";
 import { useCurrentMove } from "@/hooks/useCurrentMove";
 import { LineEval } from "@/types/eval";
+import { EngineName } from "@/types/enums";
 
 export default function ReviewPanelBody() {
   const linesNumber = useAtomValue(engineMultiPvAtom);
-  const move = useCurrentMove();
+  const move = useCurrentMove(EngineName.Stockfish16);
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
 
