@@ -53,6 +53,54 @@ export const useGameDatabase = (shouldFetchGames?: boolean) => {
     loadGames();
   }, [loadGames]);
 
+  const addGame = useCallback(
+    async (game: Chess) => {
+      if (!db) throw new Error("Database not initialized");
+
+      const gameToAdd = formatGameToDatabase(game);
+      const gameId = await db.add("games", gameToAdd as Game);
+
+      loadGames();
+
+      return gameId;
+    },
+    [db, loadGames]
+  );
+
+  const setGameEval = useCallback(
+    async (gameId: number, evaluation: GameEval) => {
+      if (!db) throw new Error("Database not initialized");
+
+      const game = await db.get("games", gameId);
+      if (!game) throw new Error("Game not found");
+
+      await db.put("games", { ...game, eval: evaluation });
+
+      loadGames();
+    },
+    [db, loadGames]
+  );
+
+  const getGame = useCallback(
+    async (gameId: number) => {
+      if (!db) return undefined;
+
+      return db.get("games", gameId);
+    },
+    [db]
+  );
+
+  const deleteGame = useCallback(
+    async (gameId: number) => {
+      if (!db) throw new Error("Database not initialized");
+
+      await db.delete("games", gameId);
+
+      loadGames();
+    },
+    [db, loadGames]
+  );
+
   const router = useRouter();
   const { gameId } = router.query;
 
@@ -62,43 +110,7 @@ export const useGameDatabase = (shouldFetchGames?: boolean) => {
         setGameFromUrl(game);
       });
     }
-  }, [gameId, games]);
-
-  const addGame = async (game: Chess) => {
-    if (!db) throw new Error("Database not initialized");
-
-    const gameToAdd = formatGameToDatabase(game);
-    const gameId = await db.add("games", gameToAdd as Game);
-
-    loadGames();
-
-    return gameId;
-  };
-
-  const setGameEval = async (gameId: number, evaluation: GameEval) => {
-    if (!db) throw new Error("Database not initialized");
-
-    const game = await db.get("games", gameId);
-    if (!game) throw new Error("Game not found");
-
-    await db.put("games", { ...game, eval: evaluation });
-
-    loadGames();
-  };
-
-  const getGame = async (gameId: number) => {
-    if (!db) return undefined;
-
-    return db.get("games", gameId);
-  };
-
-  const deleteGame = async (gameId: number) => {
-    if (!db) throw new Error("Database not initialized");
-
-    await db.delete("games", gameId);
-
-    loadGames();
-  };
+  }, [gameId, setGameFromUrl, getGame]);
 
   const isReady = db !== null;
 

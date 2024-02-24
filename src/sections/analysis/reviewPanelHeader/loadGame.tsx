@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import LoadGameButton from "../loadGame/loadGameButton";
+import LoadGameButton from "../../loadGame/loadGameButton";
 import { useCallback, useEffect } from "react";
 import { useChessActions } from "@/hooks/useChess";
 import {
@@ -7,7 +7,7 @@ import {
   boardOrientationAtom,
   gameAtom,
   gameEvalAtom,
-} from "./states";
+} from "../states";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { useAtomValue, useSetAtom } from "jotai";
 import { Chess } from "chess.js";
@@ -43,7 +43,7 @@ export default function LoadGame() {
     };
 
     loadGame();
-  }, [gameFromUrl, resetAndSetGamePgn, setEval]);
+  }, [gameFromUrl, game, resetAndSetGamePgn, setEval]);
 
   if (gameFromUrl) return null;
 

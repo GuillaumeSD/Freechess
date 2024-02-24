@@ -19,11 +19,11 @@ export default function GameReport() {
         item
         container
         rowGap={2}
-        paddingLeft={{ xs: 0, md: 6 }}
+        paddingLeft={{ xs: 0, lg: 6 }}
         justifyContent="center"
         alignItems="center"
         xs={12}
-        md={6}
+        lg={6}
       >
         <Grid
           container

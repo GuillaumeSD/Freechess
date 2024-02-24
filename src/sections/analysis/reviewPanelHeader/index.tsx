@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { Grid, Typography } from "@mui/material";
 import LoadGame from "./loadGame";
-import AnalyzeButton from "./analyzeButton";
+import AnalyzePanel from "./analyzePanel";
 
 export default function ReviewPanelHeader() {
   return (
@@ -29,7 +29,7 @@ export default function ReviewPanelHeader() {
 
       <LoadGame />
 
-      <AnalyzeButton />
+      <AnalyzePanel />
     </Grid>
   );
 }

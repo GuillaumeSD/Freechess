@@ -6,26 +6,16 @@ import LineEvaluation from "./lineEvaluation";
 import { useCurrentMove } from "@/hooks/useCurrentMove";
 
 export default function ReviewPanelBody() {
+  const move = useCurrentMove();
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
 
-  const move = useCurrentMove();
+  const boardHistory = board.history();
+  const gameHistory = game.history();
 
-  const getBestMoveLabel = () => {
-    const bestMove = move?.lastEval?.bestMove;
-    if (bestMove) {
-      return `${bestMove} was the best move`;
-    }
-
-    const boardHistory = board.history();
-    const gameHistory = game.history();
-
-    if (game.isGameOver() && boardHistory.join() === gameHistory.join()) {
-      return "Game is over";
-    }
-
-    return null;
-  };
+  const bestMove = move?.lastEval?.bestMove;
+  const isGameOver =
+    gameHistory.length > 0 && boardHistory.join() === gameHistory.join();
 
   return (
     <>
@@ -49,9 +39,21 @@ export default function ReviewPanelBody() {
         </Typography>
       </Grid>
 
-      <Typography variant="h6" align="center">
-        {getBestMoveLabel()}
-      </Typography>
+      {!!bestMove && (
+        <Grid item xs={12}>
+          <Typography variant="h6" align="center">
+            {`${bestMove} was the best move`}
+          </Typography>
+        </Grid>
+      )}
+
+      {isGameOver && (
+        <Grid item xs={12}>
+          <Typography variant="h6" align="center">
+            Game is over
+          </Typography>
+        </Grid>
+      )}
 
       <Grid item container xs={12} justifyContent="center" alignItems="center">
         <List>

@@ -11,11 +11,13 @@ export default function SaveButton() {
   const board = useAtomValue(boardAtom);
   const gameEval = useAtomValue(gameEvalAtom);
   const { addGame, setGameEval, gameFromUrl } = useGameDatabase();
-
   const router = useRouter();
 
+  const enableSave =
+    !gameFromUrl && (board.history().length || game.history().length);
+
   const handleSave = async () => {
-    if (gameFromUrl) return;
+    if (!enableSave) return;
 
     const gameToSave = getGameToSave(game, board);
 
@@ -35,8 +37,16 @@ export default function SaveButton() {
   };
 
   return (
-    <IconButton onClick={handleSave} disabled={!!gameFromUrl}>
-      <Icon icon="ri:save-3-line" />
-    </IconButton>
+    <>
+      {gameFromUrl ? (
+        <IconButton disabled={true}>
+          <Icon icon="ri:folder-check-line" />
+        </IconButton>
+      ) : (
+        <IconButton onClick={handleSave} disabled={!enableSave}>
+          <Icon icon="ri:save-3-line" />
+        </IconButton>
+      )}
+    </>
   );
 }
