@@ -1,5 +1,10 @@
 import { EngineName } from "@/types/enums";
-import { GameEval, LineEval, MoveEval } from "@/types/eval";
+import {
+  EvaluatePositionWithUpdateParams,
+  GameEval,
+  LineEval,
+  MoveEval,
+} from "@/types/eval";
 
 export abstract class UciEngine {
   private worker: Worker;
@@ -18,15 +23,15 @@ export abstract class UciEngine {
 
   public async init(): Promise<void> {
     await this.sendCommands(["uci"], "uciok");
-    await this.setMultiPv(this.multiPv, false);
+    await this.setMultiPv(this.multiPv, true);
     this.ready = true;
     console.log(`${this.engineName} initialized`);
   }
 
-  public async setMultiPv(multiPv: number, checkIsReady = true) {
-    if (multiPv === this.multiPv) return;
+  private async setMultiPv(multiPv: number, initCase = false) {
+    if (!initCase) {
+      if (multiPv === this.multiPv) return;
 
-    if (checkIsReady) {
       this.throwErrorIfNotReady();
     }
 
@@ -59,15 +64,23 @@ export abstract class UciEngine {
     return this.ready;
   }
 
+  private async stopSearch(): Promise<void> {
+    await this.sendCommands(["stop", "isready"], "readyok");
+  }
+
   private async sendCommands(
     commands: string[],
-    finalMessage: string
+    finalMessage: string,
+    onNewMessage?: (messages: string[]) => void
   ): Promise<string[]> {
     return new Promise((resolve) => {
       const messages: string[] = [];
+
       this.worker.onmessage = (event) => {
         const messageData: string = event.data;
         messages.push(messageData);
+        onNewMessage?.(messages);
+
         if (messageData.startsWith(finalMessage)) {
           resolve(messages);
         }
@@ -85,6 +98,7 @@ export abstract class UciEngine {
     multiPv = this.multiPv
   ): Promise<GameEval> {
     this.throwErrorIfNotReady();
+    await this.setMultiPv(multiPv);
     this.ready = false;
 
     await this.sendCommands(["ucinewgame", "isready"], "readyok");
@@ -92,7 +106,7 @@ export abstract class UciEngine {
 
     const moves: MoveEval[] = [];
     for (const fen of fens) {
-      const result = await this.evaluatePosition(fen, depth, multiPv, false);
+      const result = await this.evaluatePosition(fen, depth);
       moves.push(result);
     }
 
@@ -109,44 +123,46 @@ export abstract class UciEngine {
     };
   }
 
-  public async evaluatePosition(
-    fen: string,
-    depth = 16,
-    multiPv = this.multiPv,
-    checkIsReady = true
-  ): Promise<MoveEval> {
-    if (checkIsReady) {
-      this.throwErrorIfNotReady();
-    }
-
-    await this.setMultiPv(multiPv, checkIsReady);
-
+  private async evaluatePosition(fen: string, depth = 16): Promise<MoveEval> {
     console.log(`Evaluating position: ${fen}`);
+
     const results = await this.sendCommands(
       [`position fen ${fen}`, `go depth ${depth}`],
       "bestmove"
     );
 
-    const parsedResults = this.parseResults(results);
+    const whiteToPlay = fen.split(" ")[1] === "w";
+
+    return this.parseResults(results, whiteToPlay);
+  }
+
+  public async evaluatePositionWithUpdate({
+    fen,
+    depth = 16,
+    multiPv = this.multiPv,
+    setPartialEval,
+  }: EvaluatePositionWithUpdateParams): Promise<void> {
+    this.throwErrorIfNotReady();
+
+    await this.stopSearch();
+    await this.setMultiPv(multiPv);
 
     const whiteToPlay = fen.split(" ")[1] === "w";
 
-    if (!whiteToPlay) {
-      const lines = parsedResults.lines.map((line) => ({
-        ...line,
-        cp: line.cp ? -line.cp : line.cp,
-      }));
+    const onNewMessage = (messages: string[]) => {
+      const parsedResults = this.parseResults(messages, whiteToPlay);
+      setPartialEval(parsedResults);
+    };
 
-      return {
-        ...parsedResults,
-        lines,
-      };
-    }
-
-    return parsedResults;
+    console.log(`Evaluating position: ${fen}`);
+    await this.sendCommands(
+      [`position fen ${fen}`, `go depth ${depth}`],
+      "bestmove",
+      onNewMessage
+    );
   }
 
-  private parseResults(results: string[]): MoveEval {
+  private parseResults(results: string[], whiteToPlay: boolean): MoveEval {
     const parsedResults: MoveEval = {
       bestMove: "",
       lines: [],
@@ -188,6 +204,13 @@ export abstract class UciEngine {
     }
 
     parsedResults.lines = Object.values(tempResults).sort(this.sortLines);
+
+    if (!whiteToPlay) {
+      parsedResults.lines = parsedResults.lines.map((line) => ({
+        ...line,
+        cp: line.cp ? -line.cp : line.cp,
+      }));
+    }
 
     return parsedResults;
   }

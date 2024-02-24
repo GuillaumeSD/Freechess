@@ -1,11 +1,13 @@
 import { Icon } from "@iconify/react";
 import { Divider, Grid, List, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom, gameAtom } from "./states";
+import { boardAtom, engineMultiPvAtom, gameAtom } from "./states";
 import LineEvaluation from "./lineEvaluation";
 import { useCurrentMove } from "@/hooks/useCurrentMove";
+import { LineEval } from "@/types/eval";
 
 export default function ReviewPanelBody() {
+  const linesNumber = useAtomValue(engineMultiPvAtom);
   const move = useCurrentMove();
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
@@ -16,6 +18,14 @@ export default function ReviewPanelBody() {
   const bestMove = move?.lastEval?.bestMove;
   const isGameOver =
     gameHistory.length > 0 && boardHistory.join() === gameHistory.join();
+
+  const linesSkeleton: LineEval[] = Array.from({ length: linesNumber }).map(
+    (_, i) => ({ pv: [`${i}`], depth: 0, multiPv: i + 1 })
+  );
+
+  const engineLines = move?.eval?.lines.length
+    ? move.eval.lines
+    : linesSkeleton;
 
   return (
     <>
@@ -57,8 +67,8 @@ export default function ReviewPanelBody() {
 
       <Grid item container xs={12} justifyContent="center" alignItems="center">
         <List>
-          {move?.eval?.lines.map((line) => (
-            <LineEvaluation key={line.pv[0]} line={line} />
+          {engineLines.map((line) => (
+            <LineEvaluation key={line.multiPv} line={line} />
           ))}
         </List>
       </Grid>

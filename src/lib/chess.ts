@@ -57,3 +57,23 @@ export const getGameToSave = (game: Chess, board: Chess): Chess => {
 
   return board;
 };
+
+export const moveLineUciToSan = (
+  fen: string
+): ((moveUci: string) => string) => {
+  const game = new Chess(fen);
+
+  return (moveUci: string): string => {
+    try {
+      const move = game.move({
+        from: moveUci.slice(0, 2),
+        to: moveUci.slice(2, 4),
+        promotion: moveUci.slice(4, 5) || undefined,
+      });
+
+      return move.san;
+    } catch (e) {
+      return moveUci;
+    }
+  };
+};

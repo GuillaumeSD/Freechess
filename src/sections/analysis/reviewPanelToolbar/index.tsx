@@ -1,27 +1,15 @@
-import {
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  Grid,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
+import { Divider, Grid, IconButton, Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { useAtom, useAtomValue } from "jotai";
-import {
-  boardAtom,
-  showBestMoveArrowAtom,
-  showPlayerMoveArrowAtom,
-} from "../states";
+import { useAtomValue } from "jotai";
+import { boardAtom } from "../states";
 import { useChessActions } from "@/hooks/useChess";
 import FlipBoardButton from "./flipBoardButton";
 import NextMoveButton from "./nextMoveButton";
 import GoToLastPositionButton from "./goToLastPositionButton";
 import SaveButton from "./saveButton";
+import ArrowOptions from "./arrowOptions";
 
 export default function ReviewPanelToolBar() {
-  const [showBestMove, setShowBestMove] = useAtom(showBestMoveArrowAtom);
-  const [showPlayerMove, setShowPlayerMove] = useAtom(showPlayerMoveArrowAtom);
   const board = useAtomValue(boardAtom);
   const boardActions = useChessActions(boardAtom);
 
@@ -63,36 +51,7 @@ export default function ReviewPanelToolBar() {
         <SaveButton />
       </Grid>
 
-      <Grid
-        container
-        item
-        justifyContent="space-evenly"
-        alignItems="center"
-        xs={12}
-        marginY={3}
-        gap={3}
-      >
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={showBestMove}
-              onChange={(_, checked) => setShowBestMove(checked)}
-            />
-          }
-          label="Show best move green arrow"
-          sx={{ marginX: 0 }}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={showPlayerMove}
-              onChange={(_, checked) => setShowPlayerMove(checked)}
-            />
-          }
-          label="Show player move yellow arrow"
-          sx={{ marginX: 0 }}
-        />
-      </Grid>
+      <ArrowOptions />
     </>
   );
 }

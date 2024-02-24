@@ -30,3 +30,10 @@ export interface GameEval {
   accuracy: Accuracy;
   settings: EngineSettings;
 }
+
+export interface EvaluatePositionWithUpdateParams {
+  fen: string;
+  depth?: number;
+  multiPv?: number;
+  setPartialEval: (moveEval: MoveEval) => void;
+}
