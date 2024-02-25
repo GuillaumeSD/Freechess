@@ -24,7 +24,7 @@ export default function ReviewPanelBody() {
     (_, i) => ({ pv: [`${i}`], depth: 0, multiPv: i + 1 })
   );
 
-  const engineLines = move?.eval?.lines.length
+  const engineLines = move?.eval?.lines?.length
     ? move.eval.lines
     : linesSkeleton;
 

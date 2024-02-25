@@ -17,7 +17,7 @@ export default function LineEvaluation({ line }: Props) {
       ? `Mate in ${Math.abs(line.mate)}`
       : "?";
 
-  const showSkeleton = line.depth === 0;
+  const showSkeleton = line.depth < 6;
 
   return (
     <ListItem disablePadding>
@@ -38,7 +38,7 @@ export default function LineEvaluation({ line }: Props) {
 
       <Typography>
         {showSkeleton ? (
-          <Skeleton width={"30em"} variant="rounded" animation="wave" />
+          <Skeleton width={"20em"} variant="rounded" animation="wave" />
         ) : (
           line.pv.slice(0, 10).map(moveLineUciToSan(board.fen())).join(", ")
         )}
