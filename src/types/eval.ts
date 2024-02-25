@@ -1,3 +1,4 @@
+import { Move } from "chess.js";
 import { EngineName } from "./enums";
 
 export interface MoveEval {
@@ -37,3 +38,8 @@ export interface EvaluatePositionWithUpdateParams {
   multiPv?: number;
   setPartialEval: (moveEval: MoveEval) => void;
 }
+
+export type CurrentMove = Partial<Move> & {
+  eval?: MoveEval;
+  lastEval?: MoveEval;
+};

@@ -4,12 +4,12 @@ import { useAtomValue } from "jotai";
 import {
   boardAtom,
   boardOrientationAtom,
+  currentMoveAtom,
   showBestMoveArrowAtom,
   showPlayerMoveArrowAtom,
 } from "../states";
 import { Arrow, Square } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChess";
-import { useCurrentMove } from "@/hooks/useCurrentMove";
 import { useMemo, useRef } from "react";
 import PlayerInfo from "./playerInfo";
 import EvaluationBar from "./evaluationBar";
@@ -21,7 +21,7 @@ export default function Board() {
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
   const showPlayerMoveArrow = useAtomValue(showPlayerMoveArrowAtom);
   const boardActions = useChessActions(boardAtom);
-  const currentMove = useCurrentMove();
+  const currentMove = useAtomValue(currentMoveAtom);
 
   const onPieceDrop = (source: Square, target: Square): boolean => {
     try {
@@ -71,16 +71,24 @@ export default function Board() {
   }, [currentMove, showBestMoveArrow, showPlayerMoveArrow]);
 
   return (
-    <Grid item container justifyContent="center" alignItems="center" xs={12}>
-      <EvaluationBar height={boardRef?.current?.offsetWidth} />
+    <Grid
+      item
+      container
+      justifyContent="center"
+      alignItems="center"
+      xs={12}
+      wrap="nowrap"
+    >
+      <EvaluationBar height={boardRef?.current?.offsetHeight || 800} />
 
       <Grid
         item
         container
-        rowGap={2}
+        rowGap={1}
         justifyContent="center"
         alignItems="center"
-        xs={11}
+        paddingLeft={2}
+        xs
       >
         <PlayerInfo color={boardOrientation ? "black" : "white"} />
 
@@ -90,6 +98,7 @@ export default function Board() {
           justifyContent="center"
           alignItems="center"
           ref={boardRef}
+          xs={12}
         >
           <Chessboard
             id="AnalysisBoard"

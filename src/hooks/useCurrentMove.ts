@@ -1,24 +1,19 @@
 import {
   boardAtom,
+  currentMoveAtom,
   engineDepthAtom,
   engineMultiPvAtom,
   gameAtom,
   gameEvalAtom,
 } from "@/sections/analysis/states";
-import { MoveEval } from "@/types/eval";
-import { Move } from "chess.js";
-import { useAtomValue } from "jotai";
-import { useEffect, useState } from "react";
+import { CurrentMove, MoveEval } from "@/types/eval";
+import { useAtom, useAtomValue } from "jotai";
+import { useEffect } from "react";
 import { useEngine } from "./useEngine";
 import { EngineName } from "@/types/enums";
 
-export type CurrentMove = Partial<Move> & {
-  eval?: MoveEval;
-  lastEval?: MoveEval;
-};
-
 export const useCurrentMove = (engineName?: EngineName) => {
-  const [currentMove, setCurrentMove] = useState<CurrentMove>({});
+  const [currentMove, setCurrentMove] = useAtom(currentMoveAtom);
   const engine = useEngine(engineName);
   const gameEval = useAtomValue(gameEvalAtom);
   const game = useAtomValue(gameAtom);

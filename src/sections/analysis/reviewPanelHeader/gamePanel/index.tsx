@@ -12,14 +12,7 @@ export default function GamePanel() {
 
   if (!hasGameInfo) {
     return (
-      <Grid
-        item
-        container
-        xs={12}
-        justifyContent="center"
-        alignItems="center"
-        marginY={1}
-      >
+      <Grid item container xs={12} justifyContent="center" alignItems="center">
         <Typography variant="h6">No game loaded</Typography>
       </Grid>
     );
@@ -32,8 +25,7 @@ export default function GamePanel() {
       xs={12}
       justifyContent="center"
       alignItems="center"
-      gap={3}
-      marginY={1}
+      gap={2}
     >
       <Grid item container xs={12} justifyContent="center" alignItems="center">
         <PlayerInfo color="white" />
@@ -51,7 +43,7 @@ export default function GamePanel() {
         xs={10}
         justifyContent="space-evenly"
         alignItems="center"
-        gap={3}
+        gap={2}
       >
         <Typography>
           Site : {gameFromUrl?.site || game.header().Site || "?"}

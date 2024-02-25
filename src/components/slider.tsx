@@ -28,12 +28,7 @@ export default function Slider({
       justifyContent="center"
       alignItems="center"
     >
-      <Typography
-        id={`input-${label}`}
-        gutterBottom
-        textAlign="left"
-        width="100%"
-      >
+      <Typography id={`input-${label}`} textAlign="left" width="100%">
         {label}
       </Typography>
 

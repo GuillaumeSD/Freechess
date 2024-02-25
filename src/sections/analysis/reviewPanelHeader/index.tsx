@@ -1,6 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Divider, Grid, Typography } from "@mui/material";
-import AnalyzePanel from "./analyzePanel";
+import { Grid, Typography } from "@mui/material";
 import GamePanel from "./gamePanel";
 import LoadGame from "./loadGame";
 
@@ -34,15 +33,11 @@ export default function ReviewPanelHeader() {
         xs={12}
         justifyContent="center"
         alignItems="center"
-        gap={4}
+        gap={3}
       >
         <GamePanel />
         <LoadGame />
       </Grid>
-
-      <Divider sx={{ width: "90%", marginY: 3 }} />
-
-      <AnalyzePanel />
     </Grid>
   );
 }

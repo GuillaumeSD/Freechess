@@ -16,15 +16,8 @@ export default function PlayerInfo({ color }: Props) {
     game.header()[color === "white" ? "White" : "Black"];
 
   return (
-    <Grid
-      item
-      container
-      xs={12}
-      justifyContent="center"
-      alignItems="center"
-      gap={1}
-    >
-      <Typography variant="h4">
+    <Grid item container xs={12} justifyContent="center" alignItems="center">
+      <Typography variant="h5">
         {playerName || (color === "white" ? "White" : "Black")}
       </Typography>
     </Grid>

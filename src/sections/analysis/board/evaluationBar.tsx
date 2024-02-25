@@ -1,12 +1,11 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
-import { boardAtom, boardOrientationAtom } from "../states";
+import { boardAtom, boardOrientationAtom, currentMoveAtom } from "../states";
 import { getEvaluationBarValue } from "@/lib/chess";
-import { useCurrentMove } from "@/hooks/useCurrentMove";
 
 interface Props {
-  height?: number;
+  height: number;
 }
 
 export default function EvaluationBar({ height }: Props) {
@@ -16,7 +15,7 @@ export default function EvaluationBar({ height }: Props) {
   });
   const board = useAtomValue(boardAtom);
   const boardOrientation = useAtomValue(boardOrientationAtom);
-  const currentMove = useCurrentMove();
+  const currentMove = useAtomValue(currentMoveAtom);
 
   useEffect(() => {
     const bestLine = currentMove?.eval?.lines[0];
@@ -32,12 +31,11 @@ export default function EvaluationBar({ height }: Props) {
       container
       justifyContent="center"
       alignItems="center"
-      xs={1}
+      width="2rem"
       height={height}
-      paddingX={3}
     >
       <Box
-        sx={{ backgroundColor: boardOrientation ? "black" : "white" }}
+        sx={{ backgroundColor: boardOrientation ? "secondary.main" : "white" }}
         height={`${
           boardOrientation
             ? 100 - evalBar.whiteBarPercentage
@@ -59,7 +57,7 @@ export default function EvaluationBar({ height }: Props) {
       </Box>
 
       <Box
-        sx={{ backgroundColor: boardOrientation ? "white" : "black" }}
+        sx={{ backgroundColor: boardOrientation ? "white" : "secondary.main" }}
         height={`${
           boardOrientation
             ? evalBar.whiteBarPercentage

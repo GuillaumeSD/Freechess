@@ -57,7 +57,7 @@ export default function AnalyzePanel() {
       xs={12}
       justifyContent="center"
       alignItems="center"
-      rowGap={4}
+      rowGap={3}
     >
       <Slider
         label="Maximum depth"
@@ -75,14 +75,7 @@ export default function AnalyzePanel() {
         xs={6}
       />
 
-      <Grid
-        item
-        container
-        xs={12}
-        justifyContent="center"
-        alignItems="center"
-        marginTop={1}
-      >
+      <Grid item container xs={12} justifyContent="center" alignItems="center">
         <LoadingButton
           variant="contained"
           size="large"

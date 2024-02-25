@@ -2,14 +2,16 @@ import { useChessActions } from "@/hooks/useChess";
 import Board from "@/sections/analysis/board";
 import ReviewPanelBody from "@/sections/analysis/reviewPanelBody";
 import ReviewPanelHeader from "@/sections/analysis/reviewPanelHeader";
+import AnalyzePanel from "@/sections/analysis/reviewPanelHeader/analyzePanel";
 import ReviewPanelToolBar from "@/sections/analysis/reviewPanelToolbar";
+import ArrowOptions from "@/sections/analysis/reviewPanelToolbar/arrowOptions";
 import {
   boardAtom,
   boardOrientationAtom,
   gameAtom,
   gameEvalAtom,
 } from "@/sections/analysis/states";
-import { Grid } from "@mui/material";
+import { Divider, Grid } from "@mui/material";
 import { Chess } from "chess.js";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/router";
@@ -35,9 +37,9 @@ export default function GameReport() {
   return (
     <Grid
       container
-      rowGap={2}
+      rowGap={6}
       justifyContent="center"
-      alignItems="center"
+      alignItems="start"
       marginTop={1}
     >
       <Grid
@@ -46,7 +48,8 @@ export default function GameReport() {
         justifyContent="center"
         alignItems="center"
         xs={12}
-        md={6}
+        md={9}
+        lg={6}
       >
         <Board />
       </Grid>
@@ -54,7 +57,6 @@ export default function GameReport() {
       <Grid
         item
         container
-        rowGap={2}
         paddingLeft={{ xs: 0, lg: 6 }}
         justifyContent="center"
         alignItems="center"
@@ -64,8 +66,6 @@ export default function GameReport() {
         <Grid
           container
           item
-          rowGap={3}
-          columnGap={1}
           justifyContent="center"
           alignItems="center"
           borderRadius={2}
@@ -74,17 +74,27 @@ export default function GameReport() {
           xs={12}
           sx={{
             backgroundColor: "secondary.main",
-            borderRadius: 2,
             borderColor: "primary.main",
             borderWidth: 2,
           }}
-          paddingY={3}
+          padding={3}
+          gap={4}
         >
           <ReviewPanelHeader />
 
+          <Divider sx={{ width: "90%" }} />
+
+          <AnalyzePanel />
+
+          <Divider sx={{ width: "90%" }} />
+
           <ReviewPanelBody />
 
+          <Divider sx={{ width: "90%" }} />
+
           <ReviewPanelToolBar />
+
+          <ArrowOptions />
         </Grid>
       </Grid>
     </Grid>

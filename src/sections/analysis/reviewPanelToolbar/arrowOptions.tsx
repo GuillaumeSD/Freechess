@@ -18,7 +18,6 @@ export default function ArrowOptions() {
       justifyContent="space-evenly"
       alignItems="center"
       xs={12}
-      marginY={3}
       gap={3}
     >
       <FormControlLabel

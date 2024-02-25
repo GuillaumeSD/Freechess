@@ -97,11 +97,12 @@ export const getEvaluationBarValue = (
   const cp = bestLine.cp;
   const whiteBarPercentage = Math.min(50 + cp / 20, 98);
 
-  const label = (cp / 100).toFixed(1);
+  const pEval = Math.abs(cp) / 100;
+  const label = pEval.toFixed(1);
 
   if (label.toString().length > 3) {
-    return { whiteBarPercentage, label: (cp / 100).toFixed(0) };
+    return { whiteBarPercentage, label: pEval.toFixed(0) };
   }
 
-  return { whiteBarPercentage, label: (cp / 100).toFixed(1) };
+  return { whiteBarPercentage, label: pEval.toFixed(1) };
 };

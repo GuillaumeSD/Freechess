@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Divider, Grid, List, Typography } from "@mui/material";
+import { Grid, List, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, engineMultiPvAtom, gameAtom } from "./states";
 import LineEvaluation from "./lineEvaluation";
@@ -29,9 +29,14 @@ export default function ReviewPanelBody() {
     : linesSkeleton;
 
   return (
-    <>
-      <Divider sx={{ width: "90%", marginY: 3 }} />
-
+    <Grid
+      item
+      container
+      xs={12}
+      justifyContent="center"
+      alignItems="center"
+      gap={2}
+    >
       <Grid
         item
         container
@@ -73,6 +78,6 @@ export default function ReviewPanelBody() {
           ))}
         </List>
       </Grid>
-    </>
+    </Grid>
   );
 }
