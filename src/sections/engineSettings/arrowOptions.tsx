@@ -1,13 +1,11 @@
 import { Checkbox, FormControlLabel, Grid } from "@mui/material";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import {
-  gameEvalAtom,
   showBestMoveArrowAtom,
   showPlayerMoveArrowAtom,
-} from "./states";
+} from "../analysis/states";
 
 export default function ArrowOptions() {
-  const gameEval = useAtomValue(gameEvalAtom);
   const [showBestMove, setShowBestMove] = useAtom(showBestMoveArrowAtom);
   const [showPlayerMove, setShowPlayerMove] = useAtom(showPlayerMoveArrowAtom);
 
@@ -25,7 +23,6 @@ export default function ArrowOptions() {
           <Checkbox
             checked={showBestMove}
             onChange={(_, checked) => setShowBestMove(checked)}
-            disabled={!gameEval}
           />
         }
         label="Show best move green arrow"

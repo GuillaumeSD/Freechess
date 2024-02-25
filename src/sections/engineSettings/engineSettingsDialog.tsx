@@ -1,0 +1,95 @@
+import Slider from "@/components/slider";
+import { EngineName } from "@/types/enums";
+import {
+  MenuItem,
+  Select,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  DialogActions,
+  Typography,
+  Grid,
+} from "@mui/material";
+import { engineDepthAtom, engineMultiPvAtom } from "../analysis/states";
+import ArrowOptions from "./arrowOptions";
+
+interface Props {
+  open: boolean;
+  onClose: () => void;
+}
+
+export default function EngineSettingsDialog({ open, onClose }: Props) {
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle marginY={1} variant="h5">
+        Set engine parameters
+      </DialogTitle>
+      <DialogContent>
+        <Typography>
+          Only Stockfish 16 is available now, more engine choices will come !
+        </Typography>
+        <Grid
+          marginTop={4}
+          item
+          container
+          justifyContent="center"
+          alignItems="center"
+          xs={12}
+          rowGap={3}
+        >
+          <Grid item container xs={12} justifyContent="center">
+            <FormControl variant="outlined">
+              <InputLabel id="dialog-select-label">Engine</InputLabel>
+              <Select
+                labelId="dialog-select-label"
+                id="dialog-select"
+                displayEmpty
+                input={<OutlinedInput label="Engine" />}
+                value={EngineName.Stockfish16}
+                disabled={true}
+                sx={{ width: 200 }}
+              >
+                {Object.values(EngineName).map((engine) => (
+                  <MenuItem key={engine} value={engine}>
+                    {engineLabel[engine]}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Slider
+            label="Maximum depth"
+            atom={engineDepthAtom}
+            min={10}
+            max={30}
+            marksFilter={2}
+          />
+
+          <Slider
+            label="Number of lines"
+            atom={engineMultiPvAtom}
+            min={1}
+            max={6}
+            xs={6}
+          />
+
+          <ArrowOptions />
+        </Grid>
+      </DialogContent>
+      <DialogActions sx={{ m: 2 }}>
+        <Button variant="contained" onClick={onClose}>
+          Done
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+const engineLabel: Record<EngineName, string> = {
+  [EngineName.Stockfish16]: "Stockfish 16",
+};

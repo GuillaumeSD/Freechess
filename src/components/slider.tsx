@@ -24,7 +24,7 @@ export default function Slider({
     <Grid
       item
       container
-      xs={xs ?? 10}
+      xs={xs ?? 11}
       justifyContent="center"
       alignItems="center"
     >

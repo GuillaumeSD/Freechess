@@ -1,22 +1,20 @@
 import { Icon } from "@iconify/react";
-import { Grid } from "@mui/material";
 import { useState } from "react";
 import {
   engineDepthAtom,
   engineMultiPvAtom,
   gameAtom,
   gameEvalAtom,
-} from "./states";
+} from "../states";
 import { useAtomValue, useSetAtom } from "jotai";
 import { getFens } from "@/lib/chess";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { LoadingButton } from "@mui/lab";
-import Slider from "@/components/slider";
 import { useEngine } from "@/hooks/useEngine";
 import { EngineName } from "@/types/enums";
 import { logAnalyticsEvent } from "@/lib/firebase";
 
-export default function AnalyzePanel() {
+export default function AnalyzeButton() {
   const engine = useEngine(EngineName.Stockfish16);
   const [evaluationInProgress, setEvaluationInProgress] = useState(false);
   const engineDepth = useAtomValue(engineDepthAtom);
@@ -58,52 +56,25 @@ export default function AnalyzePanel() {
   };
 
   return (
-    <Grid
-      item
-      container
-      xs={12}
-      justifyContent="center"
-      alignItems="center"
-      rowGap={3}
+    <LoadingButton
+      variant="contained"
+      size="large"
+      startIcon={
+        !evaluationInProgress && (
+          <Icon icon="streamline:magnifying-glass-solid" />
+        )
+      }
+      onClick={handleAnalyze}
+      disabled={!readyToAnalyse}
+      loading={evaluationInProgress}
+      loadingPosition={evaluationInProgress ? "end" : undefined}
+      endIcon={
+        evaluationInProgress && (
+          <Icon icon="streamline:magnifying-glass-solid" />
+        )
+      }
     >
-      <Slider
-        label="Maximum depth"
-        atom={engineDepthAtom}
-        min={10}
-        max={30}
-        marksFilter={2}
-      />
-
-      <Slider
-        label="Number of lines"
-        atom={engineMultiPvAtom}
-        min={1}
-        max={6}
-        xs={6}
-      />
-
-      <Grid item container xs={12} justifyContent="center" alignItems="center">
-        <LoadingButton
-          variant="contained"
-          size="large"
-          startIcon={
-            !evaluationInProgress && (
-              <Icon icon="streamline:magnifying-glass-solid" />
-            )
-          }
-          onClick={handleAnalyze}
-          disabled={!readyToAnalyse}
-          loading={evaluationInProgress}
-          loadingPosition={evaluationInProgress ? "end" : undefined}
-          endIcon={
-            evaluationInProgress && (
-              <Icon icon="streamline:magnifying-glass-solid" />
-            )
-          }
-        >
-          {evaluationInProgress ? "Analyzing..." : "Analyze"}
-        </LoadingButton>
-      </Grid>
-    </Grid>
+      {evaluationInProgress ? "Analyzing..." : "Analyze"}
+    </LoadingButton>
   );
 }

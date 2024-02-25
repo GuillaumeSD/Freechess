@@ -72,7 +72,7 @@ export default function ReviewPanelBody() {
       )}
 
       <Grid item container xs={12} justifyContent="center" alignItems="center">
-        <List>
+        <List sx={{ maxWidth: "95%" }}>
           {engineLines.map((line) => (
             <LineEvaluation key={line.multiPv} line={line} />
           ))}

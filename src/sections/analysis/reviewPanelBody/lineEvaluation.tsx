@@ -36,7 +36,7 @@ export default function LineEvaluation({ line }: Props) {
         )}
       </Typography>
 
-      <Typography>
+      <Typography noWrap>
         {showSkeleton ? (
           <Skeleton width={"20em"} variant="rounded" animation="wave" />
         ) : (

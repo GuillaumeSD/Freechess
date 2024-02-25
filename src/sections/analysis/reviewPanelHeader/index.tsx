@@ -2,6 +2,8 @@ import { Icon } from "@iconify/react";
 import { Grid, Typography } from "@mui/material";
 import GamePanel from "./gamePanel";
 import LoadGame from "./loadGame";
+import AnalyzeButton from "./analyzeButton";
+import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
 
 export default function ReviewPanelHeader() {
   return (
@@ -37,6 +39,8 @@ export default function ReviewPanelHeader() {
       >
         <GamePanel />
         <LoadGame />
+        <AnalyzeButton />
+        <EngineSettingsButton />
       </Grid>
     </Grid>
   );
