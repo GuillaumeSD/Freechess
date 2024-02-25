@@ -2,14 +2,14 @@ import { EngineName } from "@/types/enums";
 import { UciEngine } from "./uciEngine";
 
 export class Stockfish16 extends UciEngine {
-  constructor(multiPv: number) {
+  constructor() {
     const isWasmSupported = Stockfish16.isWasmSupported();
 
     const enginePath = isWasmSupported
       ? "engines/stockfish-wasm/stockfish-nnue-16-single.js"
       : "engines/stockfish.js";
 
-    super(EngineName.Stockfish16, enginePath, multiPv);
+    super(EngineName.Stockfish16, enginePath);
   }
 
   public static isWasmSupported() {

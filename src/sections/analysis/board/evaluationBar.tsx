@@ -17,13 +17,15 @@ export default function EvaluationBar({ height }: Props) {
   const boardOrientation = useAtomValue(boardOrientationAtom);
   const currentMove = useAtomValue(currentMoveAtom);
 
+  const isWhiteToPlay = board.turn() === "w";
+
   useEffect(() => {
     const bestLine = currentMove?.eval?.lines[0];
     if (!bestLine) return;
 
-    const evalBar = getEvaluationBarValue(bestLine, board.turn() === "w");
+    const evalBar = getEvaluationBarValue(bestLine, isWhiteToPlay);
     setEvalBar(evalBar);
-  }, [currentMove, board.turn()]);
+  }, [currentMove, isWhiteToPlay]);
 
   return (
     <Grid

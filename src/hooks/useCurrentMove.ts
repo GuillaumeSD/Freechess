@@ -56,7 +56,7 @@ export const useCurrentMove = (engineName?: EngineName) => {
     }
 
     setCurrentMove(move);
-  }, [gameEval, board, game, engine, depth, multiPv]);
+  }, [gameEval, board, game, engine, depth, multiPv, setCurrentMove]);
 
   return currentMove;
 };

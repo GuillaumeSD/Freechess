@@ -10,12 +10,10 @@ export abstract class UciEngine {
   private worker: Worker;
   private ready = false;
   private engineName: EngineName;
-  private multiPv: number;
+  private multiPv = 3;
 
-  constructor(engineName: EngineName, enginePath: string, multiPv: number) {
+  constructor(engineName: EngineName, enginePath: string) {
     this.engineName = engineName;
-    this.multiPv = multiPv;
-
     this.worker = new Worker(enginePath);
 
     console.log(`${engineName} created`);

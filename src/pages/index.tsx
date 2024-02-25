@@ -32,7 +32,7 @@ export default function GameReport() {
       setBoardOrientation(true);
       gameActions.setPgn(new Chess().pgn());
     }
-  }, [gameId]);
+  }, [gameId, boardActions, gameActions, setEval, setBoardOrientation]);
 
   return (
     <Grid
