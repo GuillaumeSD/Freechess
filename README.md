@@ -4,29 +4,31 @@ Freechess is an open-source chess GUI to store, view and analyze your chess game
 
 It is built with [Next.js](https://nextjs.org/docs), [React](https://react.dev/learn/describing-the-ui), [Material UI](https://mui.com/material-ui/getting-started/overview/), and [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html).
 
-It is deployed on [Firebase](https://firebase.google.com/docs/hosting), you can see it live [here](https://freechess.web.app).
+It is deployed on [Firebase](https://firebase.google.com/docs/hosting), see it live [here](https://freechess.web.app).
 
-## Getting Started
+## Running the app in dev mode
 
-First, you need at least node18 & npm installed on your machine. Then, you can install the dependencies :
+Node 18 and npm are required.
+
+Install the dependencies :
 
 ```bash
 npm i
 ```
 
-Then, you can run the development server :
+Run the development server :
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the app running.
+Open [http://localhost:3000](http://localhost:3000) in the browser to see the app running.
 
-The development server will automatically reload if you change any of the source files.
+The app will automatically refresh on any source file change.
 
 ## Lint
 
-ESLint is configured with this project. You can run it with :
+Run it with :
 
 ```bash
 npm run lint
@@ -34,7 +36,7 @@ npm run lint
 
 ## Deploy
 
-To deploy the app, you first need to install the firebase CLI, then run :
+To deploy the app, install the [Firebase CLI](https://firebase.google.com/docs/cli) and authenticate, then run :
 
 ```bash
 npm run deploy
