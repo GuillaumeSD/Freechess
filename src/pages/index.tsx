@@ -18,8 +18,8 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export default function GameReport() {
-  const boardActions = useChessActions(boardAtom);
-  const gameActions = useChessActions(gameAtom);
+  const { reset: resetBoard } = useChessActions(boardAtom);
+  const { setPgn: setGamePgn } = useChessActions(gameAtom);
   const setEval = useSetAtom(gameEvalAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
   const router = useRouter();
@@ -27,12 +27,12 @@ export default function GameReport() {
 
   useEffect(() => {
     if (!gameId) {
-      boardActions.reset();
+      resetBoard();
       setEval(undefined);
       setBoardOrientation(true);
-      gameActions.setPgn(new Chess().pgn());
+      setGamePgn(new Chess().pgn());
     }
-  }, [gameId, boardActions, gameActions, setEval, setBoardOrientation]);
+  }, [gameId, setEval, setBoardOrientation, resetBoard, setGamePgn]);
 
   return (
     <Grid

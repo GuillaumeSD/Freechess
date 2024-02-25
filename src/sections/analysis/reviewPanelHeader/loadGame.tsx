@@ -16,20 +16,20 @@ import { useRouter } from "next/router";
 export default function LoadGame() {
   const router = useRouter();
   const game = useAtomValue(gameAtom);
-  const gameActions = useChessActions(gameAtom);
-  const boardActions = useChessActions(boardAtom);
+  const { setPgn: setGamePgn } = useChessActions(gameAtom);
+  const { reset: resetBoard } = useChessActions(boardAtom);
   const { gameFromUrl } = useGameDatabase();
   const setEval = useSetAtom(gameEvalAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
 
   const resetAndSetGamePgn = useCallback(
     (pgn: string) => {
-      boardActions.reset();
+      resetBoard();
       setEval(undefined);
       setBoardOrientation(true);
-      gameActions.setPgn(pgn);
+      setGamePgn(pgn);
     },
-    [boardActions, gameActions, setEval, setBoardOrientation]
+    [resetBoard, setGamePgn, setEval, setBoardOrientation]
   );
 
   useEffect(() => {

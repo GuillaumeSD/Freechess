@@ -40,9 +40,8 @@ export default function AnalyzePanel() {
       engineDepth,
       engineMultiPv
     );
-    console.log(newGameEval);
-    setEval(newGameEval);
 
+    setEval(newGameEval);
     setEvaluationInProgress(false);
 
     if (gameFromUrl) {

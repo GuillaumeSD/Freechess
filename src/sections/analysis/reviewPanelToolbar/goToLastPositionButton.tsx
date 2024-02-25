@@ -5,7 +5,7 @@ import { boardAtom, gameAtom } from "../states";
 import { useChessActions } from "@/hooks/useChess";
 
 export default function GoToLastPositionButton() {
-  const boardActions = useChessActions(boardAtom);
+  const { setPgn: setBoardPgn } = useChessActions(boardAtom);
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
 
@@ -20,7 +20,7 @@ export default function GoToLastPositionButton() {
         <IconButton
           onClick={() => {
             if (isButtonDisabled) return;
-            boardActions.setPgn(game.pgn());
+            setBoardPgn(game.pgn());
           }}
           disabled={isButtonDisabled}
         >

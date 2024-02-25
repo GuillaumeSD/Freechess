@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint && tsc --noEmit",
-    "deploy": "firebase deploy --project=freechess --only hosting"
+    "deploy": "firebase deploy --project=freechessproject --only hosting"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",

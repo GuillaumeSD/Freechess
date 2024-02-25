@@ -1,8 +1,8 @@
 # FreeChess
 
-This project is solely a frontend with tools for the chess community.
+Freechess is an open-source chess GUI to store, view and analyze your chess games.
 
-It is built with [Next.js](https://nextjs.org/docs), [React](https://react.dev/learn/describing-the-ui) and [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html).
+It is built with [Next.js](https://nextjs.org/docs), [React](https://react.dev/learn/describing-the-ui), [Material UI](https://mui.com/material-ui/getting-started/overview/), and [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html).
 
 It is deployed on [Firebase](https://firebase.google.com/docs/hosting), you can see it live [here](https://freechess.web.app).
 

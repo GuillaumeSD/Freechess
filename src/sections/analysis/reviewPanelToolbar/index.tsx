@@ -10,7 +10,8 @@ import SaveButton from "./saveButton";
 
 export default function ReviewPanelToolBar() {
   const board = useAtomValue(boardAtom);
-  const boardActions = useChessActions(boardAtom);
+  const { reset: resetBoard, undoMove: undoBoardMove } =
+    useChessActions(boardAtom);
 
   const boardHistory = board.history();
 
@@ -21,7 +22,7 @@ export default function ReviewPanelToolBar() {
       <Tooltip title="Reset board">
         <Grid>
           <IconButton
-            onClick={() => boardActions.reset()}
+            onClick={() => resetBoard()}
             disabled={boardHistory.length === 0}
           >
             <Icon icon="ri:skip-back-line" />
@@ -32,7 +33,7 @@ export default function ReviewPanelToolBar() {
       <Tooltip title="Go to previous move">
         <Grid>
           <IconButton
-            onClick={() => boardActions.undo()}
+            onClick={() => undoBoardMove()}
             disabled={boardHistory.length === 0}
           >
             <Icon icon="ri:arrow-left-s-line" height={30} />

@@ -20,12 +20,12 @@ export default function Board() {
   const boardOrientation = useAtomValue(boardOrientationAtom);
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
   const showPlayerMoveArrow = useAtomValue(showPlayerMoveArrowAtom);
-  const boardActions = useChessActions(boardAtom);
+  const { makeMove: makeBoardMove } = useChessActions(boardAtom);
   const currentMove = useAtomValue(currentMoveAtom);
 
   const onPieceDrop = (source: Square, target: Square): boolean => {
     try {
-      const result = boardActions.move({
+      const result = makeBoardMove({
         from: source,
         to: target,
         promotion: "q", // TODO: Let the user choose the promotion

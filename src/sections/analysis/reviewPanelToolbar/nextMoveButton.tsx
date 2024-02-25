@@ -5,7 +5,7 @@ import { boardAtom, gameAtom } from "../states";
 import { useChessActions } from "@/hooks/useChess";
 
 export default function NextMoveButton() {
-  const boardActions = useChessActions(boardAtom);
+  const { makeMove: makeBoardMove } = useChessActions(boardAtom);
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
 
@@ -23,7 +23,7 @@ export default function NextMoveButton() {
     const nextMove = game.history({ verbose: true })[nextMoveIndex];
 
     if (nextMove) {
-      boardActions.move({
+      makeBoardMove({
         from: nextMove.from,
         to: nextMove.to,
         promotion: nextMove.promotion,
