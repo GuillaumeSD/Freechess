@@ -1,7 +1,7 @@
 import { LineEval } from "@/types/eval";
 import { ListItem, Skeleton, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom } from "./states";
+import { boardAtom } from "../states";
 import { moveLineUciToSan } from "@/lib/chess";
 
 interface Props {

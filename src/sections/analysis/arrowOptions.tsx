@@ -4,7 +4,7 @@ import {
   gameEvalAtom,
   showBestMoveArrowAtom,
   showPlayerMoveArrowAtom,
-} from "../states";
+} from "./states";
 
 export default function ArrowOptions() {
   const gameEval = useAtomValue(gameEvalAtom);

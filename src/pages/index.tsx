@@ -2,9 +2,9 @@ import { useChessActions } from "@/hooks/useChess";
 import Board from "@/sections/analysis/board";
 import ReviewPanelBody from "@/sections/analysis/reviewPanelBody";
 import ReviewPanelHeader from "@/sections/analysis/reviewPanelHeader";
-import AnalyzePanel from "@/sections/analysis/reviewPanelHeader/analyzePanel";
+import AnalyzePanel from "@/sections/analysis/analyzePanel";
 import ReviewPanelToolBar from "@/sections/analysis/reviewPanelToolbar";
-import ArrowOptions from "@/sections/analysis/reviewPanelToolbar/arrowOptions";
+import ArrowOptions from "@/sections/analysis/arrowOptions";
 import {
   boardAtom,
   boardOrientationAtom,

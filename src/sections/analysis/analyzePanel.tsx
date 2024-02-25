@@ -6,7 +6,7 @@ import {
   engineMultiPvAtom,
   gameAtom,
   gameEvalAtom,
-} from "../states";
+} from "./states";
 import { useAtomValue, useSetAtom } from "jotai";
 import { getFens } from "@/lib/chess";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
@@ -14,6 +14,7 @@ import { LoadingButton } from "@mui/lab";
 import Slider from "@/components/slider";
 import { useEngine } from "@/hooks/useEngine";
 import { EngineName } from "@/types/enums";
+import { logAnalyticsEvent } from "@/lib/firebase";
 
 export default function AnalyzePanel() {
   const engine = useEngine(EngineName.Stockfish16);
@@ -47,6 +48,13 @@ export default function AnalyzePanel() {
     if (gameFromUrl) {
       setGameEval(gameFromUrl.id, newGameEval);
     }
+
+    logAnalyticsEvent("analyze_game", {
+      engine: EngineName.Stockfish16,
+      depth: engineDepth,
+      multiPv: engineMultiPv,
+      nbPositions: 1,
+    });
   };
 
   return (

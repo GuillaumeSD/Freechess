@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { Grid, List, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom, engineMultiPvAtom, gameAtom } from "./states";
+import { boardAtom, engineMultiPvAtom, gameAtom } from "../states";
 import LineEvaluation from "./lineEvaluation";
 import { useCurrentMove } from "@/hooks/useCurrentMove";
 import { LineEval } from "@/types/eval";
