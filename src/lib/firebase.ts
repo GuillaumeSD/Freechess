@@ -13,6 +13,12 @@ const firebaseConfig: FirebaseOptions = {
 
 const app = initializeApp(firebaseConfig);
 
+isSupported().then((supported) => {
+  if (supported) {
+    getAnalytics(app);
+  }
+});
+
 export const logAnalyticsEvent = async (
   eventName: string,
   eventParams?: Record<string, unknown>
