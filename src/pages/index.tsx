@@ -37,60 +37,40 @@ export default function GameReport() {
   }, [gameId, setEval, setBoardOrientation, resetBoard, setGamePgn]);
 
   return (
-    <Grid
-      container
-      rowGap={6}
-      justifyContent="center"
-      alignItems="start"
-      gap={6}
-    >
-      <Grid
-        item
-        container
-        justifyContent="center"
-        alignItems="center"
-        xs={12}
-        md
-      >
-        <Board />
-      </Grid>
+    <Grid container gap={4} justifyContent="space-evenly" alignItems="start">
+      <Board />
 
       <Grid
-        item
         container
+        item
         marginTop={{ xs: 0, md: "2.5em" }}
         justifyContent="center"
         alignItems="center"
+        borderRadius={2}
+        border={1}
+        borderColor={"secondary.main"}
         xs={12}
         md
+        sx={{
+          backgroundColor: "secondary.main",
+          borderColor: "primary.main",
+          borderWidth: 2,
+        }}
+        padding={3}
+        gap={3}
+        style={{
+          maxWidth: "1100px",
+        }}
       >
-        <Grid
-          container
-          item
-          justifyContent="center"
-          alignItems="center"
-          borderRadius={2}
-          border={1}
-          borderColor={"secondary.main"}
-          xs={12}
-          sx={{
-            backgroundColor: "secondary.main",
-            borderColor: "primary.main",
-            borderWidth: 2,
-          }}
-          padding={3}
-          gap={3}
-        >
-          {isMdOrGreater ? <ReviewPanelHeader /> : <ReviewPanelToolBar />}
+        {isMdOrGreater ? <ReviewPanelHeader /> : <ReviewPanelToolBar />}
 
-          <Divider sx={{ width: "90%" }} />
+        <Divider sx={{ width: "90%" }} />
 
-          <ReviewPanelBody />
+        <ReviewPanelBody />
 
-          <Divider sx={{ width: "90%" }} />
+        <Divider sx={{ width: "90%" }} />
 
-          {isMdOrGreater ? <ReviewPanelToolBar /> : <ReviewPanelHeader />}
-        </Grid>
+        {isMdOrGreater ? <ReviewPanelToolBar /> : <ReviewPanelHeader />}
       </Grid>
     </Grid>
   );
