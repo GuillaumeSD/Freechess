@@ -39,12 +39,12 @@ export const useScreenSize = () => {
     const width = screenSize.width;
     const height = screenSize.height;
 
-    // 900 is the md layout breakpoint
-    if (width < 900) {
-      return Math.min(width, height) * 0.95;
+    // 1200 is the lg layout breakpoint
+    if (window?.innerWidth < 1200) {
+      return Math.min(width, height - 150);
     }
 
-    return Math.min(width - 500, height) * 0.95;
+    return Math.min(width - 600, height);
   };
 
   return { ...screenSize, boardSize: getBoardSize() };

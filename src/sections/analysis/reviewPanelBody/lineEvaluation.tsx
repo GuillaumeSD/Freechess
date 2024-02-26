@@ -14,17 +14,23 @@ export default function LineEvaluation({ line }: Props) {
     line.cp !== undefined
       ? `${line.cp / 100}`
       : line.mate
-      ? `Mate in ${Math.abs(line.mate)}`
+      ? `${line.mate > 0 ? "" : "-"}M${Math.abs(line.mate)}`
       : "?";
 
   const showSkeleton = line.depth < 6;
 
   return (
     <ListItem disablePadding>
-      <Typography marginRight={2} marginY={0.5}>
+      <Typography
+        marginRight={1.5}
+        marginY={0.5}
+        noWrap
+        overflow="visible"
+        width="3em"
+        textAlign="center"
+      >
         {showSkeleton ? (
           <Skeleton
-            width={"2em"}
             variant="rounded"
             animation="wave"
             sx={{ color: "transparent" }}
@@ -36,11 +42,14 @@ export default function LineEvaluation({ line }: Props) {
         )}
       </Typography>
 
-      <Typography noWrap>
+      <Typography
+        noWrap
+        maxWidth={{ xs: "15em", sm: "25em", md: "30em", lg: "25em" }}
+      >
         {showSkeleton ? (
-          <Skeleton width={"20em"} variant="rounded" animation="wave" />
+          <Skeleton variant="rounded" animation="wave" />
         ) : (
-          line.pv.slice(0, 10).map(moveLineUciToSan(board.fen())).join(", ")
+          line.pv.map(moveLineUciToSan(board.fen())).join(", ")
         )}
       </Typography>
     </ListItem>

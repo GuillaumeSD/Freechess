@@ -85,8 +85,8 @@ export const getEvaluationBarValue = (
 ): { whiteBarPercentage: number; label: string } => {
   if (bestLine.mate) {
     return {
-      whiteBarPercentage: whiteToPlay ? 100 : 0,
-      label: `M${bestLine.mate}`,
+      whiteBarPercentage: whiteToPlay && bestLine.mate > 0 ? 100 : 0,
+      label: `M${Math.abs(bestLine.mate)}`,
     };
   }
 

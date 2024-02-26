@@ -17,7 +17,7 @@ import { useEffect } from "react";
 
 export default function GameReport() {
   const theme = useTheme();
-  const isMdOrGreater = useMediaQuery(theme.breakpoints.up("md"));
+  const isLgOrGreater = useMediaQuery(theme.breakpoints.up("lg"));
 
   const { reset: resetBoard } = useChessActions(boardAtom);
   const { setPgn: setGamePgn } = useChessActions(gameAtom);
@@ -43,26 +43,26 @@ export default function GameReport() {
       <Grid
         container
         item
-        marginTop={{ xs: 0, md: "2.5em" }}
+        marginTop={{ xs: 0, lg: "2.5em" }}
         justifyContent="center"
         alignItems="center"
         borderRadius={2}
         border={1}
         borderColor={"secondary.main"}
         xs={12}
-        md
+        lg
         sx={{
           backgroundColor: "secondary.main",
           borderColor: "primary.main",
           borderWidth: 2,
         }}
         padding={3}
-        gap={3}
+        rowGap={3}
         style={{
           maxWidth: "1100px",
         }}
       >
-        {isMdOrGreater ? <ReviewPanelHeader /> : <ReviewPanelToolBar />}
+        {isLgOrGreater ? <ReviewPanelHeader /> : <ReviewPanelToolBar />}
 
         <Divider sx={{ width: "90%" }} />
 
@@ -70,7 +70,7 @@ export default function GameReport() {
 
         <Divider sx={{ width: "90%" }} />
 
-        {isMdOrGreater ? <ReviewPanelToolBar /> : <ReviewPanelHeader />}
+        {isLgOrGreater ? <ReviewPanelToolBar /> : <ReviewPanelHeader />}
       </Grid>
     </Grid>
   );

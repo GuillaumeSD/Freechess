@@ -44,7 +44,9 @@ export default function EvaluationBar({ height }: Props) {
             : evalBar.whiteBarPercentage
         }%`}
         width="100%"
-        borderRadius="5px 5px 0 0"
+        borderRadius={
+          evalBar.whiteBarPercentage === 100 ? "5px" : "5px 5px 0 0"
+        }
       >
         <Typography
           color={boardOrientation ? "white" : "black"}
@@ -68,7 +70,9 @@ export default function EvaluationBar({ height }: Props) {
         width={"100%"}
         display="flex"
         alignItems="flex-end"
-        borderRadius="0 0 5px 5px"
+        borderRadius={
+          evalBar.whiteBarPercentage === 100 ? "5px" : "0 0 5px 5px"
+        }
       >
         <Typography
           color={boardOrientation ? "black" : "white"}

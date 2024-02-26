@@ -207,6 +207,7 @@ export abstract class UciEngine {
       parsedResults.lines = parsedResults.lines.map((line) => ({
         ...line,
         cp: line.cp ? -line.cp : line.cp,
+        mate: line.mate ? -line.mate : line.mate,
       }));
     }
 
