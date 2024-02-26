@@ -9,17 +9,21 @@ import {
   gameAtom,
   gameEvalAtom,
 } from "@/sections/analysis/states";
-import { Divider, Grid } from "@mui/material";
+import { Divider, Grid, useMediaQuery, useTheme } from "@mui/material";
 import { Chess } from "chess.js";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export default function GameReport() {
+  const theme = useTheme();
+  const isMdOrGreater = useMediaQuery(theme.breakpoints.up("md"));
+
   const { reset: resetBoard } = useChessActions(boardAtom);
   const { setPgn: setGamePgn } = useChessActions(gameAtom);
   const setEval = useSetAtom(gameEvalAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
+
   const router = useRouter();
   const { gameId } = router.query;
 
@@ -77,7 +81,7 @@ export default function GameReport() {
           padding={3}
           gap={3}
         >
-          <ReviewPanelHeader />
+          {isMdOrGreater ? <ReviewPanelHeader /> : <ReviewPanelToolBar />}
 
           <Divider sx={{ width: "90%" }} />
 
@@ -85,7 +89,7 @@ export default function GameReport() {
 
           <Divider sx={{ width: "90%" }} />
 
-          <ReviewPanelToolBar />
+          {isMdOrGreater ? <ReviewPanelToolBar /> : <ReviewPanelHeader />}
         </Grid>
       </Grid>
     </Grid>
