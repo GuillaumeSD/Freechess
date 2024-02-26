@@ -26,13 +26,13 @@ export default function PlayerInfo({ color }: Props) {
       xs={5}
       justifyContent={color === "white" ? "flex-end" : "flex-start"}
       alignItems="center"
-      gap={1}
+      gap={0.5}
     >
-      <Typography variant="h6">
+      <Typography>
         {playerName || (color === "white" ? "White" : "Black")}
       </Typography>
 
-      <Typography variant="h6">{rating ? `(${rating})` : "(?)"}</Typography>
+      <Typography>{rating ? `(${rating})` : "(?)"}</Typography>
     </Grid>
   );
 }

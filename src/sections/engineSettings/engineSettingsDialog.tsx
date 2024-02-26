@@ -28,9 +28,10 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
       <DialogTitle marginY={1} variant="h5">
         Set engine parameters
       </DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ paddingBottom: 0 }}>
         <Typography>
-          Only Stockfish 16 is available now, more engine choices will come !
+          Stockfish 16 is the only engine available now, more engine choices
+          will come soon !
         </Typography>
         <Grid
           marginTop={4}

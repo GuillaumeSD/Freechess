@@ -17,7 +17,7 @@ export default function PlayerInfo({ color }: Props) {
 
   return (
     <Grid item container xs={12} justifyContent="center" alignItems="center">
-      <Typography variant="h5">
+      <Typography variant="h6">
         {playerName || (color === "white" ? "White" : "Black")}
       </Typography>
     </Grid>

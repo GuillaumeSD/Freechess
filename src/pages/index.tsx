@@ -38,7 +38,7 @@ export default function GameReport() {
       rowGap={6}
       justifyContent="center"
       alignItems="start"
-      marginTop={1}
+      gap={6}
     >
       <Grid
         item
@@ -46,8 +46,7 @@ export default function GameReport() {
         justifyContent="center"
         alignItems="center"
         xs={12}
-        md={9}
-        lg={6}
+        md
       >
         <Board />
       </Grid>
@@ -55,11 +54,11 @@ export default function GameReport() {
       <Grid
         item
         container
-        paddingLeft={{ xs: 0, lg: 6 }}
+        marginTop={{ xs: 0, md: "2.5em" }}
         justifyContent="center"
         alignItems="center"
         xs={12}
-        lg={6}
+        md
       >
         <Grid
           container
@@ -76,7 +75,7 @@ export default function GameReport() {
             borderWidth: 2,
           }}
           padding={3}
-          gap={4}
+          gap={3}
         >
           <ReviewPanelHeader />
 

@@ -152,9 +152,7 @@ export default function GameDatabase() {
       marginTop={6}
     >
       <Grid item container xs={12} justifyContent="center" alignItems="center">
-        <Grid item container justifyContent="center" sx={{ maxWidth: "250px" }}>
-          <LoadGameButton />
-        </Grid>
+        <LoadGameButton />
       </Grid>
 
       <Grid item container xs={12} justifyContent="center" alignItems="center">

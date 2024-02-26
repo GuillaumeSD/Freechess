@@ -1,4 +1,3 @@
-import { Grid } from "@mui/material";
 import LoadGameButton from "../../loadGame/loadGameButton";
 import { useCallback, useEffect } from "react";
 import { useChessActions } from "@/hooks/useChess";
@@ -50,14 +49,13 @@ export default function LoadGame() {
   const isGameLoaded = gameFromUrl !== undefined || !!game.header().White;
 
   return (
-    <Grid item container xs={12} justifyContent="center" alignItems="center">
-      <LoadGameButton
-        label={isGameLoaded ? "Load another game" : "Load game"}
-        setGame={async (game) => {
-          await router.push("/");
-          resetAndSetGamePgn(game.pgn());
-        }}
-      />
-    </Grid>
+    <LoadGameButton
+      label={isGameLoaded ? "Load another game" : "Load game"}
+      size="small"
+      setGame={async (game) => {
+        await router.push("/");
+        resetAndSetGamePgn(game.pgn());
+      }}
+    />
   );
 }

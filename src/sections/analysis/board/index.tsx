@@ -13,9 +13,11 @@ import { useChessActions } from "@/hooks/useChess";
 import { useMemo, useRef } from "react";
 import PlayerInfo from "./playerInfo";
 import EvaluationBar from "./evaluationBar";
+import { useScreenSize } from "@/hooks/useScreenSize";
 
 export default function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
+  const { boardSize } = useScreenSize();
   const board = useAtomValue(boardAtom);
   const boardOrientation = useAtomValue(boardOrientationAtom);
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
@@ -76,10 +78,10 @@ export default function Board() {
       container
       justifyContent="center"
       alignItems="center"
-      xs={12}
       wrap="nowrap"
+      width={boardSize}
     >
-      <EvaluationBar height={boardRef?.current?.offsetHeight || 800} />
+      <EvaluationBar height={boardRef?.current?.offsetHeight || boardSize} />
 
       <Grid
         item

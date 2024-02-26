@@ -13,20 +13,33 @@ export default function ReviewPanelHeader() {
       justifyContent="center"
       alignItems="center"
       xs={12}
-      gap={3}
+      rowGap={3}
     >
       <Grid
         item
         container
         xs={12}
-        justifyContent="center"
+        justifyContent="space-between"
         alignItems="center"
-        columnGap={1}
       >
-        <Icon icon="ph:file-magnifying-glass-fill" height={40} />
-        <Typography variant="h4" align="center">
-          Game Report
-        </Typography>
+        <Grid item xs={1} />
+
+        <Grid
+          item
+          container
+          xs
+          justifyContent="center"
+          alignItems="center"
+          columnGap={1}
+        >
+          <Icon icon="ph:file-magnifying-glass-fill" height={28} />
+
+          <Typography variant="h5" align="center">
+            Game Report
+          </Typography>
+        </Grid>
+
+        <EngineSettingsButton />
       </Grid>
 
       <Grid
@@ -35,12 +48,12 @@ export default function ReviewPanelHeader() {
         xs={12}
         justifyContent="center"
         alignItems="center"
-        gap={3}
+        rowGap={3}
+        columnGap={15}
       >
         <GamePanel />
         <LoadGame />
         <AnalyzeButton />
-        <EngineSettingsButton />
       </Grid>
     </Grid>
   );

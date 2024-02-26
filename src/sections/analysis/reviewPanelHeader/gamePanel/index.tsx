@@ -10,13 +10,7 @@ export default function GamePanel() {
 
   const hasGameInfo = gameFromUrl !== undefined || !!game.header().White;
 
-  if (!hasGameInfo) {
-    return (
-      <Grid item container xs={12} justifyContent="center" alignItems="center">
-        <Typography variant="h6">No game loaded</Typography>
-      </Grid>
-    );
-  }
+  if (!hasGameInfo) return null;
 
   return (
     <Grid
@@ -25,14 +19,12 @@ export default function GamePanel() {
       xs={12}
       justifyContent="center"
       alignItems="center"
-      gap={2}
+      gap={1}
     >
       <Grid item container xs={12} justifyContent="center" alignItems="center">
         <PlayerInfo color="white" />
 
-        <Grid item container xs={1} justifyContent="center" alignItems="center">
-          <Typography variant="h6">vs</Typography>
-        </Grid>
+        <Typography marginX={1.5}>vs</Typography>
 
         <PlayerInfo color="black" />
       </Grid>
@@ -40,10 +32,11 @@ export default function GamePanel() {
       <Grid
         item
         container
-        xs={10}
+        xs={11}
         justifyContent="space-evenly"
         alignItems="center"
-        gap={2}
+        rowGap={1}
+        columnGap={3}
       >
         <Typography>
           Site : {gameFromUrl?.site || game.header().Site || "?"}

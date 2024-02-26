@@ -35,7 +35,7 @@ export default function ReviewPanelBody() {
       xs={12}
       justifyContent="center"
       alignItems="center"
-      gap={2}
+      gap={1}
     >
       <Grid
         item
@@ -48,16 +48,16 @@ export default function ReviewPanelBody() {
         <Icon
           icon="pepicons-pop:star-filled-circle"
           color="#27f019"
-          height={30}
+          height={25}
         />
-        <Typography variant="h5" align="center">
-          Game Review
+        <Typography variant="h6" align="center">
+          Engine evaluation
         </Typography>
       </Grid>
 
       {!!bestMove && (
         <Grid item xs={12}>
-          <Typography variant="h6" align="center">
+          <Typography align="center">
             {`${bestMove} was the best move`}
           </Typography>
         </Grid>
@@ -65,9 +65,7 @@ export default function ReviewPanelBody() {
 
       {isGameOver && (
         <Grid item xs={12}>
-          <Typography variant="h6" align="center">
-            Game is over
-          </Typography>
+          <Typography align="center">Game is over</Typography>
         </Grid>
       )}
 

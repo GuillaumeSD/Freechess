@@ -58,7 +58,7 @@ export default function AnalyzeButton() {
   return (
     <LoadingButton
       variant="contained"
-      size="large"
+      size="small"
       startIcon={
         !evaluationInProgress && (
           <Icon icon="streamline:magnifying-glass-solid" />
