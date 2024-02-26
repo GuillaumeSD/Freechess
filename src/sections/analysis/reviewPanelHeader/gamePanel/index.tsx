@@ -19,7 +19,7 @@ export default function GamePanel() {
       xs={12}
       justifyContent="center"
       alignItems="center"
-      gap={1}
+      gap={2}
     >
       <Grid item container xs={12} justifyContent="center" alignItems="center">
         <PlayerInfo color="white" />
@@ -38,18 +38,24 @@ export default function GamePanel() {
         rowGap={1}
         columnGap={3}
       >
-        <Typography>
-          Site : {gameFromUrl?.site || game.header().Site || "?"}
-        </Typography>
+        <Grid item container xs justifyContent="center" alignItems="center">
+          <Typography noWrap>
+            Site : {gameFromUrl?.site || game.header().Site || "?"}
+          </Typography>
+        </Grid>
 
-        <Typography>
-          Date : {gameFromUrl?.date || game.header().Date || "?"}
-        </Typography>
+        <Grid item container xs justifyContent="center" alignItems="center">
+          <Typography noWrap>
+            Date : {gameFromUrl?.date || game.header().Date || "?"}
+          </Typography>
+        </Grid>
 
-        <Typography>
-          Result :{" "}
-          {gameFromUrl?.termination || game.header().Termination || "?"}
-        </Typography>
+        <Grid item container xs justifyContent="center" alignItems="center">
+          <Typography noWrap>
+            Result :{" "}
+            {gameFromUrl?.termination || game.header().Termination || "?"}
+          </Typography>
+        </Grid>
       </Grid>
     </Grid>
   );

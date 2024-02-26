@@ -44,7 +44,7 @@ export const useScreenSize = () => {
       return Math.min(width, height - 150);
     }
 
-    return Math.min(width - 600, height);
+    return Math.min(width - 600, height * 0.95);
   };
 
   return { ...screenSize, boardSize: getBoardSize() };
