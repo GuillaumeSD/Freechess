@@ -6,6 +6,7 @@ import LineEvaluation from "./lineEvaluation";
 import { useCurrentMove } from "@/hooks/useCurrentMove";
 import { LineEval } from "@/types/eval";
 import { EngineName } from "@/types/enums";
+import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
 
 export default function ReviewPanelBody() {
   const linesNumber = useAtomValue(engineMultiPvAtom);
@@ -41,18 +42,32 @@ export default function ReviewPanelBody() {
         item
         container
         xs={12}
-        justifyContent="center"
+        justifyContent="space-between"
         alignItems="center"
-        columnGap={1}
       >
-        <Icon
-          icon="pepicons-pop:star-filled-circle"
-          color="#27f019"
-          height={25}
-        />
-        <Typography variant="h6" align="center">
-          Engine evaluation
-        </Typography>
+        <Grid item xs={1} />
+
+        <Grid
+          item
+          container
+          xs
+          justifyContent="center"
+          alignItems="center"
+          columnGap={1}
+        >
+          <Icon
+            icon="pepicons-pop:star-filled-circle"
+            color="#27f019"
+            height={25}
+          />
+          <Typography variant="h6" align="center">
+            Engine evaluation
+          </Typography>
+        </Grid>
+
+        <Grid item container xs={1} justifyContent="center">
+          <EngineSettingsButton />
+        </Grid>
       </Grid>
 
       {!!bestMove && (

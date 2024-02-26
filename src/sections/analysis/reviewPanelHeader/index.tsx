@@ -3,7 +3,6 @@ import { Grid, Typography } from "@mui/material";
 import GamePanel from "./gamePanel";
 import LoadGame from "./loadGame";
 import AnalyzeButton from "./analyzeButton";
-import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
 
 export default function ReviewPanelHeader() {
   return (
@@ -19,27 +18,15 @@ export default function ReviewPanelHeader() {
         item
         container
         xs={12}
-        justifyContent="space-between"
+        justifyContent="center"
         alignItems="center"
+        columnGap={1}
       >
-        <Grid item xs={1} />
+        <Icon icon="ph:file-magnifying-glass-fill" height={28} />
 
-        <Grid
-          item
-          container
-          xs
-          justifyContent="center"
-          alignItems="center"
-          columnGap={1}
-        >
-          <Icon icon="ph:file-magnifying-glass-fill" height={28} />
-
-          <Typography variant="h5" align="center">
-            Game Report
-          </Typography>
-        </Grid>
-
-        <EngineSettingsButton />
+        <Typography variant="h5" align="center">
+          Game Report
+        </Typography>
       </Grid>
 
       <Grid
