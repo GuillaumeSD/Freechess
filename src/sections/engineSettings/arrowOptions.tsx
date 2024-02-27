@@ -1,13 +1,19 @@
 import { Checkbox, FormControlLabel, Grid } from "@mui/material";
-import { useAtom } from "jotai";
 import {
   showBestMoveArrowAtom,
   showPlayerMoveArrowAtom,
 } from "../analysis/states";
+import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
 
 export default function ArrowOptions() {
-  const [showBestMove, setShowBestMove] = useAtom(showBestMoveArrowAtom);
-  const [showPlayerMove, setShowPlayerMove] = useAtom(showPlayerMoveArrowAtom);
+  const [showBestMove, setShowBestMove] = useAtomLocalStorage(
+    "show-arrow-best-move",
+    showBestMoveArrowAtom
+  );
+  const [showPlayerMove, setShowPlayerMove] = useAtomLocalStorage(
+    "show-arrow-player-move",
+    showPlayerMoveArrowAtom
+  );
 
   return (
     <Grid

@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { engineDepthAtom, engineMultiPvAtom } from "../analysis/states";
 import ArrowOptions from "./arrowOptions";
+import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
 
 interface Props {
   open: boolean;
@@ -23,6 +24,15 @@ interface Props {
 }
 
 export default function EngineSettingsDialog({ open, onClose }: Props) {
+  const [depth, setDepth] = useAtomLocalStorage(
+    "engine-depth",
+    engineDepthAtom
+  );
+  const [multiPv, setMultiPv] = useAtomLocalStorage(
+    "engine-multi-pv",
+    engineMultiPvAtom
+  );
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle marginY={1} variant="h5">
@@ -65,7 +75,8 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
 
           <Slider
             label="Maximum depth"
-            atom={engineDepthAtom}
+            value={depth}
+            setValue={setDepth}
             min={10}
             max={30}
             marksFilter={2}
@@ -73,7 +84,8 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
 
           <Slider
             label="Number of lines"
-            atom={engineMultiPvAtom}
+            value={multiPv}
+            setValue={setMultiPv}
             min={1}
             max={6}
             xs={6}

@@ -170,6 +170,16 @@ export default function GameDatabase() {
           hideFooter={true}
           autoHeight={true}
           localeText={gridLocaleText}
+          initialState={{
+            sorting: {
+              sortModel: [
+                {
+                  field: "date",
+                  sort: "desc",
+                },
+              ],
+            },
+          }}
         />
       </Grid>
     </Grid>

@@ -21,7 +21,7 @@ export const formatGameToDatabase = (game: Chess): Omit<Game, "id"> => {
     event: headers.Event,
     site: headers.Site,
     date: headers.Date,
-    round: headers.Round,
+    round: headers.Round ?? "?",
     white: {
       name: headers.White,
       rating: headers.WhiteElo ? Number(headers.WhiteElo) : undefined,

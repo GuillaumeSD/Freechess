@@ -1,8 +1,8 @@
 import { Grid, Slider as MuiSlider, Typography } from "@mui/material";
-import { PrimitiveAtom, useAtom } from "jotai";
 
 interface Props {
-  atom: PrimitiveAtom<number>;
+  value: number;
+  setValue: (value: number) => void;
   min: number;
   max: number;
   label: string;
@@ -14,12 +14,11 @@ export default function Slider({
   min,
   max,
   label,
-  atom,
+  value,
+  setValue,
   xs,
   marksFilter = 1,
 }: Props) {
-  const [value, setValue] = useAtom(atom);
-
   return (
     <Grid
       item

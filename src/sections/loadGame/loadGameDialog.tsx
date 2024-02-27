@@ -8,16 +8,18 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Box,
   FormControl,
   InputLabel,
   OutlinedInput,
   DialogActions,
-  TextField,
   Typography,
+  Grid,
 } from "@mui/material";
 import { Chess } from "chess.js";
 import { useState } from "react";
+import GamePgnInput from "./gamePgnInput";
+import ChessComInput from "./chessComInput";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 interface Props {
   open: boolean;
@@ -27,6 +29,10 @@ interface Props {
 
 export default function NewGameDialog({ open, onClose, setGame }: Props) {
   const [pgn, setPgn] = useState("");
+  const [gameOrigin, setGameOrigin] = useLocalStorage(
+    "preferred-game-origin",
+    GameOrigin.Pgn
+  );
   const [parsingError, setParsingError] = useState("");
   const { addGame } = useGameDatabase();
 
@@ -63,11 +69,16 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle marginY={1} variant="h5">
-        Add a game to your database
+        {setGame ? "Load a game" : "Add a game to your database"}
       </DialogTitle>
       <DialogContent>
-        <Typography>Only PGN input is supported at the moment</Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap" }} marginTop={4}>
+        <Grid
+          container
+          marginTop={1}
+          alignItems="center"
+          justifyContent="start"
+          rowGap={2}
+        >
           <FormControl sx={{ m: 1, width: 150 }}>
             <InputLabel id="dialog-select-label">Game origin</InputLabel>
             <Select
@@ -75,8 +86,8 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
               id="dialog-select"
               displayEmpty
               input={<OutlinedInput label="Game origin" />}
-              value={GameOrigin.Pgn}
-              disabled={true}
+              value={gameOrigin ?? ""}
+              onChange={(e) => setGameOrigin(e.target.value as GameOrigin)}
             >
               {Object.values(GameOrigin).map((origin) => (
                 <MenuItem key={origin} value={origin}>
@@ -85,15 +96,15 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
               ))}
             </Select>
           </FormControl>
-          <FormControl sx={{ m: 1, width: 600 }}>
-            <TextField
-              label="Enter PGN here..."
-              variant="outlined"
-              multiline
-              value={pgn}
-              onChange={(e) => setPgn(e.target.value)}
-            />
-          </FormControl>
+
+          {gameOrigin === GameOrigin.Pgn && (
+            <GamePgnInput pgn={pgn} setPgn={setPgn} />
+          )}
+
+          {gameOrigin === GameOrigin.ChessCom && (
+            <ChessComInput pgn={pgn} setPgn={setPgn} />
+          )}
+
           {parsingError && (
             <FormControl fullWidth>
               <Typography color="red" textAlign="center" marginTop={1}>
@@ -101,7 +112,7 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
               </Typography>
             </FormControl>
           )}
-        </Box>
+        </Grid>
       </DialogContent>
       <DialogActions sx={{ m: 2 }}>
         <Button
@@ -122,5 +133,4 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
 const gameOriginLabel: Record<GameOrigin, string> = {
   [GameOrigin.Pgn]: "PGN",
   [GameOrigin.ChessCom]: "Chess.com",
-  [GameOrigin.Lichess]: "Lichess",
 };
