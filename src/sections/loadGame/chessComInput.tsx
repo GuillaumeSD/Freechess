@@ -3,6 +3,7 @@ import { getUserRecentGames } from "@/lib/chessCom";
 import { capitalize } from "@/lib/helpers";
 import { ChessComGame } from "@/types/chessCom";
 import {
+  CircularProgress,
   FormControl,
   Grid,
   ListItemButton,
@@ -47,7 +48,7 @@ export default function ChessComInput({ pgn, setPgn }: Props) {
 
   return (
     <>
-      <FormControl sx={{ m: 1, width: 600 }}>
+      <FormControl sx={{ m: 1, width: 300 }}>
         <TextField
           label="Enter your Chess.com username..."
           variant="outlined"
@@ -56,7 +57,7 @@ export default function ChessComInput({ pgn, setPgn }: Props) {
         />
       </FormControl>
 
-      {games.length > 0 && (
+      {chessComUsername && (
         <Grid
           container
           item
@@ -64,6 +65,7 @@ export default function ChessComInput({ pgn, setPgn }: Props) {
           gap={2}
           justifyContent="center"
           alignContent="center"
+          minHeight={100}
         >
           {games.map((game) => (
             <ListItemButton
@@ -88,6 +90,8 @@ export default function ChessComInput({ pgn, setPgn }: Props) {
               />
             </ListItemButton>
           ))}
+
+          {games.length === 0 && <CircularProgress />}
         </Grid>
       )}
     </>
