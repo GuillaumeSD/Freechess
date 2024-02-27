@@ -19,7 +19,7 @@ export const getUserRecentGames = async (
 
   const games: ChessComGame[] = data?.games ?? [];
 
-  if (games.length < 20) {
+  if (games.length < 50) {
     const previousMonth = month === 1 ? 12 : month - 1;
     const previousPaddedMonth = getPaddedMonth(previousMonth);
     const yearToFetch = previousMonth === 12 ? year - 1 : year;
@@ -33,9 +33,9 @@ export const getUserRecentGames = async (
     games.push(...(dataPreviousMonth?.games ?? []));
   }
 
-  games.sort((a, b) => {
+  const gamesToReturn = games.slice(0, 50).sort((a, b) => {
     return b.end_time - a.end_time;
   });
 
-  return games;
+  return gamesToReturn;
 };

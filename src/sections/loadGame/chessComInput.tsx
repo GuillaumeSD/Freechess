@@ -47,7 +47,7 @@ export default function ChessComInput({ pgn, setPgn }: Props) {
 
   return (
     <>
-      <FormControl sx={{ m: 1, width: 300 }}>
+      <FormControl sx={{ m: 1, width: 600 }}>
         <TextField
           label="Enter your Chess.com username..."
           variant="outlined"
@@ -56,38 +56,40 @@ export default function ChessComInput({ pgn, setPgn }: Props) {
         />
       </FormControl>
 
-      <Grid
-        container
-        item
-        xs={12}
-        gap={2}
-        justifyContent="center"
-        alignContent="center"
-      >
-        {games.map((game) => (
-          <ListItemButton
-            onClick={() => setPgn(game.pgn)}
-            selected={pgn === game.pgn}
-            style={{ width: 350, maxWidth: 350 }}
-            key={game.uuid}
-          >
-            <ListItemText
-              primary={`${capitalize(game.white.username) || "White"} (${
-                game.white.rating || "?"
-              }) vs ${capitalize(game.black.username) || "Black"} (${
-                game.black.rating || "?"
-              })`}
-              secondary={`${capitalize(game.time_class)} played at ${new Date(
-                game.end_time * 1000
-              )
-                .toLocaleString()
-                .slice(0, -3)}`}
-              primaryTypographyProps={{ noWrap: true }}
-              secondaryTypographyProps={{ noWrap: true }}
-            />
-          </ListItemButton>
-        ))}
-      </Grid>
+      {games.length > 0 && (
+        <Grid
+          container
+          item
+          xs={12}
+          gap={2}
+          justifyContent="center"
+          alignContent="center"
+        >
+          {games.map((game) => (
+            <ListItemButton
+              onClick={() => setPgn(game.pgn)}
+              selected={pgn === game.pgn}
+              style={{ width: 350, maxWidth: 350 }}
+              key={game.uuid}
+            >
+              <ListItemText
+                primary={`${capitalize(game.white.username) || "White"} (${
+                  game.white.rating || "?"
+                }) vs ${capitalize(game.black.username) || "Black"} (${
+                  game.black.rating || "?"
+                })`}
+                secondary={`${capitalize(game.time_class)} played at ${new Date(
+                  game.end_time * 1000
+                )
+                  .toLocaleString()
+                  .slice(0, -3)}`}
+                primaryTypographyProps={{ noWrap: true }}
+                secondaryTypographyProps={{ noWrap: true }}
+              />
+            </ListItemButton>
+          ))}
+        </Grid>
+      )}
     </>
   );
 }
