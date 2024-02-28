@@ -2,9 +2,11 @@ import { EngineName } from "@/types/enums";
 import {
   EvaluatePositionWithUpdateParams,
   GameEval,
-  LineEval,
   MoveEval,
 } from "@/types/eval";
+import { parseEvaluationResults } from "./helpers/parseResults";
+import { computeAccuracy } from "./helpers/accuracy";
+import { getWhoIsCheckmated } from "../chess";
 
 export abstract class UciEngine {
   private worker: Worker;
@@ -104,14 +106,31 @@ export abstract class UciEngine {
 
     const moves: MoveEval[] = [];
     for (const fen of fens) {
+      const whoIsCheckmated = getWhoIsCheckmated(fen);
+      if (whoIsCheckmated) {
+        moves.push({
+          bestMove: "",
+          lines: [
+            {
+              pv: [],
+              depth: 0,
+              multiPv: 1,
+              mate: whoIsCheckmated === "w" ? -1 : 1,
+            },
+          ],
+        });
+        continue;
+      }
       const result = await this.evaluatePosition(fen, depth);
       moves.push(result);
     }
 
+    const accuracy = computeAccuracy(moves);
+
     this.ready = true;
     return {
-      moves,
-      accuracy: { white: 82.34, black: 67.49 }, // TODO: Calculate accuracy
+      moves: moves.slice(0, -1),
+      accuracy,
       settings: {
         engine: this.engineName,
         date: new Date().toISOString(),
@@ -131,7 +150,7 @@ export abstract class UciEngine {
 
     const whiteToPlay = fen.split(" ")[1] === "w";
 
-    return this.parseResults(results, whiteToPlay);
+    return parseEvaluationResults(results, whiteToPlay);
   }
 
   public async evaluatePositionWithUpdate({
@@ -148,7 +167,7 @@ export abstract class UciEngine {
     const whiteToPlay = fen.split(" ")[1] === "w";
 
     const onNewMessage = (messages: string[]) => {
-      const parsedResults = this.parseResults(messages, whiteToPlay);
+      const parsedResults = parseEvaluationResults(messages, whiteToPlay);
       setPartialEval(parsedResults);
     };
 
@@ -158,100 +177,5 @@ export abstract class UciEngine {
       "bestmove",
       onNewMessage
     );
-  }
-
-  private parseResults(results: string[], whiteToPlay: boolean): MoveEval {
-    const parsedResults: MoveEval = {
-      bestMove: "",
-      lines: [],
-    };
-    const tempResults: Record<string, LineEval> = {};
-
-    for (const result of results) {
-      if (result.startsWith("bestmove")) {
-        const bestMove = this.getResultProperty(result, "bestmove");
-        if (bestMove) {
-          parsedResults.bestMove = bestMove;
-        }
-      }
-
-      if (result.startsWith("info")) {
-        const pv = this.getResultPv(result);
-        const multiPv = this.getResultProperty(result, "multipv");
-        const depth = this.getResultProperty(result, "depth");
-        if (!pv || !multiPv || !depth) continue;
-
-        if (
-          tempResults[multiPv] &&
-          parseInt(depth) < tempResults[multiPv].depth
-        ) {
-          continue;
-        }
-
-        const cp = this.getResultProperty(result, "cp");
-        const mate = this.getResultProperty(result, "mate");
-
-        tempResults[multiPv] = {
-          pv,
-          cp: cp ? parseInt(cp) : undefined,
-          mate: mate ? parseInt(mate) : undefined,
-          depth: parseInt(depth),
-          multiPv: parseInt(multiPv),
-        };
-      }
-    }
-
-    parsedResults.lines = Object.values(tempResults).sort(this.sortLines);
-
-    if (!whiteToPlay) {
-      parsedResults.lines = parsedResults.lines.map((line) => ({
-        ...line,
-        cp: line.cp ? -line.cp : line.cp,
-        mate: line.mate ? -line.mate : line.mate,
-      }));
-    }
-
-    return parsedResults;
-  }
-
-  private sortLines(a: LineEval, b: LineEval): number {
-    if (a.mate !== undefined && b.mate !== undefined) {
-      return a.mate - b.mate;
-    }
-
-    if (a.mate !== undefined) {
-      return -a.mate;
-    }
-
-    if (b.mate !== undefined) {
-      return b.mate;
-    }
-
-    return (b.cp ?? 0) - (a.cp ?? 0);
-  }
-
-  private getResultProperty(
-    result: string,
-    property: string
-  ): string | undefined {
-    const splitResult = result.split(" ");
-    const propertyIndex = splitResult.indexOf(property);
-
-    if (propertyIndex === -1 || propertyIndex + 1 >= splitResult.length) {
-      return undefined;
-    }
-
-    return splitResult[propertyIndex + 1];
-  }
-
-  private getResultPv(result: string): string[] | undefined {
-    const splitResult = result.split(" ");
-    const pvIndex = splitResult.indexOf("pv");
-
-    if (pvIndex === -1 || pvIndex + 1 >= splitResult.length) {
-      return undefined;
-    }
-
-    return splitResult.slice(pvIndex + 1);
   }
 }

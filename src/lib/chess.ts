@@ -3,7 +3,11 @@ import { Game } from "@/types/game";
 import { Chess } from "chess.js";
 
 export const getFens = (game: Chess): string[] => {
-  return game.history({ verbose: true }).map((move) => move.before);
+  const history = game.history({ verbose: true });
+  const fens = history.map((move) => move.before);
+  fens.push(history[history.length - 1].after);
+
+  return fens;
 };
 
 export const getGameFromPgn = (pgn: string): Chess => {
@@ -105,4 +109,10 @@ export const getEvaluationBarValue = (
   }
 
   return { whiteBarPercentage, label: pEval.toFixed(1) };
+};
+
+export const getWhoIsCheckmated = (fen: string): "w" | "b" | null => {
+  const game = new Chess(fen);
+  if (!game.isCheckmate()) return null;
+  return game.turn();
 };
