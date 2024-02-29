@@ -7,6 +7,8 @@ import { useCurrentMove } from "@/hooks/useCurrentMove";
 import { LineEval } from "@/types/eval";
 import { EngineName } from "@/types/enums";
 import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
+import Accuracies from "./accuracies";
+import BestMove from "./bestMove";
 
 export default function ReviewPanelBody() {
   const linesNumber = useAtomValue(engineMultiPvAtom);
@@ -17,7 +19,6 @@ export default function ReviewPanelBody() {
   const boardHistory = board.history();
   const gameHistory = game.history();
 
-  const bestMove = move?.lastEval?.bestMove;
   const isGameOver =
     gameHistory.length > 0 && boardHistory.join() === gameHistory.join();
 
@@ -36,7 +37,7 @@ export default function ReviewPanelBody() {
       xs={12}
       justifyContent="center"
       alignItems="center"
-      rowGap={1}
+      rowGap={1.5}
     >
       <Grid
         item
@@ -70,13 +71,9 @@ export default function ReviewPanelBody() {
         </Grid>
       </Grid>
 
-      {!!bestMove && (
-        <Grid item xs={12}>
-          <Typography align="center">
-            {`${bestMove} was the best move`}
-          </Typography>
-        </Grid>
-      )}
+      <Accuracies />
+
+      <BestMove />
 
       {isGameOver && (
         <Grid item xs={12}>
@@ -85,7 +82,7 @@ export default function ReviewPanelBody() {
       )}
 
       <Grid item container xs={12} justifyContent="center" alignItems="center">
-        <List sx={{ maxWidth: "95%" }}>
+        <List sx={{ maxWidth: "95%", padding: 0 }}>
           {!board.isCheckmate() &&
             engineLines.map((line) => (
               <LineEvaluation key={line.multiPv} line={line} />
