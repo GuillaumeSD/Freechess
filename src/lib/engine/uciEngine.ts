@@ -7,6 +7,7 @@ import {
 import { parseEvaluationResults } from "./helpers/parseResults";
 import { computeAccuracy } from "./helpers/accuracy";
 import { getWhoIsCheckmated } from "../chess";
+import { getLichessEval } from "../lichess";
 
 export abstract class UciEngine {
   private worker: Worker;
@@ -143,6 +144,14 @@ export abstract class UciEngine {
   private async evaluatePosition(fen: string, depth = 16): Promise<MoveEval> {
     console.log(`Evaluating position: ${fen}`);
 
+    const lichessEval = await getLichessEval(fen, this.multiPv);
+    if (
+      lichessEval.lines.length >= this.multiPv &&
+      lichessEval.lines[0].depth >= depth
+    ) {
+      return lichessEval;
+    }
+
     const results = await this.sendCommands(
       [`position fen ${fen}`, `go depth ${depth}`],
       "bestmove"
@@ -161,6 +170,8 @@ export abstract class UciEngine {
   }: EvaluatePositionWithUpdateParams): Promise<void> {
     this.throwErrorIfNotReady();
 
+    const lichessEvalPromise = getLichessEval(fen, multiPv);
+
     await this.stopSearch();
     await this.setMultiPv(multiPv);
 
@@ -172,6 +183,16 @@ export abstract class UciEngine {
     };
 
     console.log(`Evaluating position: ${fen}`);
+
+    const lichessEval = await lichessEvalPromise;
+    if (
+      lichessEval.lines.length >= multiPv &&
+      lichessEval.lines[0].depth >= depth
+    ) {
+      setPartialEval(lichessEval);
+      return;
+    }
+
     await this.sendCommands(
       [`position fen ${fen}`, `go depth ${depth}`],
       "bestmove",

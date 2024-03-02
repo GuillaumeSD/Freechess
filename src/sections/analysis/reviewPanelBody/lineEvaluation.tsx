@@ -47,7 +47,7 @@ export default function LineEvaluation({ line }: Props) {
         maxWidth={{ xs: "15em", sm: "25em", md: "30em", lg: "25em" }}
       >
         {showSkeleton ? (
-          <Skeleton variant="rounded" animation="wave" />
+          <Skeleton variant="rounded" animation="wave" width="15em" />
         ) : (
           line.pv.map(moveLineUciToSan(board.fen())).join(", ")
         )}

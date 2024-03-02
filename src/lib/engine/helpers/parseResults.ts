@@ -57,7 +57,7 @@ export const parseEvaluationResults = (
   return parsedResults;
 };
 
-const sortLines = (a: LineEval, b: LineEval): number => {
+export const sortLines = (a: LineEval, b: LineEval): number => {
   if (a.mate !== undefined && b.mate !== undefined) {
     return a.mate - b.mate;
   }
