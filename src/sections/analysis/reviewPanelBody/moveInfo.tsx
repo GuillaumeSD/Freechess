@@ -49,5 +49,5 @@ const moveClassificationLabels: Record<MoveClassification, string> = {
   [MoveClassification.Good]: "good",
   [MoveClassification.Excellent]: "excellent",
   [MoveClassification.Best]: "the best move",
-  [MoveClassification.Book]: "an opening move",
+  [MoveClassification.Book]: "a book move",
 };
