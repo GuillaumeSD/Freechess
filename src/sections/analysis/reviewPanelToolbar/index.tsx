@@ -2,7 +2,7 @@ import { Grid, IconButton, Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useAtomValue } from "jotai";
 import { boardAtom } from "../states";
-import { useChessActions } from "@/hooks/useChess";
+import { useChessActions } from "@/hooks/useChessActions";
 import FlipBoardButton from "./flipBoardButton";
 import NextMoveButton from "./nextMoveButton";
 import GoToLastPositionButton from "./goToLastPositionButton";

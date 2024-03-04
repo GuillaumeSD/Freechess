@@ -1,4 +1,4 @@
-import { useChessActions } from "@/hooks/useChess";
+import { useChessActions } from "@/hooks/useChessActions";
 import Board from "@/sections/analysis/board";
 import ReviewPanelBody from "@/sections/analysis/reviewPanelBody";
 import ReviewPanelHeader from "@/sections/analysis/reviewPanelHeader";
@@ -55,6 +55,7 @@ export default function GameReport() {
           backgroundColor: "secondary.main",
           borderColor: "primary.main",
           borderWidth: 2,
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
         padding={3}
         rowGap={3}

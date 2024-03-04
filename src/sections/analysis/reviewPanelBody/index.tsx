@@ -8,7 +8,8 @@ import { LineEval } from "@/types/eval";
 import { EngineName } from "@/types/enums";
 import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
 import Accuracies from "./accuracies";
-import BestMove from "./bestMove";
+import MoveInfo from "./moveInfo";
+import Opening from "./opening";
 
 export default function ReviewPanelBody() {
   const linesNumber = useAtomValue(engineMultiPvAtom);
@@ -20,7 +21,10 @@ export default function ReviewPanelBody() {
   const gameHistory = game.history();
 
   const isGameOver =
-    gameHistory.length > 0 && boardHistory.join() === gameHistory.join();
+    boardHistory.length > 0 &&
+    (board.isCheckmate() ||
+      board.isDraw() ||
+      boardHistory.join() === gameHistory.join());
 
   const linesSkeleton: LineEval[] = Array.from({ length: linesNumber }).map(
     (_, i) => ({ pv: [`${i}`], depth: 0, multiPv: i + 1 })
@@ -73,7 +77,9 @@ export default function ReviewPanelBody() {
 
       <Accuracies />
 
-      <BestMove />
+      <MoveInfo />
+
+      <Opening />
 
       {isGameOver && (
         <Grid item xs={12}>

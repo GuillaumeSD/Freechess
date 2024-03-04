@@ -7,7 +7,7 @@ import {
   gameEvalAtom,
 } from "../states";
 import { useAtomValue, useSetAtom } from "jotai";
-import { getFens } from "@/lib/chess";
+import { getEvaluateGameParams } from "@/lib/chess";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { LoadingButton } from "@mui/lab";
 import { useEngine } from "@/hooks/useEngine";
@@ -27,18 +27,22 @@ export default function AnalyzeButton() {
     engine?.isReady() && game.history().length > 0 && !evaluationInProgress;
 
   const handleAnalyze = async () => {
-    const gameFens = getFens(game);
-    if (!engine?.isReady() || gameFens.length === 0 || evaluationInProgress) {
+    const params = getEvaluateGameParams(game);
+    if (
+      !engine?.isReady() ||
+      params.fens.length === 0 ||
+      evaluationInProgress
+    ) {
       return;
     }
 
     setEvaluationInProgress(true);
 
-    const newGameEval = await engine.evaluateGame(
-      gameFens,
-      engineDepth,
-      engineMultiPv
-    );
+    const newGameEval = await engine.evaluateGame({
+      ...params,
+      depth: engineDepth,
+      multiPv: engineMultiPv,
+    });
 
     setEval(newGameEval);
     setEvaluationInProgress(false);

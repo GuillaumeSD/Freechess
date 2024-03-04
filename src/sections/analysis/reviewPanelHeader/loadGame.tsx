@@ -1,6 +1,6 @@
 import LoadGameButton from "../../loadGame/loadGameButton";
 import { useCallback, useEffect } from "react";
-import { useChessActions } from "@/hooks/useChess";
+import { useChessActions } from "@/hooks/useChessActions";
 import {
   boardAtom,
   boardOrientationAtom,

@@ -5,7 +5,6 @@ export const parseEvaluationResults = (
   whiteToPlay: boolean
 ): MoveEval => {
   const parsedResults: MoveEval = {
-    bestMove: "",
     lines: [],
   };
   const tempResults: Record<string, LineEval> = {};

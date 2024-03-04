@@ -1,13 +1,18 @@
-import { LineEval } from "@/types/eval";
+import { EvaluateGameParams, LineEval } from "@/types/eval";
 import { Game } from "@/types/game";
 import { Chess } from "chess.js";
 
-export const getFens = (game: Chess): string[] => {
+export const getEvaluateGameParams = (game: Chess): EvaluateGameParams => {
   const history = game.history({ verbose: true });
+
   const fens = history.map((move) => move.before);
   fens.push(history[history.length - 1].after);
 
-  return fens;
+  const uciMoves = history.map(
+    (move) => move.from + move.to + (move.promotion || "")
+  );
+
+  return { fens, uciMoves };
 };
 
 export const getGameFromPgn = (pgn: string): Chess => {

@@ -1,8 +1,10 @@
 import { Move } from "chess.js";
-import { EngineName } from "./enums";
+import { EngineName, MoveClassification } from "./enums";
 
 export interface MoveEval {
-  bestMove: string;
+  bestMove?: string;
+  moveClassification?: MoveClassification;
+  opening?: string;
   lines: LineEval[];
 }
 
@@ -43,3 +45,10 @@ export type CurrentMove = Partial<Move> & {
   eval?: MoveEval;
   lastEval?: MoveEval;
 };
+
+export interface EvaluateGameParams {
+  fens: string[];
+  uciMoves: string[];
+  depth?: number;
+  multiPv?: number;
+}

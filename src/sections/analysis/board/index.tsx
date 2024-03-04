@@ -9,7 +9,7 @@ import {
   showPlayerMoveArrowAtom,
 } from "../states";
 import { Arrow, Square } from "react-chessboard/dist/chessboard/types";
-import { useChessActions } from "@/hooks/useChess";
+import { useChessActions } from "@/hooks/useChessActions";
 import { useMemo, useRef } from "react";
 import PlayerInfo from "./playerInfo";
 import EvaluationBar from "./evaluationBar";
@@ -25,12 +25,16 @@ export default function Board() {
   const { makeMove: makeBoardMove } = useChessActions(boardAtom);
   const currentMove = useAtomValue(currentMoveAtom);
 
-  const onPieceDrop = (source: Square, target: Square): boolean => {
+  const onPieceDrop = (
+    source: Square,
+    target: Square,
+    piece: string
+  ): boolean => {
     try {
       const result = makeBoardMove({
         from: source,
         to: target,
-        promotion: "q", // TODO: Let the user choose the promotion
+        promotion: piece[1]?.toLowerCase() ?? "q",
       });
 
       return !!result;
@@ -42,7 +46,7 @@ export default function Board() {
   const customArrows: Arrow[] = useMemo(() => {
     const arrows: Arrow[] = [];
 
-    if (currentMove?.lastEval && showBestMoveArrow) {
+    if (currentMove?.lastEval?.bestMove && showBestMoveArrow) {
       const bestMoveArrow = [
         currentMove.lastEval.bestMove.slice(0, 2),
         currentMove.lastEval.bestMove.slice(2, 4),
@@ -108,7 +112,10 @@ export default function Board() {
             onPieceDrop={onPieceDrop}
             boardOrientation={boardOrientation ? "white" : "black"}
             customArrows={customArrows}
-            customBoardStyle={{ borderRadius: "5px" }}
+            customBoardStyle={{
+              borderRadius: "5px",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+            }}
           />
         </Grid>
 

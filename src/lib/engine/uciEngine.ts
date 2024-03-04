@@ -1,5 +1,6 @@
 import { EngineName } from "@/types/enums";
 import {
+  EvaluateGameParams,
   EvaluatePositionWithUpdateParams,
   GameEval,
   MoveEval,
@@ -8,6 +9,7 @@ import { parseEvaluationResults } from "./helpers/parseResults";
 import { computeAccuracy } from "./helpers/accuracy";
 import { getWhoIsCheckmated } from "../chess";
 import { getLichessEval } from "../lichess";
+import { getMovesClassification } from "./helpers/moveClassification";
 
 export abstract class UciEngine {
   private worker: Worker;
@@ -93,11 +95,12 @@ export abstract class UciEngine {
     });
   }
 
-  public async evaluateGame(
-    fens: string[],
+  public async evaluateGame({
+    fens,
+    uciMoves,
     depth = 16,
-    multiPv = this.multiPv
-  ): Promise<GameEval> {
+    multiPv = this.multiPv,
+  }: EvaluateGameParams): Promise<GameEval> {
     this.throwErrorIfNotReady();
     await this.setMultiPv(multiPv);
     this.ready = false;
@@ -110,7 +113,6 @@ export abstract class UciEngine {
       const whoIsCheckmated = getWhoIsCheckmated(fen);
       if (whoIsCheckmated) {
         moves.push({
-          bestMove: "",
           lines: [
             {
               pv: [],
@@ -126,11 +128,16 @@ export abstract class UciEngine {
       moves.push(result);
     }
 
+    const movesWithClassification = getMovesClassification(
+      moves,
+      uciMoves,
+      fens
+    );
     const accuracy = computeAccuracy(moves);
 
     this.ready = true;
     return {
-      moves: moves.slice(0, -1),
+      moves: movesWithClassification,
       accuracy,
       settings: {
         engine: this.engineName,

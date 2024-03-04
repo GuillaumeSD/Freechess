@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom } from "../states";
-import { useChessActions } from "@/hooks/useChess";
+import { useChessActions } from "@/hooks/useChessActions";
 
 export default function GoToLastPositionButton() {
   const { setPgn: setBoardPgn } = useChessActions(boardAtom);
