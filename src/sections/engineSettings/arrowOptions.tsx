@@ -31,7 +31,7 @@ export default function ArrowOptions() {
             onChange={(_, checked) => setShowBestMove(checked)}
           />
         }
-        label="Show best move green arrow"
+        label="Show engine best move arrow"
         sx={{ marginX: 0 }}
       />
       <FormControlLabel
@@ -41,7 +41,7 @@ export default function ArrowOptions() {
             onChange={(_, checked) => setShowPlayerMove(checked)}
           />
         }
-        label="Show player move yellow arrow"
+        label="Show played move arrow"
         sx={{ marginX: 0 }}
       />
     </Grid>

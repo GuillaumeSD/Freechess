@@ -14,6 +14,7 @@ import { useMemo, useRef } from "react";
 import PlayerInfo from "./playerInfo";
 import EvaluationBar from "./evaluationBar";
 import { useScreenSize } from "@/hooks/useScreenSize";
+import { MoveClassification } from "@/types/enums";
 
 export default function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
@@ -45,22 +46,36 @@ export default function Board() {
 
   const customArrows: Arrow[] = useMemo(() => {
     const arrows: Arrow[] = [];
+    const bestMove = currentMove?.lastEval?.bestMove;
+    const moveClassification = currentMove?.eval?.moveClassification;
 
-    if (currentMove?.lastEval?.bestMove && showBestMoveArrow) {
+    if (
+      bestMove &&
+      showBestMoveArrow &&
+      moveClassification !== MoveClassification.Book
+    ) {
       const bestMoveArrow = [
-        currentMove.lastEval.bestMove.slice(0, 2),
-        currentMove.lastEval.bestMove.slice(2, 4),
-        "#3aab18",
+        bestMove.slice(0, 2),
+        bestMove.slice(2, 4),
+        moveClassificationColors[MoveClassification.Best],
       ] as Arrow;
 
       arrows.push(bestMoveArrow);
     }
 
-    if (currentMove.from && currentMove.to && showPlayerMoveArrow) {
+    if (
+      currentMove.from &&
+      currentMove.to &&
+      showPlayerMoveArrow &&
+      moveClassification !== MoveClassification.Best
+    ) {
+      const arrowColor = moveClassification
+        ? moveClassificationColors[moveClassification]
+        : "#ffaa00";
       const playerMoveArrow: Arrow = [
         currentMove.from,
         currentMove.to,
-        "#ffaa00",
+        arrowColor,
       ];
 
       if (
@@ -124,3 +139,13 @@ export default function Board() {
     </Grid>
   );
 }
+
+const moveClassificationColors: Record<MoveClassification, string> = {
+  [MoveClassification.Best]: "#26c2a3",
+  [MoveClassification.Book]: "#d5a47d",
+  [MoveClassification.Excellent]: "#3aab18",
+  [MoveClassification.Good]: "#81b64c",
+  [MoveClassification.Inaccuracy]: "#f7c631",
+  [MoveClassification.Mistake]: "#ffa459",
+  [MoveClassification.Blunder]: "#fa412d",
+};
