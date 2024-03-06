@@ -1,10 +1,10 @@
-import { LineEval, MoveEval } from "@/types/eval";
+import { LineEval, PositionEval } from "@/types/eval";
 
 export const parseEvaluationResults = (
   results: string[],
   whiteToPlay: boolean
-): MoveEval => {
-  const parsedResults: MoveEval = {
+): PositionEval => {
+  const parsedResults: PositionEval = {
     lines: [],
   };
   const tempResults: Record<string, LineEval> = {};

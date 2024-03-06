@@ -1,4 +1,4 @@
-import { LineEval, MoveEval } from "@/types/eval";
+import { LineEval, PositionEval } from "@/types/eval";
 import { sortLines } from "./engine/helpers/parseResults";
 import {
   LichessError,
@@ -9,7 +9,7 @@ import {
 export const getLichessEval = async (
   fen: string,
   multiPv = 1
-): Promise<MoveEval> => {
+): Promise<PositionEval> => {
   try {
     const res = await fetch(
       `https://lichess.org/api/cloud-eval?fen=${fen}&multiPv=${multiPv}`

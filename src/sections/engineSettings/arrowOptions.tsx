@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, Grid } from "@mui/material";
 import {
   showBestMoveArrowAtom,
-  showPlayerMoveArrowAtom,
+  showPlayerMoveIconAtom,
 } from "../analysis/states";
 import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
 
@@ -10,9 +10,9 @@ export default function ArrowOptions() {
     "show-arrow-best-move",
     showBestMoveArrowAtom
   );
-  const [showPlayerMove, setShowPlayerMove] = useAtomLocalStorage(
-    "show-arrow-player-move",
-    showPlayerMoveArrowAtom
+  const [showPlayerMoveIcon, setShowPlayerMoveIcon] = useAtomLocalStorage(
+    "show-icon-player-move",
+    showPlayerMoveIconAtom
   );
 
   return (
@@ -37,11 +37,11 @@ export default function ArrowOptions() {
       <FormControlLabel
         control={
           <Checkbox
-            checked={showPlayerMove}
-            onChange={(_, checked) => setShowPlayerMove(checked)}
+            checked={showPlayerMoveIcon}
+            onChange={(_, checked) => setShowPlayerMoveIcon(checked)}
           />
         }
-        label="Show played move arrow"
+        label="Show played move icon"
         sx={{ marginX: 0 }}
       />
     </Grid>

@@ -1,16 +1,15 @@
-import { useCurrentMove } from "@/hooks/useCurrentMove";
 import { Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom } from "../states";
+import { boardAtom, currentPositionAtom } from "../states";
 import { useMemo } from "react";
 import { moveLineUciToSan } from "@/lib/chess";
 import { MoveClassification } from "@/types/enums";
 
 export default function MoveInfo() {
-  const move = useCurrentMove();
+  const position = useAtomValue(currentPositionAtom);
   const board = useAtomValue(boardAtom);
 
-  const bestMove = move?.lastEval?.bestMove;
+  const bestMove = position?.lastEval?.bestMove;
 
   const bestMoveSan = useMemo(() => {
     if (!bestMove) return undefined;
@@ -23,9 +22,9 @@ export default function MoveInfo() {
 
   if (!bestMoveSan) return null;
 
-  const moveClassification = move.eval?.moveClassification;
+  const moveClassification = position.eval?.moveClassification;
   const moveLabel = moveClassification
-    ? `${move.san} is ${moveClassificationLabels[moveClassification]}`
+    ? `${position.lastMove?.san} is ${moveClassificationLabels[moveClassification]}`
     : null;
 
   const bestMoveLabel =

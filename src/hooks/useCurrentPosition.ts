@@ -1,19 +1,19 @@
 import {
   boardAtom,
-  currentMoveAtom,
+  currentPositionAtom,
   engineDepthAtom,
   engineMultiPvAtom,
   gameAtom,
   gameEvalAtom,
 } from "@/sections/analysis/states";
-import { CurrentMove, MoveEval } from "@/types/eval";
+import { CurrentPosition, PositionEval } from "@/types/eval";
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect } from "react";
 import { useEngine } from "./useEngine";
 import { EngineName } from "@/types/enums";
 
-export const useCurrentMove = (engineName?: EngineName) => {
-  const [currentMove, setCurrentMove] = useAtom(currentMoveAtom);
+export const useCurrentPosition = (engineName?: EngineName) => {
+  const [currentPosition, setCurrentPosition] = useAtom(currentPositionAtom);
   const engine = useEngine(engineName);
   const gameEval = useAtomValue(gameEvalAtom);
   const game = useAtomValue(gameAtom);
@@ -22,8 +22,8 @@ export const useCurrentMove = (engineName?: EngineName) => {
   const multiPv = useAtomValue(engineMultiPvAtom);
 
   useEffect(() => {
-    const move: CurrentMove = {
-      ...board.history({ verbose: true }).at(-1),
+    const position: CurrentPosition = {
+      lastMove: board.history({ verbose: true }).at(-1),
     };
 
     if (gameEval) {
@@ -36,15 +36,15 @@ export const useCurrentMove = (engineName?: EngineName) => {
       ) {
         const evalIndex = board.history().length;
 
-        move.eval = gameEval.moves[evalIndex];
-        move.lastEval =
-          evalIndex > 0 ? gameEval.moves[evalIndex - 1] : undefined;
+        position.eval = gameEval.positions[evalIndex];
+        position.lastEval =
+          evalIndex > 0 ? gameEval.positions[evalIndex - 1] : undefined;
       }
     }
 
-    if (!move.eval && engine?.isReady()) {
-      const setPartialEval = (moveEval: MoveEval) => {
-        setCurrentMove({ ...move, eval: moveEval });
+    if (!position.eval && engine?.isReady()) {
+      const setPartialEval = (positionEval: PositionEval) => {
+        setCurrentPosition({ ...position, eval: positionEval });
       };
 
       engine.evaluatePositionWithUpdate({
@@ -55,8 +55,8 @@ export const useCurrentMove = (engineName?: EngineName) => {
       });
     }
 
-    setCurrentMove(move);
-  }, [gameEval, board, game, engine, depth, multiPv, setCurrentMove]);
+    setCurrentPosition(position);
+  }, [gameEval, board, game, engine, depth, multiPv, setCurrentPosition]);
 
-  return currentMove;
+  return currentPosition;
 };

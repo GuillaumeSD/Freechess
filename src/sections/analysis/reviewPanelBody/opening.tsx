@@ -1,10 +1,10 @@
-import { useCurrentMove } from "@/hooks/useCurrentMove";
+import { useCurrentPosition } from "@/hooks/useCurrentPosition";
 import { Grid, Typography } from "@mui/material";
 
 export default function Opening() {
-  const move = useCurrentMove();
+  const position = useCurrentPosition();
 
-  const opening = move?.eval?.opening;
+  const opening = position?.eval?.opening;
   if (!opening) return null;
 
   return (

@@ -4,15 +4,15 @@ import {
   getStandardDeviation,
   getWeightedMean,
 } from "@/lib/helpers";
-import { Accuracy, MoveEval } from "@/types/eval";
+import { Accuracy, PositionEval } from "@/types/eval";
 import { getPositionWinPercentage } from "./winPercentage";
 
-export const computeAccuracy = (moves: MoveEval[]): Accuracy => {
-  const movesWinPercentage = moves.map(getPositionWinPercentage);
+export const computeAccuracy = (positions: PositionEval[]): Accuracy => {
+  const positionsWinPercentage = positions.map(getPositionWinPercentage);
 
-  const weights = getAccuracyWeights(movesWinPercentage);
+  const weights = getAccuracyWeights(positionsWinPercentage);
 
-  const movesAccuracy = getMovesAccuracy(movesWinPercentage);
+  const movesAccuracy = getMovesAccuracy(positionsWinPercentage);
 
   const whiteAccuracy = getPlayerAccuracy(movesAccuracy, weights, "white");
   const blackAccuracy = getPlayerAccuracy(movesAccuracy, weights, "black");

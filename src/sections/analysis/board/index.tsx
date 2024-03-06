@@ -4,9 +4,8 @@ import { useAtomValue } from "jotai";
 import {
   boardAtom,
   boardOrientationAtom,
-  currentMoveAtom,
+  currentPositionAtom,
   showBestMoveArrowAtom,
-  showPlayerMoveArrowAtom,
 } from "../states";
 import { Arrow, Square } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChessActions";
@@ -15,6 +14,10 @@ import PlayerInfo from "./playerInfo";
 import EvaluationBar from "./evaluationBar";
 import { useScreenSize } from "@/hooks/useScreenSize";
 import { MoveClassification } from "@/types/enums";
+import {
+  moveClassificationColors,
+  useSquareRenderer,
+} from "@/hooks/useSquareRenderer";
 
 export default function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
@@ -22,9 +25,9 @@ export default function Board() {
   const board = useAtomValue(boardAtom);
   const boardOrientation = useAtomValue(boardOrientationAtom);
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
-  const showPlayerMoveArrow = useAtomValue(showPlayerMoveArrowAtom);
   const { makeMove: makeBoardMove } = useChessActions(boardAtom);
-  const currentMove = useAtomValue(currentMoveAtom);
+  const position = useAtomValue(currentPositionAtom);
+  const squareRenderer = useSquareRenderer(position);
 
   const onPieceDrop = (
     source: Square,
@@ -45,9 +48,8 @@ export default function Board() {
   };
 
   const customArrows: Arrow[] = useMemo(() => {
-    const arrows: Arrow[] = [];
-    const bestMove = currentMove?.lastEval?.bestMove;
-    const moveClassification = currentMove?.eval?.moveClassification;
+    const bestMove = position?.lastEval?.bestMove;
+    const moveClassification = position?.eval?.moveClassification;
 
     if (
       bestMove &&
@@ -60,36 +62,11 @@ export default function Board() {
         moveClassificationColors[MoveClassification.Best],
       ] as Arrow;
 
-      arrows.push(bestMoveArrow);
+      return [bestMoveArrow];
     }
 
-    if (
-      currentMove.from &&
-      currentMove.to &&
-      showPlayerMoveArrow &&
-      moveClassification !== MoveClassification.Best
-    ) {
-      const arrowColor = moveClassification
-        ? moveClassificationColors[moveClassification]
-        : "#ffaa00";
-      const playerMoveArrow: Arrow = [
-        currentMove.from,
-        currentMove.to,
-        arrowColor,
-      ];
-
-      if (
-        arrows.every(
-          (arrow) =>
-            arrow[0] !== playerMoveArrow[0] || arrow[1] !== playerMoveArrow[1]
-        )
-      ) {
-        arrows.push(playerMoveArrow);
-      }
-    }
-
-    return arrows;
-  }, [currentMove, showBestMoveArrow, showPlayerMoveArrow]);
+    return [];
+  }, [position, showBestMoveArrow]);
 
   return (
     <Grid
@@ -131,6 +108,7 @@ export default function Board() {
               borderRadius: "5px",
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
             }}
+            customSquare={squareRenderer}
           />
         </Grid>
 
@@ -139,13 +117,3 @@ export default function Board() {
     </Grid>
   );
 }
-
-const moveClassificationColors: Record<MoveClassification, string> = {
-  [MoveClassification.Best]: "#26c2a3",
-  [MoveClassification.Book]: "#d5a47d",
-  [MoveClassification.Excellent]: "#3aab18",
-  [MoveClassification.Good]: "#81b64c",
-  [MoveClassification.Inaccuracy]: "#f7c631",
-  [MoveClassification.Mistake]: "#ffa459",
-  [MoveClassification.Blunder]: "#fa412d",
-};

@@ -1,7 +1,11 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
-import { boardAtom, boardOrientationAtom, currentMoveAtom } from "../states";
+import {
+  boardAtom,
+  boardOrientationAtom,
+  currentPositionAtom,
+} from "../states";
 import { getEvaluationBarValue } from "@/lib/chess";
 
 interface Props {
@@ -15,17 +19,17 @@ export default function EvaluationBar({ height }: Props) {
   });
   const board = useAtomValue(boardAtom);
   const boardOrientation = useAtomValue(boardOrientationAtom);
-  const currentMove = useAtomValue(currentMoveAtom);
+  const position = useAtomValue(currentPositionAtom);
 
   const isWhiteToPlay = board.turn() === "w";
 
   useEffect(() => {
-    const bestLine = currentMove?.eval?.lines[0];
+    const bestLine = position?.eval?.lines[0];
     if (!bestLine || bestLine.depth < 6) return;
 
     const evalBar = getEvaluationBarValue(bestLine, isWhiteToPlay);
     setEvalBar(evalBar);
-  }, [currentMove, isWhiteToPlay]);
+  }, [position, isWhiteToPlay]);
 
   return (
     <Grid

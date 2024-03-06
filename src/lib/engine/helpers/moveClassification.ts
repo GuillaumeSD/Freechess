@@ -1,13 +1,13 @@
-import { MoveEval } from "@/types/eval";
+import { PositionEval } from "@/types/eval";
 import { getPositionWinPercentage } from "./winPercentage";
 import { MoveClassification } from "@/types/enums";
 import { openings } from "@/data/openings";
 
 export const getMovesClassification = (
-  rawMoves: MoveEval[],
+  rawMoves: PositionEval[],
   uciMoves: string[],
   fens: string[]
-): MoveEval[] => {
+): PositionEval[] => {
   const positionsWinPercentage = rawMoves.map(getPositionWinPercentage);
   let currentOpening: string | undefined = undefined;
 

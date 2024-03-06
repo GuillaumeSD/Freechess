@@ -3,7 +3,7 @@ import {
   EvaluateGameParams,
   EvaluatePositionWithUpdateParams,
   GameEval,
-  MoveEval,
+  PositionEval,
 } from "@/types/eval";
 import { parseEvaluationResults } from "./helpers/parseResults";
 import { computeAccuracy } from "./helpers/accuracy";
@@ -108,11 +108,11 @@ export abstract class UciEngine {
     await this.sendCommands(["ucinewgame", "isready"], "readyok");
     this.worker.postMessage("position startpos");
 
-    const moves: MoveEval[] = [];
+    const positions: PositionEval[] = [];
     for (const fen of fens) {
       const whoIsCheckmated = getWhoIsCheckmated(fen);
       if (whoIsCheckmated) {
-        moves.push({
+        positions.push({
           lines: [
             {
               pv: [],
@@ -125,19 +125,19 @@ export abstract class UciEngine {
         continue;
       }
       const result = await this.evaluatePosition(fen, depth);
-      moves.push(result);
+      positions.push(result);
     }
 
-    const movesWithClassification = getMovesClassification(
-      moves,
+    const positionsWithClassification = getMovesClassification(
+      positions,
       uciMoves,
       fens
     );
-    const accuracy = computeAccuracy(moves);
+    const accuracy = computeAccuracy(positions);
 
     this.ready = true;
     return {
-      moves: movesWithClassification,
+      positions: positionsWithClassification,
       accuracy,
       settings: {
         engine: this.engineName,
@@ -148,7 +148,10 @@ export abstract class UciEngine {
     };
   }
 
-  private async evaluatePosition(fen: string, depth = 16): Promise<MoveEval> {
+  private async evaluatePosition(
+    fen: string,
+    depth = 16
+  ): Promise<PositionEval> {
     console.log(`Evaluating position: ${fen}`);
 
     const lichessEval = await getLichessEval(fen, this.multiPv);

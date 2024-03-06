@@ -1,7 +1,7 @@
 import { Move } from "chess.js";
 import { EngineName, MoveClassification } from "./enums";
 
-export interface MoveEval {
+export interface PositionEval {
   bestMove?: string;
   moveClassification?: MoveClassification;
   opening?: string;
@@ -29,7 +29,7 @@ export interface EngineSettings {
 }
 
 export interface GameEval {
-  moves: MoveEval[];
+  positions: PositionEval[];
   accuracy: Accuracy;
   settings: EngineSettings;
 }
@@ -38,13 +38,14 @@ export interface EvaluatePositionWithUpdateParams {
   fen: string;
   depth?: number;
   multiPv?: number;
-  setPartialEval: (moveEval: MoveEval) => void;
+  setPartialEval: (positionEval: PositionEval) => void;
 }
 
-export type CurrentMove = Partial<Move> & {
-  eval?: MoveEval;
-  lastEval?: MoveEval;
-};
+export interface CurrentPosition {
+  lastMove?: Move;
+  eval?: PositionEval;
+  lastEval?: PositionEval;
+}
 
 export interface EvaluateGameParams {
   fens: string[];

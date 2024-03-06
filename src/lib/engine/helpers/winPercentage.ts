@@ -1,13 +1,13 @@
 import { ceilsNumber } from "@/lib/helpers";
-import { MoveEval } from "@/types/eval";
+import { PositionEval } from "@/types/eval";
 
-export const getPositionWinPercentage = (move: MoveEval): number => {
-  if (move.lines[0].cp !== undefined) {
-    return getWinPercentageFromCp(move.lines[0].cp);
+export const getPositionWinPercentage = (position: PositionEval): number => {
+  if (position.lines[0].cp !== undefined) {
+    return getWinPercentageFromCp(position.lines[0].cp);
   }
 
-  if (move.lines[0].mate !== undefined) {
-    return getWinPercentageFromMate(move.lines[0].mate);
+  if (position.lines[0].mate !== undefined) {
+    return getWinPercentageFromMate(position.lines[0].mate);
   }
 
   throw new Error("No cp or mate in move");

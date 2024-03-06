@@ -3,7 +3,7 @@ import { Grid, List, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, engineMultiPvAtom, gameAtom } from "../states";
 import LineEvaluation from "./lineEvaluation";
-import { useCurrentMove } from "@/hooks/useCurrentMove";
+import { useCurrentPosition } from "@/hooks/useCurrentPosition";
 import { LineEval } from "@/types/eval";
 import { EngineName } from "@/types/enums";
 import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
@@ -13,7 +13,7 @@ import Opening from "./opening";
 
 export default function ReviewPanelBody() {
   const linesNumber = useAtomValue(engineMultiPvAtom);
-  const move = useCurrentMove(EngineName.Stockfish16);
+  const position = useCurrentPosition(EngineName.Stockfish16);
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
 
@@ -30,8 +30,8 @@ export default function ReviewPanelBody() {
     (_, i) => ({ pv: [`${i}`], depth: 0, multiPv: i + 1 })
   );
 
-  const engineLines = move?.eval?.lines?.length
-    ? move.eval.lines
+  const engineLines = position?.eval?.lines?.length
+    ? position.eval.lines
     : linesSkeleton;
 
   return (
