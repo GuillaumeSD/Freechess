@@ -3,6 +3,7 @@ import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom } from "../states";
 import { useChessActions } from "@/hooks/useChessActions";
+import { useEffect } from "react";
 
 export default function NextMoveButton() {
   const { makeMove: makeBoardMove } = useChessActions(boardAtom);
@@ -30,6 +31,20 @@ export default function NextMoveButton() {
       });
     }
   };
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        addNextGameMoveToBoard();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [addNextGameMoveToBoard]);
 
   return (
     <Tooltip title="Go to next move">
