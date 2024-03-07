@@ -3,7 +3,7 @@ import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom } from "../states";
 import { useChessActions } from "@/hooks/useChessActions";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 export default function NextMoveButton() {
   const { makeMove: makeBoardMove } = useChessActions(boardAtom);
@@ -17,7 +17,7 @@ export default function NextMoveButton() {
     boardHistory.length < gameHistory.length &&
     gameHistory.slice(0, boardHistory.length).join() === boardHistory.join();
 
-  const addNextGameMoveToBoard = () => {
+  const addNextGameMoveToBoard = useCallback(() => {
     if (!isButtonEnabled) return;
 
     const nextMoveIndex = boardHistory.length;
@@ -30,7 +30,7 @@ export default function NextMoveButton() {
         promotion: nextMove.promotion,
       });
     }
-  };
+  }, [isButtonEnabled, boardHistory, game, makeBoardMove]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
