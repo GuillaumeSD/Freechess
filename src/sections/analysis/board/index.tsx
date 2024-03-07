@@ -14,10 +14,7 @@ import PlayerInfo from "./playerInfo";
 import EvaluationBar from "./evaluationBar";
 import { useScreenSize } from "@/hooks/useScreenSize";
 import { MoveClassification } from "@/types/enums";
-import {
-  moveClassificationColors,
-  useSquareRenderer,
-} from "@/hooks/useSquareRenderer";
+import SquareRenderer, { moveClassificationColors } from "./squareRenderer";
 
 export default function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
@@ -27,7 +24,6 @@ export default function Board() {
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
   const { makeMove: makeBoardMove } = useChessActions(boardAtom);
   const position = useAtomValue(currentPositionAtom);
-  const squareRenderer = useSquareRenderer(position);
 
   const onPieceDrop = (
     source: Square,
@@ -108,7 +104,7 @@ export default function Board() {
               borderRadius: "5px",
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
             }}
-            customSquare={squareRenderer}
+            customSquare={SquareRenderer}
           />
         </Grid>
 
