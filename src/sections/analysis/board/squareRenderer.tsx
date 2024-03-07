@@ -15,15 +15,15 @@ const SquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
     const toSquare = position.lastMove?.to;
     const moveClassification = position?.eval?.moveClassification;
 
-    const showPlayerMove = moveClassification && showPlayerMoveIcon;
-
     const customSquareStyle: CSSProperties | undefined =
-      showPlayerMove && (fromSquare === square || toSquare === square)
+      fromSquare === square || toSquare === square
         ? {
             position: "absolute",
             width: "100%",
             height: "100%",
-            backgroundColor: moveClassificationColors[moveClassification],
+            backgroundColor: moveClassification
+              ? moveClassificationColors[moveClassification]
+              : "#ffff33",
             opacity: 0.5,
           }
         : undefined;
@@ -32,7 +32,7 @@ const SquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
       <div ref={ref} style={{ ...style, position: "relative" }}>
         {children}
         {customSquareStyle && <div style={customSquareStyle} />}
-        {showPlayerMove && square === toSquare && (
+        {moveClassification && showPlayerMoveIcon && square === toSquare && (
           <Image
             src={`/icons/${moveClassification}.png`}
             alt="move-icon"
