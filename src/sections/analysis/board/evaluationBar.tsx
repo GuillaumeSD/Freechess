@@ -25,9 +25,9 @@ export default function EvaluationBar({ height }: Props) {
 
   useEffect(() => {
     const bestLine = position?.eval?.lines[0];
-    if (!bestLine || bestLine.depth < 6) return;
+    if (!position.eval || !bestLine || bestLine.depth < 6) return;
 
-    const evalBar = getEvaluationBarValue(bestLine, isWhiteToPlay);
+    const evalBar = getEvaluationBarValue(position.eval);
     setEvalBar(evalBar);
   }, [position, isWhiteToPlay]);
 

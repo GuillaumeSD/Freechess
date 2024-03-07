@@ -40,8 +40,10 @@ const SquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
             height={40}
             style={{
               position: "absolute",
-              top: -15,
-              right: -15,
+              top: "max(-15px, -1.8vw)",
+              right: "max(-15px, -1.8vw)",
+              maxWidth: "3.6vw",
+              maxHeight: "3.6vw",
             }}
           />
         )}

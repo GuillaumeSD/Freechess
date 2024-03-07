@@ -4,32 +4,32 @@ import { MoveClassification } from "@/types/enums";
 import { openings } from "@/data/openings";
 
 export const getMovesClassification = (
-  rawMoves: PositionEval[],
+  rawPositions: PositionEval[],
   uciMoves: string[],
   fens: string[]
 ): PositionEval[] => {
-  const positionsWinPercentage = rawMoves.map(getPositionWinPercentage);
+  const positionsWinPercentage = rawPositions.map(getPositionWinPercentage);
   let currentOpening: string | undefined = undefined;
 
-  const moves = rawMoves.map((rawMove, index) => {
-    if (index === 0) return rawMove;
+  const positions = rawPositions.map((rawPosition, index) => {
+    if (index === 0) return rawPosition;
 
     const currentFen = fens[index].split(" ")[0];
     const opening = openings.find((opening) => opening.fen === currentFen);
     if (opening) {
       currentOpening = opening.name;
       return {
-        ...rawMove,
+        ...rawPosition,
         opening: opening.name,
         moveClassification: MoveClassification.Book,
       };
     }
 
     const uciMove = uciMoves[index - 1];
-    const bestMove = rawMoves[index - 1].bestMove;
+    const bestMove = rawPositions[index - 1].bestMove;
     if (uciMove === bestMove) {
       return {
-        ...rawMove,
+        ...rawPosition,
         opening: currentOpening,
         moveClassification: MoveClassification.Best,
       };
@@ -46,13 +46,13 @@ export const getMovesClassification = (
     );
 
     return {
-      ...rawMove,
+      ...rawPosition,
       opening: currentOpening,
       moveClassification,
     };
   });
 
-  return moves;
+  return positions;
 };
 
 const getMoveClassification = (

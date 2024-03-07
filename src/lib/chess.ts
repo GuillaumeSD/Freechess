@@ -1,6 +1,7 @@
-import { EvaluateGameParams, LineEval } from "@/types/eval";
+import { EvaluateGameParams, PositionEval } from "@/types/eval";
 import { Game } from "@/types/game";
 import { Chess } from "chess.js";
+import { getPositionWinPercentage } from "./engine/helpers/winPercentage";
 
 export const getEvaluateGameParams = (game: Chess): EvaluateGameParams => {
   const history = game.history({ verbose: true });
@@ -89,31 +90,26 @@ export const moveLineUciToSan = (
 };
 
 export const getEvaluationBarValue = (
-  bestLine: LineEval,
-  whiteToPlay: boolean
+  position: PositionEval
 ): { whiteBarPercentage: number; label: string } => {
-  if (bestLine.mate) {
-    return {
-      whiteBarPercentage: whiteToPlay && bestLine.mate > 0 ? 100 : 0,
-      label: `M${Math.abs(bestLine.mate)}`,
-    };
-  }
+  const whiteBarPercentage = getPositionWinPercentage(position);
+  const bestLine = position.lines[0];
 
-  if (!bestLine.cp) {
-    return { whiteBarPercentage: 50, label: "0.0" };
+  if (bestLine.mate) {
+    return { label: `M${Math.abs(bestLine.mate)}`, whiteBarPercentage };
   }
 
   const cp = bestLine.cp;
-  const whiteBarPercentage = Math.min(50 + cp / 20, 98);
+  if (!cp) return { whiteBarPercentage, label: "0.0" };
 
   const pEval = Math.abs(cp) / 100;
-  const label = pEval.toFixed(1);
+  let label = pEval.toFixed(1);
 
   if (label.toString().length > 3) {
-    return { whiteBarPercentage, label: pEval.toFixed(0) };
+    label = pEval.toFixed(0);
   }
 
-  return { whiteBarPercentage, label: pEval.toFixed(1) };
+  return { whiteBarPercentage, label };
 };
 
 export const getWhoIsCheckmated = (fen: string): "w" | "b" | null => {
