@@ -52,4 +52,5 @@ export interface EvaluateGameParams {
   uciMoves: string[];
   depth?: number;
   multiPv?: number;
+  setEvaluationProgress?: (value: number) => void;
 }

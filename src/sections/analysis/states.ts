@@ -13,3 +13,4 @@ export const showPlayerMoveIconAtom = atom(true);
 
 export const engineDepthAtom = atom(16);
 export const engineMultiPvAtom = atom(3);
+export const evaluationProgressAtom = atom(0);

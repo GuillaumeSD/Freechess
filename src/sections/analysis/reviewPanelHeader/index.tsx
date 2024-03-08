@@ -3,8 +3,13 @@ import { Grid, Typography } from "@mui/material";
 import GamePanel from "./gamePanel";
 import LoadGame from "./loadGame";
 import AnalyzeButton from "./analyzeButton";
+import LinearProgressBar from "@/components/LinearProgressBar";
+import { useAtomValue } from "jotai";
+import { evaluationProgressAtom } from "../states";
 
 export default function ReviewPanelHeader() {
+  const evaluationProgress = useAtomValue(evaluationProgressAtom);
+
   return (
     <Grid
       item
@@ -36,11 +41,12 @@ export default function ReviewPanelHeader() {
         justifyContent="center"
         alignItems="center"
         rowGap={3}
-        columnGap={15}
+        columnGap={12}
       >
         <GamePanel />
         <LoadGame />
         <AnalyzeButton />
+        <LinearProgressBar value={evaluationProgress} label="Analyzing..." />
       </Grid>
     </Grid>
   );

@@ -1,12 +1,12 @@
 import { Icon } from "@iconify/react";
-import { useState } from "react";
 import {
   engineDepthAtom,
   engineMultiPvAtom,
+  evaluationProgressAtom,
   gameAtom,
   gameEvalAtom,
 } from "../states";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { getEvaluateGameParams } from "@/lib/chess";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { LoadingButton } from "@mui/lab";
@@ -16,36 +16,33 @@ import { logAnalyticsEvent } from "@/lib/firebase";
 
 export default function AnalyzeButton() {
   const engine = useEngine(EngineName.Stockfish16);
-  const [evaluationInProgress, setEvaluationInProgress] = useState(false);
+  const [evaluationProgress, setEvaluationProgress] = useAtom(
+    evaluationProgressAtom
+  );
   const engineDepth = useAtomValue(engineDepthAtom);
   const engineMultiPv = useAtomValue(engineMultiPvAtom);
   const { setGameEval, gameFromUrl } = useGameDatabase();
-  const setEval = useSetAtom(gameEvalAtom);
+  const [gameEval, setEval] = useAtom(gameEvalAtom);
   const game = useAtomValue(gameAtom);
 
   const readyToAnalyse =
-    engine?.isReady() && game.history().length > 0 && !evaluationInProgress;
+    engine?.isReady() && game.history().length > 0 && !evaluationProgress;
 
   const handleAnalyze = async () => {
     const params = getEvaluateGameParams(game);
-    if (
-      !engine?.isReady() ||
-      params.fens.length === 0 ||
-      evaluationInProgress
-    ) {
+    if (!engine?.isReady() || params.fens.length === 0 || evaluationProgress) {
       return;
     }
-
-    setEvaluationInProgress(true);
 
     const newGameEval = await engine.evaluateGame({
       ...params,
       depth: engineDepth,
       multiPv: engineMultiPv,
+      setEvaluationProgress,
     });
 
     setEval(newGameEval);
-    setEvaluationInProgress(false);
+    setEvaluationProgress(0);
 
     if (gameFromUrl) {
       setGameEval(gameFromUrl.id, newGameEval);
@@ -59,26 +56,17 @@ export default function AnalyzeButton() {
     });
   };
 
+  if (evaluationProgress) return null;
+
   return (
     <LoadingButton
       variant="contained"
       size="small"
-      startIcon={
-        !evaluationInProgress && (
-          <Icon icon="streamline:magnifying-glass-solid" />
-        )
-      }
+      startIcon={<Icon icon="streamline:magnifying-glass-solid" />}
       onClick={handleAnalyze}
       disabled={!readyToAnalyse}
-      loading={evaluationInProgress}
-      loadingPosition={evaluationInProgress ? "end" : undefined}
-      endIcon={
-        evaluationInProgress && (
-          <Icon icon="streamline:magnifying-glass-solid" />
-        )
-      }
     >
-      {evaluationInProgress ? "Analyzing..." : "Analyze"}
+      {gameEval ? "Analyze again" : "Analyze"}
     </LoadingButton>
   );
 }

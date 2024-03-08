@@ -100,8 +100,10 @@ export abstract class UciEngine {
     uciMoves,
     depth = 16,
     multiPv = this.multiPv,
+    setEvaluationProgress,
   }: EvaluateGameParams): Promise<GameEval> {
     this.throwErrorIfNotReady();
+    setEvaluationProgress?.(1);
     await this.setMultiPv(multiPv);
     this.ready = false;
 
@@ -126,6 +128,9 @@ export abstract class UciEngine {
       }
       const result = await this.evaluatePosition(fen, depth);
       positions.push(result);
+      setEvaluationProgress?.(
+        Math.max((fens.indexOf(fen) / fens.length) * 100 - 5, 2)
+      );
     }
 
     const positionsWithClassification = getMovesClassification(
@@ -136,6 +141,7 @@ export abstract class UciEngine {
     const accuracy = computeAccuracy(positions);
 
     this.ready = true;
+    setEvaluationProgress?.(99);
     return {
       positions: positionsWithClassification,
       accuracy,

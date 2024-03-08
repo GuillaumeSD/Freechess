@@ -4,6 +4,7 @@ import { useChessActions } from "@/hooks/useChessActions";
 import {
   boardAtom,
   boardOrientationAtom,
+  evaluationProgressAtom,
   gameAtom,
   gameEvalAtom,
 } from "../states";
@@ -20,6 +21,7 @@ export default function LoadGame() {
   const { gameFromUrl } = useGameDatabase();
   const setEval = useSetAtom(gameEvalAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
+  const evaluationProgress = useAtomValue(evaluationProgressAtom);
 
   const resetAndSetGamePgn = useCallback(
     (pgn: string) => {
@@ -47,6 +49,8 @@ export default function LoadGame() {
   }, [gameFromUrl, game, resetAndSetGamePgn, setEval]);
 
   const isGameLoaded = gameFromUrl !== undefined || !!game.header().White;
+
+  if (evaluationProgress) return null;
 
   return (
     <LoadGameButton
