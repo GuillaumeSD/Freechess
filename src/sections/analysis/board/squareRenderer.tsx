@@ -23,7 +23,7 @@ const SquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
             height: "100%",
             backgroundColor: moveClassification
               ? moveClassificationColors[moveClassification]
-              : "#ffff33",
+              : "#fad541",
             opacity: 0.5,
           }
         : undefined;
