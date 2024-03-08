@@ -39,9 +39,11 @@ export default function EvaluationBar({ height }: Props) {
       alignItems="center"
       width="2rem"
       height={height}
+      border={`1px solid black`}
+      borderRadius="5px"
     >
       <Box
-        sx={{ backgroundColor: boardOrientation ? "secondary.main" : "white" }}
+        sx={{ backgroundColor: boardOrientation ? "#424242" : "white" }}
         height={`${
           boardOrientation
             ? 100 - evalBar.whiteBarPercentage
@@ -65,7 +67,7 @@ export default function EvaluationBar({ height }: Props) {
       </Box>
 
       <Box
-        sx={{ backgroundColor: boardOrientation ? "white" : "secondary.main" }}
+        sx={{ backgroundColor: boardOrientation ? "white" : "#424242" }}
         height={`${
           boardOrientation
             ? evalBar.whiteBarPercentage
