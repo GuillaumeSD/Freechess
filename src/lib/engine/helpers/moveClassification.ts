@@ -64,9 +64,9 @@ const getMoveClassification = (
     (positionWinPercentage - lastPositionWinPercentage) *
     (isWhiteMove ? 1 : -1);
 
-  if (winPercentageDiff < -15) return MoveClassification.Blunder;
+  if (winPercentageDiff < -20) return MoveClassification.Blunder;
   if (winPercentageDiff < -10) return MoveClassification.Mistake;
   if (winPercentageDiff < -5) return MoveClassification.Inaccuracy;
-  if (winPercentageDiff < 0) return MoveClassification.Good;
+  if (winPercentageDiff < -2) return MoveClassification.Good;
   return MoveClassification.Excellent;
 };
