@@ -129,7 +129,7 @@ export abstract class UciEngine {
       const result = await this.evaluatePosition(fen, depth);
       positions.push(result);
       setEvaluationProgress?.(
-        Math.max((fens.indexOf(fen) / fens.length) * 100 - 5, 2)
+        Math.max(((fens.indexOf(fen) + 1) / fens.length) * 100 - 2, 2)
       );
     }
 

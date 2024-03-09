@@ -44,6 +44,7 @@ const SquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
               right: "max(-15px, -1.8vw)",
               maxWidth: "3.6vw",
               maxHeight: "3.6vw",
+              zIndex: 100,
             }}
           />
         )}
