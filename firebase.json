@@ -5,6 +5,34 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "cleanUrls": true,
     "trailingSlash": false,
-    "predeploy": ["npm run lint", "npm run build"]
+    "predeploy": ["npm run lint", "npm run build"],
+    "headers": [
+      {
+        "source": "/",
+        "headers": [
+          {
+            "key": "Cross-Origin-Embedder-Policy",
+            "value": "require-corp"
+          },
+          {
+            "key": "Cross-Origin-Opener-Policy",
+            "value": "same-origin"
+          }
+        ]
+      },
+      {
+        "source": "/engines/stockfish-wasm/stockfish-nnue-16.js",
+        "headers": [
+          {
+            "key": "Cross-Origin-Embedder-Policy",
+            "value": "require-corp"
+          },
+          {
+            "key": "Cross-Origin-Opener-Policy",
+            "value": "same-origin"
+          }
+        ]
+      }
+    ]
   }
 }

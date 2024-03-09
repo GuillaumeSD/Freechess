@@ -23,7 +23,7 @@ export default function Accuracies() {
         lineHeight={1}
         padding={1}
         fontWeight="bold"
-        border={`1px solid #424242`}
+        border="1px solid #424242"
       >
         {`${gameEval?.accuracy.white.toFixed(1)} %`}
       </Typography>
@@ -37,7 +37,7 @@ export default function Accuracies() {
         lineHeight={1}
         padding={1}
         fontWeight="bold"
-        border={`1px solid #424242`}
+        border="1px solid #424242"
       >
         {`${gameEval?.accuracy.black.toFixed(1)} %`}
       </Typography>
