@@ -29,7 +29,9 @@ export default function MoveInfo() {
 
   const bestMoveLabel =
     moveClassification === MoveClassification.Best ||
-    moveClassification === MoveClassification.Book
+    moveClassification === MoveClassification.Book ||
+    moveClassification === MoveClassification.Brilliant ||
+    moveClassification === MoveClassification.Great
       ? null
       : `${bestMoveSan} was the best move`;
 
