@@ -131,7 +131,11 @@ export const getIsPieceSacrifice = (
   bestLinePvToPlay: string[]
 ): boolean => {
   const exchangeSquare = playedMove.slice(2, 4);
-  if (bestLinePvToPlay[0].slice(2, 4) !== exchangeSquare) return false;
+  if (
+    !bestLinePvToPlay.length ||
+    bestLinePvToPlay[0].slice(2, 4) !== exchangeSquare
+  )
+    return false;
 
   const game = new Chess(fen);
   const whiteToPlay = game.turn() === "w";
