@@ -1,16 +1,20 @@
 import { ceilsNumber } from "@/lib/helpers";
-import { PositionEval } from "@/types/eval";
+import { LineEval, PositionEval } from "@/types/eval";
 
 export const getPositionWinPercentage = (position: PositionEval): number => {
-  if (position.lines[0].cp !== undefined) {
-    return getWinPercentageFromCp(position.lines[0].cp);
+  return getLineWinPercentage(position.lines[0]);
+};
+
+export const getLineWinPercentage = (line: LineEval): number => {
+  if (line.cp !== undefined) {
+    return getWinPercentageFromCp(line.cp);
   }
 
-  if (position.lines[0].mate !== undefined) {
-    return getWinPercentageFromMate(position.lines[0].mate);
+  if (line.mate !== undefined) {
+    return getWinPercentageFromMate(line.mate);
   }
 
-  throw new Error("No cp or mate in move");
+  throw new Error("No cp or mate in line");
 };
 
 const getWinPercentageFromMate = (mate: number): number => {

@@ -1,6 +1,6 @@
 import { EvaluateGameParams, PositionEval } from "@/types/eval";
 import { Game } from "@/types/game";
-import { Chess } from "chess.js";
+import { Chess, PieceSymbol } from "chess.js";
 import { getPositionWinPercentage } from "./engine/helpers/winPercentage";
 
 export const getEvaluateGameParams = (game: Chess): EvaluateGameParams => {
@@ -76,12 +76,7 @@ export const moveLineUciToSan = (
 
   return (moveUci: string): string => {
     try {
-      const move = game.move({
-        from: moveUci.slice(0, 2),
-        to: moveUci.slice(2, 4),
-        promotion: moveUci.slice(4, 5) || undefined,
-      });
-
+      const move = game.move(uciMoveParams(moveUci));
       return move.san;
     } catch (e) {
       return moveUci;
@@ -116,4 +111,69 @@ export const getWhoIsCheckmated = (fen: string): "w" | "b" | null => {
   const game = new Chess(fen);
   if (!game.isCheckmate()) return null;
   return game.turn();
+};
+
+export const uciMoveParams = (
+  uciMove: string
+): {
+  from: string;
+  to: string;
+  promotion?: string | undefined;
+} => ({
+  from: uciMove.slice(0, 2),
+  to: uciMove.slice(2, 4),
+  promotion: uciMove.slice(4, 5) || undefined,
+});
+
+export const getIsPieceSacrifice = (
+  fen: string,
+  playedMove: string,
+  bestLinePvToPlay: string[]
+): boolean => {
+  if (playedMove.slice(2, 4) !== bestLinePvToPlay[0].slice(2, 4)) return false;
+
+  const game = new Chess(fen);
+  const whiteToPlay = game.turn() === "w";
+  const startingMaterialDifference = getMaterialDifference(fen);
+  game.move(uciMoveParams(playedMove));
+  game.move(uciMoveParams(bestLinePvToPlay[0]));
+  const endingMaterialDifference = getMaterialDifference(game.fen());
+
+  const materialDiff = endingMaterialDifference - startingMaterialDifference;
+  const materialDiffPlayerRelative = whiteToPlay ? materialDiff : -materialDiff;
+
+  return materialDiffPlayerRelative < 0;
+};
+
+export const getMaterialDifference = (fen: string): number => {
+  const game = new Chess(fen);
+  const board = game.board().flat();
+
+  return board.reduce((acc, square) => {
+    if (!square) return acc;
+    const piece = square.type;
+
+    if (square.color === "w") {
+      return acc + getPieceValue(piece);
+    }
+
+    return acc - getPieceValue(piece);
+  }, 0);
+};
+
+const getPieceValue = (piece: PieceSymbol): number => {
+  switch (piece) {
+    case "p":
+      return 1;
+    case "n":
+      return 3;
+    case "b":
+      return 3;
+    case "r":
+      return 5;
+    case "q":
+      return 9;
+    default:
+      return 0;
+  }
 };

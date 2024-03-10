@@ -38,7 +38,7 @@ export abstract class UciEngine {
       this.throwErrorIfNotReady();
     }
 
-    if (multiPv < 1 || multiPv > 6) {
+    if (multiPv < 2 || multiPv > 6) {
       throw new Error(`Invalid MultiPV value : ${multiPv}`);
     }
 

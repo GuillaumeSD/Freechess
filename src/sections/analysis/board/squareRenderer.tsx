@@ -58,8 +58,10 @@ SquareRenderer.displayName = "CustomSquareRenderer";
 export default SquareRenderer;
 
 export const moveClassificationColors: Record<MoveClassification, string> = {
-  [MoveClassification.Best]: "#3aab18",
   [MoveClassification.Book]: "#d5a47d",
+  [MoveClassification.Brilliant]: "#26c2a3",
+  [MoveClassification.Great]: "#749bbf",
+  [MoveClassification.Best]: "#3aab18",
   [MoveClassification.Excellent]: "#3aab18",
   [MoveClassification.Good]: "#81b64c",
   [MoveClassification.Inaccuracy]: "#f7c631",

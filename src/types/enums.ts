@@ -15,4 +15,6 @@ export enum MoveClassification {
   Excellent = "excellent",
   Best = "best",
   Book = "book",
+  Great = "great",
+  Brilliant = "brilliant",
 }

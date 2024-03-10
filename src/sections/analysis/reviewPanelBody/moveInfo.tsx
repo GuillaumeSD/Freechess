@@ -42,11 +42,13 @@ export default function MoveInfo() {
 }
 
 const moveClassificationLabels: Record<MoveClassification, string> = {
-  [MoveClassification.Blunder]: "a blunder",
-  [MoveClassification.Mistake]: "a mistake",
-  [MoveClassification.Inaccuracy]: "an inaccuracy",
-  [MoveClassification.Good]: "good",
-  [MoveClassification.Excellent]: "excellent",
-  [MoveClassification.Best]: "the best move",
   [MoveClassification.Book]: "a book move",
+  [MoveClassification.Brilliant]: "brilliant !!",
+  [MoveClassification.Great]: "a great move !",
+  [MoveClassification.Best]: "the best move",
+  [MoveClassification.Excellent]: "excellent",
+  [MoveClassification.Good]: "good",
+  [MoveClassification.Inaccuracy]: "an inaccuracy",
+  [MoveClassification.Mistake]: "a mistake",
+  [MoveClassification.Blunder]: "a blunder",
 };

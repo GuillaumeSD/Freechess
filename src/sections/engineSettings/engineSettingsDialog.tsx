@@ -86,7 +86,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
             label="Number of lines"
             value={multiPv}
             setValue={setMultiPv}
-            min={1}
+            min={2}
             max={6}
             xs={6}
           />
