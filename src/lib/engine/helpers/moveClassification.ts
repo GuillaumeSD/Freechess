@@ -47,11 +47,13 @@ export const getMovesClassification = (
 
     if (
       isBrilliantMove(
+        lastPositionWinPercentage,
         positionWinPercentage,
         isWhiteMove,
         playedMove,
         bestLinePvToPlay,
-        fens[index - 1]
+        fens[index - 1],
+        lastPositionAlternativeLineWinPercentage
       )
     ) {
       return {
@@ -117,26 +119,34 @@ const getMoveBasicClassification = (
 };
 
 const isBrilliantMove = (
+  lastPositionWinPercentage: number,
   positionWinPercentage: number,
   isWhiteMove: boolean,
   playedMove: string,
   bestLinePvToPlay: string[],
-  fen: string
+  fen: string,
+  lastPositionAlternativeLineWinPercentage: number | undefined
 ): boolean => {
+  if (!lastPositionAlternativeLineWinPercentage) return false;
+
+  const winPercentageDiff =
+    (positionWinPercentage - lastPositionWinPercentage) *
+    (isWhiteMove ? 1 : -1);
+  if (winPercentageDiff < -2) return false;
+
   const isPieceSacrifice = getIsPieceSacrifice(
     fen,
     playedMove,
     bestLinePvToPlay
   );
-
   if (!isPieceSacrifice) return false;
 
   const isNotLosing = isWhiteMove
-    ? positionWinPercentage > 50
-    : positionWinPercentage < 50;
+    ? positionWinPercentage >= 50
+    : positionWinPercentage <= 50;
   const isAlternateCompletelyWinning = isWhiteMove
-    ? positionWinPercentage > 70
-    : positionWinPercentage < 30;
+    ? lastPositionAlternativeLineWinPercentage > 70
+    : lastPositionAlternativeLineWinPercentage < 30;
 
   return isNotLosing && !isAlternateCompletelyWinning;
 };
@@ -152,7 +162,6 @@ const isGreatMove = (
   const winPercentageDiff =
     (positionWinPercentage - lastPositionWinPercentage) *
     (isWhiteMove ? 1 : -1);
-
   if (winPercentageDiff < -2) return false;
 
   const hasChangedGameOutcome = getHasChangedGameOutcome(
@@ -167,7 +176,7 @@ const isGreatMove = (
     isWhiteMove
   );
 
-  return hasChangedGameOutcome && isTheOnlyGoodMove;
+  return hasChangedGameOutcome || isTheOnlyGoodMove;
 };
 
 const getHasChangedGameOutcome = (

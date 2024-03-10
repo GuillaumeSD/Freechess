@@ -130,19 +130,25 @@ export const getIsPieceSacrifice = (
   playedMove: string,
   bestLinePvToPlay: string[]
 ): boolean => {
-  if (playedMove.slice(2, 4) !== bestLinePvToPlay[0].slice(2, 4)) return false;
+  const exchangeSquare = playedMove.slice(2, 4);
+  if (bestLinePvToPlay[0].slice(2, 4) !== exchangeSquare) return false;
 
   const game = new Chess(fen);
   const whiteToPlay = game.turn() === "w";
   const startingMaterialDifference = getMaterialDifference(fen);
+
   game.move(uciMoveParams(playedMove));
-  game.move(uciMoveParams(bestLinePvToPlay[0]));
+  for (const move of bestLinePvToPlay) {
+    if (move.slice(2, 4) !== exchangeSquare) break;
+    game.move(uciMoveParams(move));
+  }
+
   const endingMaterialDifference = getMaterialDifference(game.fen());
 
   const materialDiff = endingMaterialDifference - startingMaterialDifference;
   const materialDiffPlayerRelative = whiteToPlay ? materialDiff : -materialDiff;
 
-  return materialDiffPlayerRelative < 0;
+  return materialDiffPlayerRelative < -1;
 };
 
 export const getMaterialDifference = (fen: string): number => {

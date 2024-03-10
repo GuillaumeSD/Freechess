@@ -36,22 +36,11 @@ export const getLichessEval = async (
     }));
 
     lines.sort(sortLines);
+    const isWhiteToPlay = fen.split(" ")[1] === "w";
+    if (!isWhiteToPlay) lines.reverse();
 
     const bestMove = lines[0].pv[0];
     const linesToKeep = lines.slice(0, multiPv);
-
-    const isWhiteToPlay = fen.split(" ")[1] === "w";
-
-    if (!isWhiteToPlay) {
-      return {
-        bestMove,
-        lines: linesToKeep.map((line) => ({
-          ...line,
-          cp: line.cp ? -line.cp : line.cp,
-          mate: line.mate ? -line.mate : line.mate,
-        })),
-      };
-    }
 
     return {
       bestMove,
