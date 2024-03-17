@@ -47,6 +47,13 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
           </NavLink>
           <IconButton
             color="inherit"
+            onClick={() => window.open("https://discord.gg/Yr99abAcUr")}
+          >
+            <Icon icon="ri:discord-fill" />
+          </IconButton>
+          <IconButton
+            color="inherit"
+            sx={{ ml: 1 }}
             onClick={() =>
               window.open("https://github.com/GuillaumeSD/freechess")
             }
