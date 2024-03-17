@@ -31,7 +31,7 @@ export default function Board() {
 
   useEffect(() => {
     setClickedSquares([]);
-  }, [boardFen]);
+  }, [boardFen, setClickedSquares]);
 
   const onPieceDrop = (
     source: Square,
