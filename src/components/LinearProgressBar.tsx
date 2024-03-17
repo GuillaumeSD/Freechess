@@ -24,8 +24,9 @@ const LinearProgressBar = (
         alignItems="center"
         justifyContent="center"
         wrap="nowrap"
+        columnGap={2}
       >
-        <Grid item sx={{ width: "100%", mr: 2 }}>
+        <Grid item sx={{ width: "100%" }}>
           <LinearProgress
             variant="determinate"
             {...props}
@@ -45,7 +46,7 @@ const LinearProgressBar = (
             })}
           />
         </Grid>
-        <Grid item sx={{ minWidth: 35 }}>
+        <Grid item>
           <Typography variant="body2" color="text.secondary">{`${Math.round(
             props.value
           )}%`}</Typography>

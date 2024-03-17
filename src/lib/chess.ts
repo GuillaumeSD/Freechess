@@ -130,10 +130,9 @@ export const getIsPieceSacrifice = (
   playedMove: string,
   bestLinePvToPlay: string[]
 ): boolean => {
-  const exchangeSquare = playedMove.slice(2, 4);
   if (
     !bestLinePvToPlay.length ||
-    bestLinePvToPlay[0].slice(2, 4) !== exchangeSquare
+    bestLinePvToPlay[0].slice(2, 4) !== playedMove.slice(2, 4)
   )
     return false;
 
@@ -141,10 +140,20 @@ export const getIsPieceSacrifice = (
   const whiteToPlay = game.turn() === "w";
   const startingMaterialDifference = getMaterialDifference(fen);
 
-  game.move(uciMoveParams(playedMove));
-  for (const move of bestLinePvToPlay) {
-    if (move.slice(2, 4) !== exchangeSquare) break;
-    game.move(uciMoveParams(move));
+  let moves = [playedMove, ...bestLinePvToPlay];
+  if (moves.length % 2 === 1) {
+    moves = moves.slice(0, -1);
+  }
+  let nonCapturingMovesTemp = 1;
+
+  for (const move of moves) {
+    const fullMove = game.move(uciMoveParams(move));
+    if (fullMove.captured) {
+      nonCapturingMovesTemp = 1;
+    } else {
+      nonCapturingMovesTemp--;
+      if (nonCapturingMovesTemp < 0) break;
+    }
   }
 
   const endingMaterialDifference = getMaterialDifference(game.fen());
