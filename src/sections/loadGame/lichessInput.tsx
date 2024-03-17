@@ -1,7 +1,7 @@
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { getChessComUserRecentGames } from "@/lib/chessCom";
+import { getLichessUserRecentGames } from "@/lib/lichess";
 import { capitalize } from "@/lib/helpers";
-import { ChessComGame } from "@/types/chessCom";
+import { LichessGame } from "@/types/lichess";
 import {
   CircularProgress,
   FormControl,
@@ -17,23 +17,23 @@ interface Props {
   setPgn: (pgn: string) => void;
 }
 
-export default function ChessComInput({ pgn, setPgn }: Props) {
+export default function LichessInput({ pgn, setPgn }: Props) {
   const [requestCount, setRequestCount] = useState(0);
-  const [chessComUsername, setChessComUsername] = useLocalStorage(
-    "chesscom-username",
+  const [lichessUsername, setLichessUsername] = useLocalStorage(
+    "lichess-username",
     ""
   );
-  const [games, setGames] = useState<ChessComGame[]>([]);
+  const [games, setGames] = useState<LichessGame[]>([]);
 
   useEffect(() => {
-    if (!chessComUsername) {
+    if (!lichessUsername) {
       setGames([]);
       return;
     }
 
     const timeout = setTimeout(
       async () => {
-        const games = await getChessComUserRecentGames(chessComUsername);
+        const games = await getLichessUserRecentGames(lichessUsername);
         setGames(games);
       },
       requestCount === 0 ? 0 : 500
@@ -44,20 +44,20 @@ export default function ChessComInput({ pgn, setPgn }: Props) {
     return () => {
       clearTimeout(timeout);
     };
-  }, [chessComUsername]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lichessUsername]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
       <FormControl sx={{ m: 1, width: 300 }}>
         <TextField
-          label="Enter your Chess.com username..."
+          label="Enter your Lichess username..."
           variant="outlined"
-          value={chessComUsername ?? ""}
-          onChange={(e) => setChessComUsername(e.target.value)}
+          value={lichessUsername ?? ""}
+          onChange={(e) => setLichessUsername(e.target.value)}
         />
       </FormControl>
 
-      {chessComUsername && (
+      {lichessUsername && (
         <Grid
           container
           item
@@ -72,16 +72,18 @@ export default function ChessComInput({ pgn, setPgn }: Props) {
               onClick={() => setPgn(game.pgn)}
               selected={pgn === game.pgn}
               style={{ width: 350, maxWidth: 350 }}
-              key={game.uuid}
+              key={game.id}
             >
               <ListItemText
-                primary={`${capitalize(game.white.username) || "White"} (${
-                  game.white.rating || "?"
-                }) vs ${capitalize(game.black.username) || "Black"} (${
-                  game.black.rating || "?"
-                })`}
-                secondary={`${capitalize(game.time_class)} played at ${new Date(
-                  game.end_time * 1000
+                primary={`${
+                  capitalize(game.players.white.user?.name || "white") ||
+                  "White"
+                } (${game.players?.white?.rating || "?"}) vs ${
+                  capitalize(game.players.black.user?.name || "black") ||
+                  "Black"
+                } (${game.players?.black?.rating || "?"})`}
+                secondary={`${capitalize(game.speed)} played at ${new Date(
+                  game.lastMoveAt
                 )
                   .toLocaleString()
                   .slice(0, -3)}`}

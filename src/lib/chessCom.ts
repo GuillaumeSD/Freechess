@@ -1,7 +1,7 @@
 import { ChessComGame } from "@/types/chessCom";
 import { getPaddedMonth } from "./helpers";
 
-export const getUserRecentGames = async (
+export const getChessComUserRecentGames = async (
   username: string
 ): Promise<ChessComGame[]> => {
   const date = new Date();

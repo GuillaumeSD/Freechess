@@ -20,6 +20,7 @@ import { useState } from "react";
 import GamePgnInput from "./gamePgnInput";
 import ChessComInput from "./chessComInput";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import LichessInput from "./lichessInput";
 
 interface Props {
   open: boolean;
@@ -105,6 +106,10 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
             <ChessComInput pgn={pgn} setPgn={setPgn} />
           )}
 
+          {gameOrigin === GameOrigin.Lichess && (
+            <LichessInput pgn={pgn} setPgn={setPgn} />
+          )}
+
           {parsingError && (
             <FormControl fullWidth>
               <Typography color="red" textAlign="center" marginTop={1}>
@@ -133,4 +138,5 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
 const gameOriginLabel: Record<GameOrigin, string> = {
   [GameOrigin.Pgn]: "PGN",
   [GameOrigin.ChessCom]: "Chess.com",
+  [GameOrigin.Lichess]: "Lichess.org",
 };
