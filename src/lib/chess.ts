@@ -196,3 +196,11 @@ const getPieceValue = (piece: PieceSymbol): number => {
       return 0;
   }
 };
+
+export const getStartingFen = (pgn: string): string => {
+  const game = new Chess();
+  game.loadPgn(pgn);
+
+  const history = game.history({ verbose: true });
+  return history[0].before;
+};

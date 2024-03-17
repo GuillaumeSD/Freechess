@@ -12,6 +12,7 @@ import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { useAtomValue, useSetAtom } from "jotai";
 import { Chess } from "chess.js";
 import { useRouter } from "next/router";
+import { getStartingFen } from "@/lib/chess";
 
 export default function LoadGame() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function LoadGame() {
 
   const resetAndSetGamePgn = useCallback(
     (pgn: string) => {
-      resetBoard();
+      resetBoard(getStartingFen(pgn));
       setEval(undefined);
       setBoardOrientation(true);
       setGamePgn(pgn);

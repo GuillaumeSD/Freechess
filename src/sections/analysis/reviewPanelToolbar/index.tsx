@@ -8,6 +8,7 @@ import NextMoveButton from "./nextMoveButton";
 import GoToLastPositionButton from "./goToLastPositionButton";
 import SaveButton from "./saveButton";
 import { useEffect } from "react";
+import { getStartingFen } from "@/lib/chess";
 
 export default function ReviewPanelToolBar() {
   const board = useAtomValue(boardAtom);
@@ -38,7 +39,7 @@ export default function ReviewPanelToolBar() {
       <Tooltip title="Reset board">
         <Grid>
           <IconButton
-            onClick={() => resetBoard()}
+            onClick={() => resetBoard(getStartingFen(board.pgn()))}
             disabled={boardHistory.length === 0}
           >
             <Icon icon="ri:skip-back-line" />

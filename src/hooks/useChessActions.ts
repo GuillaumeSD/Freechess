@@ -14,9 +14,12 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
     [setGame]
   );
 
-  const reset = useCallback(() => {
-    setGame(new Chess());
-  }, [setGame]);
+  const reset = useCallback(
+    (fen?: string) => {
+      setGame(new Chess(fen));
+    },
+    [setGame]
+  );
 
   const copyGame = useCallback(() => {
     const newGame = new Chess();
