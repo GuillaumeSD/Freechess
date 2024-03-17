@@ -1,22 +1,40 @@
-import { currentPositionAtom, showPlayerMoveIconAtom } from "../states";
+import {
+  clickedSquaresAtom,
+  currentPositionAtom,
+  showPlayerMoveIconAtom,
+} from "../states";
 import { MoveClassification } from "@/types/enums";
-import { useAtomValue } from "jotai";
+import { atom, useAtom, useAtomValue } from "jotai";
 import Image from "next/image";
-import { CSSProperties, forwardRef } from "react";
+import { CSSProperties, MouseEventHandler, forwardRef } from "react";
 import { CustomSquareProps } from "react-chessboard/dist/chessboard/types";
+
+const rightClickEventSquareAtom = atom<string | null>(null);
 
 const SquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
   (props, ref) => {
     const { children, square, style } = props;
     const showPlayerMoveIcon = useAtomValue(showPlayerMoveIconAtom);
     const position = useAtomValue(currentPositionAtom);
+    const [clickedSquares, setClickedSquares] = useAtom(clickedSquaresAtom);
+    const [rightClickEventSquare, setRightClickEventSquare] = useAtom(
+      rightClickEventSquareAtom
+    );
 
     const fromSquare = position.lastMove?.from;
     const toSquare = position.lastMove?.to;
     const moveClassification = position?.eval?.moveClassification;
 
     const customSquareStyle: CSSProperties | undefined =
-      fromSquare === square || toSquare === square
+      clickedSquares.includes(square)
+        ? {
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#eb6150",
+            opacity: "0.8",
+          }
+        : fromSquare === square || toSquare === square
         ? {
             position: "absolute",
             width: "100%",
@@ -28,8 +46,35 @@ const SquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
           }
         : undefined;
 
+    const handleSquareLeftClick: MouseEventHandler<HTMLDivElement> = () => {
+      setClickedSquares([]);
+    };
+
+    const handleSquareRightClick: MouseEventHandler<HTMLDivElement> = (
+      event
+    ) => {
+      if (event.button !== 2) return;
+
+      if (rightClickEventSquare !== square) {
+        setRightClickEventSquare(null);
+        return;
+      }
+
+      setClickedSquares((prev) =>
+        prev.includes(square)
+          ? prev.filter((s) => s !== square)
+          : [...prev, square]
+      );
+    };
+
     return (
-      <div ref={ref} style={{ ...style, position: "relative" }}>
+      <div
+        ref={ref}
+        style={{ ...style, position: "relative" }}
+        onClick={handleSquareLeftClick}
+        onMouseDown={(e) => e.button === 2 && setRightClickEventSquare(square)}
+        onMouseUp={handleSquareRightClick}
+      >
         {children}
         {customSquareStyle && <div style={customSquareStyle} />}
         {moveClassification && showPlayerMoveIcon && square === toSquare && (

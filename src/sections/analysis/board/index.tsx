@@ -1,15 +1,16 @@
 import { Grid } from "@mui/material";
 import { Chessboard } from "react-chessboard";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import {
   boardAtom,
   boardOrientationAtom,
+  clickedSquaresAtom,
   currentPositionAtom,
   showBestMoveArrowAtom,
 } from "../states";
 import { Arrow, Square } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChessActions";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import PlayerInfo from "./playerInfo";
 import EvaluationBar from "./evaluationBar";
 import { useScreenSize } from "@/hooks/useScreenSize";
@@ -24,6 +25,13 @@ export default function Board() {
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
   const { makeMove: makeBoardMove } = useChessActions(boardAtom);
   const position = useAtomValue(currentPositionAtom);
+  const setClickedSquares = useSetAtom(clickedSquaresAtom);
+
+  const boardFen = board.fen();
+
+  useEffect(() => {
+    setClickedSquares([]);
+  }, [boardFen]);
 
   const onPieceDrop = (
     source: Square,
@@ -96,7 +104,7 @@ export default function Board() {
         >
           <Chessboard
             id="AnalysisBoard"
-            position={board.fen()}
+            position={boardFen}
             onPieceDrop={onPieceDrop}
             boardOrientation={boardOrientation ? "white" : "black"}
             customArrows={customArrows}
