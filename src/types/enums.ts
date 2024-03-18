@@ -19,3 +19,8 @@ export enum MoveClassification {
   Great = "great",
   Brilliant = "brilliant",
 }
+
+export enum Color {
+  White = "w",
+  Black = "b",
+}

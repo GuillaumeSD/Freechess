@@ -5,7 +5,10 @@ import {
   GameEval,
   PositionEval,
 } from "@/types/eval";
-import { parseEvaluationResults } from "./helpers/parseResults";
+import {
+  getResultProperty,
+  parseEvaluationResults,
+} from "./helpers/parseResults";
 import { computeAccuracy } from "./helpers/accuracy";
 import { getWhoIsCheckmated } from "../chess";
 import { getLichessEval } from "../lichess";
@@ -16,6 +19,7 @@ export abstract class UciEngine {
   private ready = false;
   private engineName: EngineName;
   private multiPv = 3;
+  private skillLevel: number | undefined = undefined;
 
   constructor(engineName: EngineName, enginePath: string) {
     this.engineName = engineName;
@@ -48,6 +52,25 @@ export abstract class UciEngine {
     );
 
     this.multiPv = multiPv;
+  }
+
+  private async setSkillLevel(skillLevel: number, initCase = false) {
+    if (!initCase) {
+      if (skillLevel === this.skillLevel) return;
+
+      this.throwErrorIfNotReady();
+    }
+
+    if (skillLevel < 0 || skillLevel > 20) {
+      throw new Error(`Invalid SkillLevel value : ${skillLevel}`);
+    }
+
+    await this.sendCommands(
+      [`setoption name Skill Level value ${skillLevel}`, "isready"],
+      "readyok"
+    );
+
+    this.skillLevel = skillLevel;
   }
 
   private throwErrorIfNotReady() {
@@ -214,5 +237,29 @@ export abstract class UciEngine {
       "bestmove",
       onNewMessage
     );
+  }
+
+  public async getEngineNextMove(
+    fen: string,
+    skillLevel: number,
+    depth = 16
+  ): Promise<string> {
+    this.throwErrorIfNotReady();
+    await this.setSkillLevel(skillLevel);
+
+    console.log(`Evaluating position: ${fen}`);
+
+    const results = await this.sendCommands(
+      [`position fen ${fen}`, `go depth ${depth}`],
+      "bestmove"
+    );
+
+    const moveResult = results.find((result) => result.startsWith("bestmove"));
+    const move = getResultProperty(moveResult ?? "", "bestmove");
+    if (!move) {
+      throw new Error("No move found");
+    }
+
+    return move;
   }
 }

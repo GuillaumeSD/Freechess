@@ -72,7 +72,7 @@ export const sortLines = (a: LineEval, b: LineEval): number => {
   return (b.cp ?? 0) - (a.cp ?? 0);
 };
 
-const getResultProperty = (
+export const getResultProperty = (
   result: string,
   property: string
 ): string | undefined => {
