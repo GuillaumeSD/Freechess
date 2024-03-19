@@ -5,6 +5,7 @@ import {
   clickedSquaresAtom,
   engineSkillLevelAtom,
   gameAtom,
+  playableSquaresAtom,
   playerColorAtom,
 } from "../states";
 import { Square } from "react-chessboard/dist/chessboard/types";
@@ -24,23 +25,30 @@ export default function Board() {
   const playerColor = useAtomValue(playerColorAtom);
   const { makeMove: makeBoardMove } = useChessActions(gameAtom);
   const setClickedSquares = useSetAtom(clickedSquaresAtom);
+  const setPlayableSquares = useSetAtom(playableSquaresAtom);
   const engineSkillLevel = useAtomValue(engineSkillLevelAtom);
   const engine = useEngine(EngineName.Stockfish16);
 
   const gameFen = game.fen();
-  const turn = game.turn();
+  const isGameFinished = game.isGameOver();
 
   useEffect(() => {
     const playEngineMove = async () => {
-      if (!engine?.isReady() || turn === playerColor) return;
+      if (!engine?.isReady() || game.turn() === playerColor || isGameFinished) {
+        return;
+      }
       const move = await engine.getEngineNextMove(
         gameFen,
         engineSkillLevel - 1
       );
-      makeBoardMove(uciMoveParams(move));
+      if (move) makeBoardMove(uciMoveParams(move));
     };
     playEngineMove();
-  }, [engine, turn, engine, playerColor, engineSkillLevel]);
+
+    return () => {
+      engine?.stopSearch();
+    };
+  }, [gameFen, engine]);
 
   useEffect(() => {
     setClickedSquares([]);
@@ -68,6 +76,27 @@ export default function Board() {
   const isPieceDraggable = ({ piece }: { piece: string }): boolean => {
     if (!piece) return false;
     return playerColor === piece[0];
+  };
+
+  const handleSquareLeftClick = () => {
+    setClickedSquares([]);
+  };
+
+  const handleSquareRightClick = (square: Square) => {
+    setClickedSquares((prev) =>
+      prev.includes(square)
+        ? prev.filter((s) => s !== square)
+        : [...prev, square]
+    );
+  };
+
+  const handlePieceDragBegin = (_: string, square: Square) => {
+    const moves = game.moves({ square, verbose: true });
+    setPlayableSquares(moves.map((m) => m.to));
+  };
+
+  const handlePieceDragEnd = () => {
+    setPlayableSquares([]);
   };
 
   return (
@@ -103,6 +132,10 @@ export default function Board() {
           }}
           isDraggablePiece={isPieceDraggable}
           customSquare={SquareRenderer}
+          onSquareClick={handleSquareLeftClick}
+          onSquareRightClick={handleSquareRightClick}
+          onPieceDragBegin={handlePieceDragBegin}
+          onPieceDragEnd={handlePieceDragEnd}
         />
       </Grid>
 

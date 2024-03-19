@@ -7,3 +7,4 @@ export const playerColorAtom = atom<Color>(Color.White);
 export const engineSkillLevelAtom = atom<number>(1);
 
 export const clickedSquaresAtom = atom<string[]>([]);
+export const playableSquaresAtom = atom<string[]>([]);

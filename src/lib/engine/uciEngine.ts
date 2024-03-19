@@ -90,7 +90,7 @@ export abstract class UciEngine {
     return this.ready;
   }
 
-  private async stopSearch(): Promise<void> {
+  public async stopSearch(): Promise<void> {
     await this.sendCommands(["stop", "isready"], "readyok");
   }
 
@@ -243,7 +243,7 @@ export abstract class UciEngine {
     fen: string,
     skillLevel: number,
     depth = 16
-  ): Promise<string> {
+  ): Promise<string | undefined> {
     this.throwErrorIfNotReady();
     await this.setSkillLevel(skillLevel);
 
@@ -260,6 +260,6 @@ export abstract class UciEngine {
       throw new Error("No move found");
     }
 
-    return move;
+    return move === "(none)" ? undefined : move;
   }
 }

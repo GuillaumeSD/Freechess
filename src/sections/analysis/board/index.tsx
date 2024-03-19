@@ -6,6 +6,7 @@ import {
   boardOrientationAtom,
   clickedSquaresAtom,
   currentPositionAtom,
+  playableSquaresAtom,
   showBestMoveArrowAtom,
 } from "../states";
 import { Arrow, Square } from "react-chessboard/dist/chessboard/types";
@@ -26,6 +27,7 @@ export default function Board() {
   const { makeMove: makeBoardMove } = useChessActions(boardAtom);
   const position = useAtomValue(currentPositionAtom);
   const setClickedSquares = useSetAtom(clickedSquaresAtom);
+  const setPlayableSquares = useSetAtom(playableSquaresAtom);
 
   const boardFen = board.fen();
 
@@ -49,6 +51,27 @@ export default function Board() {
     } catch {
       return false;
     }
+  };
+
+  const handleSquareLeftClick = () => {
+    setClickedSquares([]);
+  };
+
+  const handleSquareRightClick = (square: Square) => {
+    setClickedSquares((prev) =>
+      prev.includes(square)
+        ? prev.filter((s) => s !== square)
+        : [...prev, square]
+    );
+  };
+
+  const handlePieceDragBegin = (_: string, square: Square) => {
+    const moves = board.moves({ square, verbose: true });
+    setPlayableSquares(moves.map((m) => m.to));
+  };
+
+  const handlePieceDragEnd = () => {
+    setPlayableSquares([]);
   };
 
   const customArrows: Arrow[] = useMemo(() => {
@@ -113,6 +136,10 @@ export default function Board() {
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
             }}
             customSquare={SquareRenderer}
+            onSquareClick={handleSquareLeftClick}
+            onSquareRightClick={handleSquareRightClick}
+            onPieceDragBegin={handlePieceDragBegin}
+            onPieceDragEnd={handlePieceDragEnd}
           />
         </Grid>
 
