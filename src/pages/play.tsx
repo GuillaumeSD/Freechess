@@ -1,7 +1,14 @@
 import Board from "@/sections/play/board";
-import { CircularProgress, Divider, Grid, Typography } from "@mui/material";
+import GameInProgress from "@/sections/play/gameInProgress";
+import GameRecap from "@/sections/play/gameRecap";
+import GameSettingsButton from "@/sections/play/gameSettings/gameSettingsButton";
+import { isGameInProgressAtom } from "@/sections/play/states";
+import { Grid } from "@mui/material";
+import { useAtomValue } from "jotai";
 
 export default function Play() {
+  const isGameInProgress = useAtomValue(isGameInProgressAtom);
+
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start">
       <Board />
@@ -29,19 +36,9 @@ export default function Play() {
           maxWidth: "1100px",
         }}
       >
-        <Grid
-          item
-          container
-          xs={12}
-          justifyContent="center"
-          alignItems="center"
-          columnGap={2}
-        >
-          <Typography>Game in progress</Typography>
-          <CircularProgress size={20} color="info" />
-        </Grid>
-
-        <Divider sx={{ width: "90%" }} />
+        <GameInProgress />
+        {!isGameInProgress && <GameSettingsButton />}
+        <GameRecap />
       </Grid>
     </Grid>
   );

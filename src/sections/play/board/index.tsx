@@ -7,6 +7,7 @@ import {
   gameAtom,
   playableSquaresAtom,
   playerColorAtom,
+  isGameInProgressAtom,
 } from "../states";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChessActions";
@@ -23,10 +24,11 @@ export default function Board() {
   const { boardSize } = useScreenSize();
   const game = useAtomValue(gameAtom);
   const playerColor = useAtomValue(playerColorAtom);
-  const { makeMove: makeBoardMove } = useChessActions(gameAtom);
+  const { makeMove: makeGameMove } = useChessActions(gameAtom);
   const setClickedSquares = useSetAtom(clickedSquaresAtom);
   const setPlayableSquares = useSetAtom(playableSquaresAtom);
   const engineSkillLevel = useAtomValue(engineSkillLevelAtom);
+  const isGameInProgress = useAtomValue(isGameInProgressAtom);
   const engine = useEngine(EngineName.Stockfish16);
 
   const gameFen = game.fen();
@@ -34,21 +36,26 @@ export default function Board() {
 
   useEffect(() => {
     const playEngineMove = async () => {
-      if (!engine?.isReady() || game.turn() === playerColor || isGameFinished) {
+      if (
+        !engine?.isReady() ||
+        game.turn() === playerColor ||
+        isGameFinished ||
+        !isGameInProgress
+      ) {
         return;
       }
       const move = await engine.getEngineNextMove(
         gameFen,
         engineSkillLevel - 1
       );
-      if (move) makeBoardMove(uciMoveParams(move));
+      if (move) makeGameMove(uciMoveParams(move));
     };
     playEngineMove();
 
     return () => {
       engine?.stopSearch();
     };
-  }, [gameFen, engine]);
+  }, [gameFen, isGameInProgress]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setClickedSquares([]);
@@ -61,7 +68,7 @@ export default function Board() {
   ): boolean => {
     if (!piece || piece[0] !== playerColor) return false;
     try {
-      const result = makeBoardMove({
+      const result = makeGameMove({
         from: source,
         to: target,
         promotion: piece[1]?.toLowerCase() ?? "q",
@@ -125,7 +132,7 @@ export default function Board() {
           id="AnalysisBoard"
           position={gameFen}
           onPieceDrop={onPieceDrop}
-          boardOrientation={playerColor ? "white" : "black"}
+          boardOrientation={playerColor === Color.White ? "white" : "black"}
           customBoardStyle={{
             borderRadius: "5px",
             boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
