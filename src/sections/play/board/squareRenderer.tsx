@@ -1,4 +1,8 @@
-import { clickedSquaresAtom, gameAtom, playableSquaresAtom } from "../states";
+import {
+  clickedSquaresAtom,
+  gameDataAtom,
+  playableSquaresAtom,
+} from "../states";
 import { useAtomValue } from "jotai";
 import { CSSProperties, forwardRef } from "react";
 import { CustomSquareProps } from "react-chessboard/dist/chessboard/types";
@@ -6,13 +10,12 @@ import { CustomSquareProps } from "react-chessboard/dist/chessboard/types";
 const SquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
   (props, ref) => {
     const { children, square, style } = props;
-    const game = useAtomValue(gameAtom);
     const clickedSquares = useAtomValue(clickedSquaresAtom);
     const playableSquares = useAtomValue(playableSquaresAtom);
+    const gameData = useAtomValue(gameDataAtom);
 
-    const lastMove = game.history({ verbose: true }).at(-1);
-    const fromSquare = lastMove?.from;
-    const toSquare = lastMove?.to;
+    const fromSquare = gameData.lastMove?.from;
+    const toSquare = gameData.lastMove?.to;
 
     const highlightSquareStyle: CSSProperties | undefined =
       clickedSquares.includes(square)

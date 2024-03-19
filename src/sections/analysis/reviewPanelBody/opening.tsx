@@ -1,4 +1,4 @@
-import { useCurrentPosition } from "@/hooks/useCurrentPosition";
+import { useCurrentPosition } from "../hooks/useCurrentPosition";
 import { Grid, Typography } from "@mui/material";
 
 export default function Opening() {

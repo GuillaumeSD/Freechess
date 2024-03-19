@@ -8,6 +8,7 @@ import {
   playableSquaresAtom,
   playerColorAtom,
   isGameInProgressAtom,
+  gameDataAtom,
 } from "../states";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChessActions";
@@ -18,10 +19,12 @@ import { Color, EngineName } from "@/types/enums";
 import SquareRenderer from "./squareRenderer";
 import { useEngine } from "@/hooks/useEngine";
 import { uciMoveParams } from "@/lib/chess";
+import { useGameData } from "@/hooks/useGameData";
 
 export default function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
   const { boardSize } = useScreenSize();
+  const engine = useEngine(EngineName.Stockfish16);
   const game = useAtomValue(gameAtom);
   const playerColor = useAtomValue(playerColorAtom);
   const { makeMove: makeGameMove } = useChessActions(gameAtom);
@@ -29,7 +32,7 @@ export default function Board() {
   const setPlayableSquares = useSetAtom(playableSquaresAtom);
   const engineSkillLevel = useAtomValue(engineSkillLevelAtom);
   const isGameInProgress = useAtomValue(isGameInProgressAtom);
-  const engine = useEngine(EngineName.Stockfish16);
+  useGameData(gameAtom, gameDataAtom);
 
   const gameFen = game.fen();
   const isGameFinished = game.isGameOver();
@@ -129,7 +132,7 @@ export default function Board() {
         xs={12}
       >
         <Chessboard
-          id="AnalysisBoard"
+          id="PlayBoard"
           position={gameFen}
           onPieceDrop={onPieceDrop}
           boardOrientation={playerColor === Color.White ? "white" : "black"}

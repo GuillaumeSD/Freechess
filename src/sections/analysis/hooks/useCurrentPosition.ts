@@ -9,7 +9,7 @@ import {
 import { CurrentPosition, PositionEval } from "@/types/eval";
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect } from "react";
-import { useEngine } from "./useEngine";
+import { useEngine } from "../../../hooks/useEngine";
 import { EngineName } from "@/types/enums";
 
 export const useCurrentPosition = (engineName?: EngineName) => {

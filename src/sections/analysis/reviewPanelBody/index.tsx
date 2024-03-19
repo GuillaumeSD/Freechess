@@ -3,7 +3,7 @@ import { Grid, List, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, engineMultiPvAtom, gameAtom } from "../states";
 import LineEvaluation from "./lineEvaluation";
-import { useCurrentPosition } from "@/hooks/useCurrentPosition";
+import { useCurrentPosition } from "../hooks/useCurrentPosition";
 import { LineEval } from "@/types/eval";
 import { EngineName } from "@/types/enums";
 import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
