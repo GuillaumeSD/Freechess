@@ -35,17 +35,5 @@ export const useScreenSize = () => {
     };
   }, []);
 
-  const getBoardSize = () => {
-    const width = screenSize.width;
-    const height = screenSize.height;
-
-    // 1200 is the lg layout breakpoint
-    if (window?.innerWidth < 1200) {
-      return Math.min(width, height - 150);
-    }
-
-    return Math.min(width - 600, height * 0.95);
-  };
-
-  return { ...screenSize, boardSize: getBoardSize() };
+  return screenSize;
 };

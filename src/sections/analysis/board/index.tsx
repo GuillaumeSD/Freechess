@@ -20,7 +20,7 @@ import SquareRenderer, { moveClassificationColors } from "./squareRenderer";
 
 export default function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
-  const { boardSize } = useScreenSize();
+  const screenSize = useScreenSize();
   const board = useAtomValue(boardAtom);
   const boardOrientation = useAtomValue(boardOrientationAtom);
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
@@ -90,6 +90,18 @@ export default function Board() {
 
     return [];
   }, [position, showBestMoveArrow]);
+
+  const boardSize = useMemo(() => {
+    const width = screenSize.width;
+    const height = screenSize.height;
+
+    // 1200 is the lg layout breakpoint
+    if (window?.innerWidth < 1200) {
+      return Math.min(width, height - 150);
+    }
+
+    return Math.min(width - 600, height * 0.95);
+  }, [screenSize]);
 
   return (
     <Grid

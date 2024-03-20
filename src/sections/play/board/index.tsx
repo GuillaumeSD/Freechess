@@ -12,7 +12,7 @@ import {
 } from "../states";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChessActions";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import PlayerInfo from "./playerInfo";
 import { useScreenSize } from "@/hooks/useScreenSize";
 import { Color, EngineName } from "@/types/enums";
@@ -23,7 +23,7 @@ import { useGameData } from "@/hooks/useGameData";
 
 export default function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
-  const { boardSize } = useScreenSize();
+  const screenSize = useScreenSize();
   const engine = useEngine(EngineName.Stockfish16);
   const game = useAtomValue(gameAtom);
   const playerColor = useAtomValue(playerColorAtom);
@@ -106,6 +106,18 @@ export default function Board() {
     setPlayableSquares([]);
   };
 
+  const boardSize = useMemo(() => {
+    const width = screenSize.width;
+    const height = screenSize.height;
+
+    // 900 is the md layout breakpoint
+    if (window?.innerWidth < 900) {
+      return Math.min(width, height - 150);
+    }
+
+    return Math.min(width - 300, height * 0.85);
+  }, [screenSize]);
+
   return (
     <Grid
       item
@@ -114,7 +126,6 @@ export default function Board() {
       justifyContent="center"
       alignItems="center"
       width={boardSize}
-      maxWidth="85vh"
     >
       <PlayerInfo
         color={playerColor === Color.White ? Color.Black : Color.White}

@@ -16,14 +16,14 @@ export default function Play() {
       <Grid
         container
         item
-        marginTop={{ xs: 0, lg: "2.5em" }}
+        marginTop={{ xs: 0, md: "2.5em" }}
         justifyContent="center"
         alignItems="center"
         borderRadius={2}
         border={1}
         borderColor={"secondary.main"}
         xs={12}
-        lg
+        md
         sx={{
           backgroundColor: "secondary.main",
           borderColor: "primary.main",
@@ -33,7 +33,7 @@ export default function Play() {
         padding={3}
         rowGap={3}
         style={{
-          maxWidth: "1100px",
+          maxWidth: "400px",
         }}
       >
         <GameInProgress />
