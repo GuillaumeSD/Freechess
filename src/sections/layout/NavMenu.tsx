@@ -30,7 +30,7 @@ export default function NavMenu({ open, onClose }: Props) {
   return (
     <Drawer anchor="left" open={open} onClose={onClose}>
       <Toolbar />
-      <Box sx={{ width: 250 }}>
+      <Box sx={{ width: 250, overflow: "hidden" }}>
         <List>
           {MenuOptions.map(({ text, icon, href }) => (
             <ListItem key={text} disablePadding sx={{ margin: 0.7 }}>

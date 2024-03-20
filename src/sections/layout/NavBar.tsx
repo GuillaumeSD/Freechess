@@ -8,6 +8,7 @@ import NavMenu from "./NavMenu";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import NavLink from "@/components/NavLink";
+import Image from "next/image";
 
 interface Props {
   darkMode: boolean;
@@ -40,8 +41,18 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
           >
             <Icon icon="mdi:menu" />
           </IconButton>
+          <Image
+            src="/favicon-32x32.png"
+            alt="FreeChess logo"
+            width={32}
+            height={32}
+          />
           <NavLink href="/">
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1, ml: 1 }}
+            >
               Free Chess
             </Typography>
           </NavLink>
