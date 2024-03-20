@@ -27,6 +27,7 @@ import {
 } from "../states";
 import { useChessActions } from "@/hooks/useChessActions";
 import { playGameStartSound } from "@/lib/sounds";
+import { logAnalyticsEvent } from "@/lib/firebase";
 
 interface Props {
   open: boolean;
@@ -52,6 +53,12 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
     });
     playGameStartSound();
     setIsGameInProgress(true);
+
+    logAnalyticsEvent("play_game", {
+      engine: EngineName.Stockfish16,
+      skillLevel,
+      playerColor,
+    });
   };
 
   return (

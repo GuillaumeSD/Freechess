@@ -52,7 +52,7 @@ export default function AnalyzeButton() {
       engine: EngineName.Stockfish16,
       depth: engineDepth,
       multiPv: engineMultiPv,
-      nbPositions: 1,
+      nbPositions: params.fens.length,
     });
   };
 
