@@ -2,6 +2,7 @@ import { Button, CircularProgress, Grid, Typography } from "@mui/material";
 import { useAtom, useAtomValue } from "jotai";
 import { gameAtom, isGameInProgressAtom } from "./states";
 import { useEffect } from "react";
+import { playGameEndSound } from "@/lib/sounds";
 
 export default function GameInProgress() {
   const game = useAtomValue(gameAtom);
@@ -10,6 +11,11 @@ export default function GameInProgress() {
   useEffect(() => {
     if (game.isGameOver()) setIsGameInProgress(false);
   }, [game, setIsGameInProgress]);
+
+  const handleResign = () => {
+    playGameEndSound();
+    setIsGameInProgress(false);
+  };
 
   if (!isGameInProgress) return null;
 
@@ -42,7 +48,7 @@ export default function GameInProgress() {
         xs={12}
         gap={2}
       >
-        <Button variant="outlined" onClick={() => setIsGameInProgress(false)}>
+        <Button variant="outlined" onClick={handleResign}>
           Resign
         </Button>
       </Grid>

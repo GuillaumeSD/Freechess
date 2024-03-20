@@ -1,4 +1,5 @@
 import { setGameHeaders } from "@/lib/chess";
+import { playIllegalMoveSound, playSoundFromMove } from "@/lib/sounds";
 import { Chess, Move } from "chess.js";
 import { PrimitiveAtom, useAtom } from "jotai";
 import { useCallback } from "react";
@@ -39,17 +40,23 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
   const makeMove = useCallback(
     (move: { from: string; to: string; promotion?: string }): Move | null => {
       const newGame = copyGame();
-      const result = newGame.move(move);
-      setGame(newGame);
-
-      return result;
+      try {
+        const result = newGame.move(move);
+        setGame(newGame);
+        playSoundFromMove(result);
+        return result;
+      } catch {
+        playIllegalMoveSound();
+        return null;
+      }
     },
     [copyGame, setGame]
   );
 
   const undoMove = useCallback(() => {
     const newGame = copyGame();
-    newGame.undo();
+    const move = newGame.undo();
+    if (move) playSoundFromMove(move);
     setGame(newGame);
   }, [copyGame, setGame]);
 

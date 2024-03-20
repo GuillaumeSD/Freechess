@@ -26,6 +26,7 @@ import {
   gameAtom,
 } from "../states";
 import { useChessActions } from "@/hooks/useChessActions";
+import { playGameStartSound } from "@/lib/sounds";
 
 interface Props {
   open: boolean;
@@ -49,6 +50,7 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
       blackName:
         playerColor === Color.Black ? "You" : `Stockfish level ${skillLevel}`,
     });
+    playGameStartSound();
     setIsGameInProgress(true);
   };
 

@@ -247,3 +247,8 @@ export const getStartingFen = (
 
   return history[0].before;
 };
+
+export const isCheck = (fen: string): boolean => {
+  const game = new Chess(fen);
+  return game.inCheck();
+};

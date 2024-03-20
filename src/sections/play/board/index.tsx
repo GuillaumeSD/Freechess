@@ -70,17 +70,14 @@ export default function Board() {
     piece: string
   ): boolean => {
     if (!piece || piece[0] !== playerColor || !isGameInProgress) return false;
-    try {
-      const result = makeGameMove({
-        from: source,
-        to: target,
-        promotion: piece[1]?.toLowerCase() ?? "q",
-      });
 
-      return !!result;
-    } catch {
-      return false;
-    }
+    const result = makeGameMove({
+      from: source,
+      to: target,
+      promotion: piece[1]?.toLowerCase() ?? "q",
+    });
+
+    return !!result;
   };
 
   const isPieceDraggable = ({ piece }: { piece: string }): boolean => {

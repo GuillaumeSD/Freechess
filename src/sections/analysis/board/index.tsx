@@ -40,17 +40,13 @@ export default function Board() {
     target: Square,
     piece: string
   ): boolean => {
-    try {
-      const result = makeBoardMove({
-        from: source,
-        to: target,
-        promotion: piece[1]?.toLowerCase() ?? "q",
-      });
+    const result = makeBoardMove({
+      from: source,
+      to: target,
+      promotion: piece[1]?.toLowerCase() ?? "q",
+    });
 
-      return !!result;
-    } catch {
-      return false;
-    }
+    return !!result;
   };
 
   const handleSquareLeftClick = () => {
