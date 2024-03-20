@@ -43,7 +43,12 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
 
   const handleGameStart = () => {
     onClose();
-    resetGame();
+    resetGame({
+      whiteName:
+        playerColor === Color.White ? "You" : `Stockfish level ${skillLevel}`,
+      blackName:
+        playerColor === Color.Black ? "You" : `Stockfish level ${skillLevel}`,
+    });
     setIsGameInProgress(true);
   };
 

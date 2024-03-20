@@ -69,7 +69,7 @@ export default function Board() {
     target: Square,
     piece: string
   ): boolean => {
-    if (!piece || piece[0] !== playerColor) return false;
+    if (!piece || piece[0] !== playerColor || !isGameInProgress) return false;
     try {
       const result = makeGameMove({
         from: source,

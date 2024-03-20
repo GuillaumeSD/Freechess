@@ -39,7 +39,7 @@ export default function ReviewPanelToolBar() {
       <Tooltip title="Reset board">
         <Grid>
           <IconButton
-            onClick={() => resetBoard(getStartingFen(board.pgn()))}
+            onClick={() => resetBoard({ fen: getStartingFen({ game: board }) })}
             disabled={boardHistory.length === 0}
           >
             <Icon icon="ri:skip-back-line" />

@@ -2,6 +2,7 @@ import { EvaluateGameParams, PositionEval } from "@/types/eval";
 import { Game } from "@/types/game";
 import { Chess, PieceSymbol } from "chess.js";
 import { getPositionWinPercentage } from "./engine/helpers/winPercentage";
+import { Color } from "@/types/enums";
 
 export const getEvaluateGameParams = (game: Chess): EvaluateGameParams => {
   const history = game.history({ verbose: true });
@@ -48,25 +49,64 @@ export const formatGameToDatabase = (game: Chess): Omit<Game, "id"> => {
 
 export const getGameToSave = (game: Chess, board: Chess): Chess => {
   if (game.history().length) return game;
+  return setGameHeaders(board);
+};
 
-  const headers = board.header();
+export const setGameHeaders = (
+  game: Chess,
+  params: { whiteName?: string; blackName?: string; resigned?: Color } = {}
+): Chess => {
+  game.header("Event", "Freechess Game");
+  game.header("Site", "Freechess");
+  game.header(
+    "Date",
+    new Date().toISOString().split("T")[0].replaceAll("-", ".")
+  );
 
-  if (!headers.Event) {
-    board.header("Event", "Freechess Game");
-  }
+  const { whiteName, blackName, resigned } = params;
 
-  if (!headers.Site) {
-    board.header("Site", "Freechess");
-  }
+  if (whiteName) game.header("White", whiteName);
+  if (blackName) game.header("Black", blackName);
 
-  if (!headers.Date) {
-    board.header(
-      "Date",
-      new Date().toISOString().split("T")[0].replaceAll("-", ".")
+  const whiteNameToUse = game.header().White || "White";
+  const blackNameToUse = game.header().Black || "Black";
+
+  if (resigned) {
+    game.header("Result", resigned === "w" ? "0-1" : "1-0");
+    game.header(
+      "Termination",
+      `${resigned === "w" ? blackNameToUse : whiteNameToUse} won by resignation`
     );
   }
 
-  return board;
+  if (!game.isGameOver()) return game;
+
+  if (game.isCheckmate()) {
+    game.header("Result", game.turn() === "w" ? "0-1" : "1-0");
+    game.header(
+      "Termination",
+      `${
+        game.turn() === "w" ? blackNameToUse : whiteNameToUse
+      } won by checkmate`
+    );
+  }
+
+  if (game.isInsufficientMaterial()) {
+    game.header("Result", "1/2-1/2");
+    game.header("Termination", "Draw by insufficient material");
+  }
+
+  if (game.isStalemate()) {
+    game.header("Result", "1/2-1/2");
+    game.header("Termination", "Draw by stalemate");
+  }
+
+  if (game.isThreefoldRepetition()) {
+    game.header("Result", "1/2-1/2");
+    game.header("Termination", "Draw by threefold repetition");
+  }
+
+  return game;
 };
 
 export const moveLineUciToSan = (
@@ -197,10 +237,13 @@ const getPieceValue = (piece: PieceSymbol): number => {
   }
 };
 
-export const getStartingFen = (pgn: string): string => {
-  const game = new Chess();
-  game.loadPgn(pgn);
+export const getStartingFen = (
+  params: { pgn: string } | { game: Chess }
+): string => {
+  const game = "game" in params ? params.game : getGameFromPgn(params.pgn);
 
   const history = game.history({ verbose: true });
+  if (!history.length) return game.fen();
+
   return history[0].before;
 };

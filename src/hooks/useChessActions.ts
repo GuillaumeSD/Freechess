@@ -1,6 +1,13 @@
+import { setGameHeaders } from "@/lib/chess";
 import { Chess, Move } from "chess.js";
 import { PrimitiveAtom, useAtom } from "jotai";
 import { useCallback } from "react";
+
+export interface resetGameParams {
+  fen?: string;
+  whiteName?: string;
+  blackName?: string;
+}
 
 export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
   const [game, setGame] = useAtom(chessAtom);
@@ -15,8 +22,10 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
   );
 
   const reset = useCallback(
-    (fen?: string) => {
-      setGame(new Chess(fen));
+    (params?: resetGameParams) => {
+      const newGame = new Chess(params?.fen);
+      setGameHeaders(newGame, params);
+      setGame(newGame);
     },
     [setGame]
   );

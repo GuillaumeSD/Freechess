@@ -26,7 +26,7 @@ export default function LoadGame() {
 
   const resetAndSetGamePgn = useCallback(
     (pgn: string) => {
-      resetBoard(getStartingFen(pgn));
+      resetBoard({ fen: getStartingFen({ pgn }) });
       setEval(undefined);
       setBoardOrientation(true);
       setGamePgn(pgn);

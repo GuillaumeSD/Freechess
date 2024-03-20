@@ -1,14 +1,25 @@
 import { useAtomValue } from "jotai";
-import { gameAtom, isGameInProgressAtom, playerColorAtom } from "./states";
-import { Grid, Typography } from "@mui/material";
+import {
+  gameAtom,
+  gameDataAtom,
+  isGameInProgressAtom,
+  playerColorAtom,
+} from "./states";
+import { Button, Grid, Typography } from "@mui/material";
 import { Color } from "@/types/enums";
+import { setGameHeaders } from "@/lib/chess";
+import { useGameDatabase } from "@/hooks/useGameDatabase";
+import { useRouter } from "next/router";
 
 export default function GameRecap() {
   const game = useAtomValue(gameAtom);
+  const gameData = useAtomValue(gameDataAtom);
   const playerColor = useAtomValue(playerColorAtom);
   const isGameInProgress = useAtomValue(isGameInProgressAtom);
+  const { addGame } = useGameDatabase();
+  const router = useRouter();
 
-  if (isGameInProgress) return null;
+  if (isGameInProgress || !gameData.history.length) return null;
 
   const getResultLabel = () => {
     if (game.isCheckmate()) {
@@ -16,13 +27,21 @@ export default function GameRecap() {
       const winnerLabel = winnerColor === playerColor ? "You" : "Stockfish";
       return `${winnerLabel} won by checkmate !`;
     }
-    if (game.isDraw()) {
-      if (game.isInsufficientMaterial()) return "Draw by insufficient material";
-      if (game.isStalemate()) return "Draw by stalemate";
-      if (game.isThreefoldRepetition()) return "Draw by threefold repetition";
-      return "Draw by fifty-move rule";
-    }
+    if (game.isInsufficientMaterial()) return "Draw by insufficient material";
+    if (game.isStalemate()) return "Draw by stalemate";
+    if (game.isThreefoldRepetition()) return "Draw by threefold repetition";
+    if (game.isDraw()) "Draw by fifty-move rule";
+
     return "You resigned";
+  };
+
+  const handleOpenGameAnalysis = async () => {
+    const gameToAnalysis = setGameHeaders(game, {
+      resigned: !game.isGameOver() ? playerColor : undefined,
+    });
+    const gameId = await addGame(gameToAnalysis);
+
+    router.push({ pathname: "/", query: { gameId } });
   };
 
   return (
@@ -32,9 +51,15 @@ export default function GameRecap() {
       xs={12}
       justifyContent="center"
       alignItems="center"
-      gap={1}
+      gap={2}
     >
-      <Typography>{getResultLabel()}</Typography>
+      <Grid item container xs={12} justifyContent="center">
+        <Typography>{getResultLabel()}</Typography>
+      </Grid>
+
+      <Button variant="outlined" onClick={handleOpenGameAnalysis}>
+        Open game analysis
+      </Button>
     </Grid>
   );
 }
