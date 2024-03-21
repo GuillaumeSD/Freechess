@@ -1,10 +1,10 @@
 # Freechess
 
-Freechess is an open-source chess GUI to play, view and analyze your chess games from anywhere with Stockfish for free !
+Freechess is an open-source chess web app to play, view and analyze your chess games for free from anywhere with Stockfish !
 
-It is built with [Next.js](https://nextjs.org/docs), [React](https://react.dev/learn/describing-the-ui), [Material UI](https://mui.com/material-ui/getting-started/overview/), and [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html).
+Built with [Next.js](https://nextjs.org/docs), [React](https://react.dev/learn/describing-the-ui), [Material UI](https://mui.com/material-ui/getting-started/overview/), and [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html).
 
-It is deployed on [Firebase](https://firebase.google.com/docs/hosting), see it live [here](https://freechess.web.app).
+Deployed on [Firebase](https://firebase.google.com/docs/hosting), see it live [here](https://freechess.web.app).
 
 ## Running the app in dev mode
 

@@ -24,7 +24,7 @@ export default function Document() {
         />
         <meta
           name="description"
-          content="Open source chess app to play, view and analyze your chess games for free from anywhere with Stockfish !"
+          content="Open-source chess app to play, view and analyze your chess games for free from anywhere with Stockfish !"
         />
 
         {/* Balises OG (Facebook & Twitter) */}
@@ -38,7 +38,7 @@ export default function Document() {
         />
         <meta
           property="og:description"
-          content="Open source chess app to play, view and analyze your chess games for free from anywhere with Stockfish !"
+          content="Open-source chess app to play, view and analyze your chess games for free from anywhere with Stockfish !"
         />
 
         {/* Balise Twitter */}
