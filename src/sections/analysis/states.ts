@@ -10,8 +10,6 @@ export const currentPositionAtom = atom<CurrentPosition>({});
 export const boardOrientationAtom = atom(true);
 export const showBestMoveArrowAtom = atom(true);
 export const showPlayerMoveIconAtom = atom(true);
-export const clickedSquaresAtom = atom<string[]>([]);
-export const playableSquaresAtom = atom<string[]>([]);
 
 export const engineDepthAtom = atom(16);
 export const engineMultiPvAtom = atom(3);

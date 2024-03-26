@@ -3,6 +3,7 @@ import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom } from "../states";
 import { useChessActions } from "@/hooks/useChessActions";
+import { useEffect } from "react";
 
 export default function GoToLastPositionButton() {
   const { setPgn: setBoardPgn } = useChessActions(boardAtom);
@@ -13,6 +14,21 @@ export default function GoToLastPositionButton() {
   const boardHistory = board.history();
 
   const isButtonDisabled = boardHistory >= gameHistory;
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowUp") {
+        if (isButtonDisabled) return;
+        setBoardPgn(game.pgn());
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isButtonDisabled, setBoardPgn, game]);
 
   return (
     <Tooltip title="Go to final position">

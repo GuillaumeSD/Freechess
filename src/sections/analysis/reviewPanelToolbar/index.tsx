@@ -22,6 +22,8 @@ export default function ReviewPanelToolBar() {
       if (boardHistory.length === 0) return;
       if (e.key === "ArrowLeft") {
         undoBoardMove();
+      } else if (e.key === "ArrowDown") {
+        resetBoard({ fen: getStartingFen({ game: board }) });
       }
     };
 
@@ -30,7 +32,7 @@ export default function ReviewPanelToolBar() {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [undoBoardMove, boardHistory]);
+  }, [undoBoardMove, boardHistory, resetBoard, board]);
 
   return (
     <Grid container item justifyContent="center" alignItems="center" xs={12}>
