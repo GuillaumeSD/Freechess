@@ -1,6 +1,6 @@
 import { EvaluateGameParams, PositionEval } from "@/types/eval";
 import { Game } from "@/types/game";
-import { Chess, PieceSymbol } from "chess.js";
+import { Chess, PieceSymbol, Square } from "chess.js";
 import { getPositionWinPercentage } from "./engine/helpers/winPercentage";
 import { Color } from "@/types/enums";
 
@@ -156,14 +156,29 @@ export const getWhoIsCheckmated = (fen: string): "w" | "b" | null => {
 export const uciMoveParams = (
   uciMove: string
 ): {
-  from: string;
-  to: string;
+  from: Square;
+  to: Square;
   promotion?: string | undefined;
 } => ({
-  from: uciMove.slice(0, 2),
-  to: uciMove.slice(2, 4),
+  from: uciMove.slice(0, 2) as Square,
+  to: uciMove.slice(2, 4) as Square,
   promotion: uciMove.slice(4, 5) || undefined,
 });
+
+export const isSimplePieceRecapture = (
+  fen: string,
+  uciMoves: [string, string]
+): boolean => {
+  const game = new Chess(fen);
+  const moves = uciMoves.map((uciMove) => uciMoveParams(uciMove));
+
+  if (moves[0].to !== moves[1].to) return false;
+
+  const piece = game.get(moves[0].to);
+  if (piece) return true;
+
+  return false;
+};
 
 export const getIsPieceSacrifice = (
   fen: string,

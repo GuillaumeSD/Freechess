@@ -5,7 +5,7 @@ import {
 } from "./winPercentage";
 import { MoveClassification } from "@/types/enums";
 import { openings } from "@/data/openings";
-import { getIsPieceSacrifice } from "@/lib/chess";
+import { getIsPieceSacrifice, isSimplePieceRecapture } from "@/lib/chess";
 
 export const getMovesClassification = (
   rawPositions: PositionEval[],
@@ -63,12 +63,18 @@ export const getMovesClassification = (
       };
     }
 
+    const fenTwoMovesAgo = index > 1 ? fens[index - 2] : null;
+    const uciNextTwoMoves: [string, string] | null =
+      index > 1 ? [uciMoves[index - 2], uciMoves[index - 1]] : null;
+
     if (
       isGreatMove(
         lastPositionWinPercentage,
         positionWinPercentage,
         isWhiteMove,
-        lastPositionAlternativeLineWinPercentage
+        lastPositionAlternativeLineWinPercentage,
+        fenTwoMovesAgo,
+        uciNextTwoMoves
       )
     ) {
       return {
@@ -155,7 +161,9 @@ const isGreatMove = (
   lastPositionWinPercentage: number,
   positionWinPercentage: number,
   isWhiteMove: boolean,
-  lastPositionAlternativeLineWinPercentage: number | undefined
+  lastPositionAlternativeLineWinPercentage: number | undefined,
+  fenTwoMovesAgo: string | null,
+  uciMoves: [string, string] | null
 ): boolean => {
   if (!lastPositionAlternativeLineWinPercentage) return false;
 
@@ -163,6 +171,13 @@ const isGreatMove = (
     (positionWinPercentage - lastPositionWinPercentage) *
     (isWhiteMove ? 1 : -1);
   if (winPercentageDiff < -2) return false;
+
+  if (
+    fenTwoMovesAgo &&
+    uciMoves &&
+    isSimplePieceRecapture(fenTwoMovesAgo, uciMoves)
+  )
+    return false;
 
   const hasChangedGameOutcome = getHasChangedGameOutcome(
     lastPositionWinPercentage,
