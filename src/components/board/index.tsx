@@ -60,7 +60,7 @@ export default function Board({
     setClickedSquares([]);
   }, [gameFen, setClickedSquares]);
 
-  const isPieceDraggable = useCallback(
+  const isPiecePlayable = useCallback(
     ({ piece }: { piece: string }): boolean => {
       if (game.isGameOver() || !canPlay) return false;
       if (canPlay === true || canPlay === piece[0]) return true;
@@ -74,7 +74,7 @@ export default function Board({
     target: Square,
     piece: string
   ): boolean => {
-    if (!isPieceDraggable({ piece })) return false;
+    if (!isPiecePlayable({ piece })) return false;
 
     const result = makeGameMove({
       from: source,
@@ -97,10 +97,11 @@ export default function Board({
     }
   };
 
-  const handleSquareLeftClick = (square: Square) => {
+  const handleSquareLeftClick = (square: Square, piece?: string) => {
     setClickedSquares([]);
 
     if (!moveClickFrom) {
+      if (piece && !isPiecePlayable({ piece })) return;
       resetMoveClick(square);
       return;
     }
@@ -255,7 +256,7 @@ export default function Board({
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
             }}
             customArrows={customArrows}
-            isDraggablePiece={isPieceDraggable}
+            isDraggablePiece={isPiecePlayable}
             customSquare={SquareRenderer}
             onSquareClick={handleSquareLeftClick}
             onSquareRightClick={handleSquareRightClick}
@@ -264,6 +265,7 @@ export default function Board({
             onPromotionPieceSelect={onPromotionPieceSelect}
             showPromotionDialog={showPromotionDialog}
             promotionToSquare={moveClickTo}
+            animationDuration={200}
           />
         </Grid>
 
