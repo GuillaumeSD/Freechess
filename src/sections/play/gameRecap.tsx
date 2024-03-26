@@ -1,10 +1,5 @@
 import { useAtomValue } from "jotai";
-import {
-  gameAtom,
-  gameDataAtom,
-  isGameInProgressAtom,
-  playerColorAtom,
-} from "./states";
+import { gameAtom, isGameInProgressAtom, playerColorAtom } from "./states";
 import { Button, Grid, Typography } from "@mui/material";
 import { Color } from "@/types/enums";
 import { setGameHeaders } from "@/lib/chess";
@@ -13,13 +8,12 @@ import { useRouter } from "next/router";
 
 export default function GameRecap() {
   const game = useAtomValue(gameAtom);
-  const gameData = useAtomValue(gameDataAtom);
   const playerColor = useAtomValue(playerColorAtom);
   const isGameInProgress = useAtomValue(isGameInProgressAtom);
   const { addGame } = useGameDatabase();
   const router = useRouter();
 
-  if (isGameInProgress || !gameData.history.length) return null;
+  if (isGameInProgress || !game.history().length) return null;
 
   const getResultLabel = () => {
     if (game.isCheckmate()) {

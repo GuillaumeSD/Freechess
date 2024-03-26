@@ -1,17 +1,17 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
 import GameSettingsDialog from "./gameSettingsDialog";
+import { gameAtom } from "../states";
 import { useAtomValue } from "jotai";
-import { gameDataAtom } from "../states";
 
 export default function GameSettingsButton() {
   const [openDialog, setOpenDialog] = useState(false);
-  const gameData = useAtomValue(gameDataAtom);
+  const game = useAtomValue(gameAtom);
 
   return (
     <>
       <Button variant="contained" onClick={() => setOpenDialog(true)}>
-        {gameData.history.length ? "Start new game" : "Start game"}
+        {game.history().length ? "Start new game" : "Start game"}
       </Button>
 
       <GameSettingsDialog
