@@ -12,9 +12,13 @@ export const getLichessEval = async (
   multiPv = 1
 ): Promise<PositionEval> => {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 200);
     const res = await fetch(
-      `https://lichess.org/api/cloud-eval?fen=${fen}&multiPv=${multiPv}`
+      `https://lichess.org/api/cloud-eval?fen=${fen}&multiPv=${multiPv}`,
+      { method: "GET", signal: controller.signal }
     );
+    clearTimeout(timeoutId);
 
     const data: LichessResponse<LichessEvalBody> = await res.json();
 
