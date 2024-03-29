@@ -60,5 +60,26 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
     setGame(newGame);
   }, [copyGame, setGame]);
 
-  return { setPgn, reset, makeMove, undoMove };
+  const goToMove = useCallback(
+    (moveIdx: number, game: Chess) => {
+      if (moveIdx < 0) return;
+
+      const newGame = new Chess();
+      newGame.loadPgn(game.pgn());
+
+      const movesNb = game.history().length;
+      if (moveIdx > movesNb) return;
+
+      let lastMove: Move | null = null;
+      for (let i = movesNb; i > moveIdx; i--) {
+        lastMove = newGame.undo();
+      }
+
+      setGame(newGame);
+      playSoundFromMove(lastMove);
+    },
+    [setGame]
+  );
+
+  return { setPgn, reset, makeMove, undoMove, goToMove };
 };

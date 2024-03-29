@@ -1,5 +1,6 @@
 import { useChessActions } from "@/hooks/useChessActions";
 import Board from "@/sections/analysis/board";
+import MovesClassificationsRecap from "@/sections/analysis/movesClassificationsRecap";
 import ReviewPanelBody from "@/sections/analysis/reviewPanelBody";
 import ReviewPanelHeader from "@/sections/analysis/reviewPanelHeader";
 import ReviewPanelToolBar from "@/sections/analysis/reviewPanelToolbar";
@@ -73,6 +74,8 @@ export default function GameReport() {
 
         {isLgOrGreater ? <ReviewPanelToolBar /> : <ReviewPanelHeader />}
       </Grid>
+
+      <MovesClassificationsRecap />
     </Grid>
   );
 }

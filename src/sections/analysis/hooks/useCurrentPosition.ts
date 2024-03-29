@@ -34,7 +34,7 @@ export const useCurrentPosition = (engineName?: EngineName) => {
         boardHistory.length <= gameHistory.length &&
         gameHistory.slice(0, boardHistory.length).join() === boardHistory.join()
       ) {
-        const evalIndex = board.history().length;
+        const evalIndex = boardHistory.length;
 
         position.eval = gameEval.positions[evalIndex];
         position.lastEval =

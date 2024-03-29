@@ -27,7 +27,7 @@ export default function ReviewPanelHeader() {
         alignItems="center"
         columnGap={1}
       >
-        <Icon icon="ph:file-magnifying-glass-fill" height={28} />
+        <Icon icon="streamline:clipboard-check" height={24} />
 
         <Typography variant="h5" align="center">
           Game Report
