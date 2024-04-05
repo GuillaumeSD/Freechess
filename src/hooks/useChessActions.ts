@@ -1,5 +1,9 @@
 import { setGameHeaders } from "@/lib/chess";
-import { playIllegalMoveSound, playSoundFromMove } from "@/lib/sounds";
+import {
+  playGameEndSound,
+  playIllegalMoveSound,
+  playSoundFromMove,
+} from "@/lib/sounds";
 import { Chess, Move } from "chess.js";
 import { PrimitiveAtom, useAtom } from "jotai";
 import { useCallback } from "react";
@@ -76,7 +80,11 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
       }
 
       setGame(newGame);
-      playSoundFromMove(lastMove);
+      if (lastMove) {
+        playSoundFromMove(lastMove);
+      } else {
+        playGameEndSound();
+      }
     },
     [setGame]
   );

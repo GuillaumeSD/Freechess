@@ -1,6 +1,6 @@
 import { usePlayersNames } from "@/hooks/usePlayerNames";
 import { Grid, Typography } from "@mui/material";
-import { gameAtom, gameEvalAtom } from "../states";
+import { gameAtom, gameEvalAtom } from "../../states";
 import { MoveClassification } from "@/types/enums";
 import ClassificationRow from "./classificationRow";
 import { useAtomValue } from "jotai";
@@ -17,20 +17,10 @@ export default function MovesClassificationsRecap() {
       item
       justifyContent="center"
       alignItems="center"
-      borderRadius={2}
-      border={1}
-      borderColor={"secondary.main"}
-      sx={{
-        backgroundColor: "secondary.main",
-        borderColor: "primary.main",
-        borderWidth: 2,
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-      }}
-      marginTop={{ xs: 0, lg: "2.5em" }}
-      paddingY={3}
       rowGap={2}
-      xs
-      style={{ maxWidth: "50rem" }}
+      xs={6}
+      sx={{ scrollbarWidth: "thin", overflowY: "auto" }}
+      maxHeight="100%"
     >
       <Grid
         item
@@ -40,13 +30,13 @@ export default function MovesClassificationsRecap() {
         wrap="nowrap"
         xs={12}
       >
-        <Typography width="12rem" align="center">
+        <Typography width="12rem" align="center" noWrap>
           {whiteName}
         </Typography>
 
         <Typography width="7rem" />
 
-        <Typography width="12rem" align="center">
+        <Typography width="12rem" align="center" noWrap>
           {blackName}
         </Typography>
       </Grid>

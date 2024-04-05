@@ -26,14 +26,16 @@ export const useCurrentPosition = (engineName?: EngineName) => {
       lastMove: board.history({ verbose: true }).at(-1),
     };
 
-    if (gameEval) {
-      const boardHistory = board.history();
-      const gameHistory = game.history();
+    const boardHistory = board.history();
+    const gameHistory = game.history();
 
-      if (
-        boardHistory.length <= gameHistory.length &&
-        gameHistory.slice(0, boardHistory.length).join() === boardHistory.join()
-      ) {
+    if (
+      boardHistory.length <= gameHistory.length &&
+      gameHistory.slice(0, boardHistory.length).join() === boardHistory.join()
+    ) {
+      position.currentMoveIdx = boardHistory.length;
+
+      if (gameEval) {
         const evalIndex = boardHistory.length;
 
         position.eval = gameEval.positions[evalIndex];

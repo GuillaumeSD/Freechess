@@ -11,8 +11,16 @@ export const usePlayersNames = (gameAtom: PrimitiveAtom<Chess>) => {
   const blackName =
     gameFromUrl?.black?.name || game.header()["Black"] || "Black";
 
+  const whiteElo =
+    gameFromUrl?.white?.rating || game.header()["WhiteElo"] || "?";
+
+  const blackElo =
+    gameFromUrl?.black?.rating || game.header()["BlackElo"] || "?";
+
   return {
     whiteName,
     blackName,
+    whiteElo,
+    blackElo,
   };
 };

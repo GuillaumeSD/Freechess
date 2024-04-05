@@ -1,7 +1,7 @@
 import { Color, MoveClassification } from "@/types/enums";
 import { Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom, gameAtom, gameEvalAtom } from "../states";
+import { boardAtom, gameAtom, gameEvalAtom } from "../../states";
 import { useMemo } from "react";
 import { moveClassificationColors } from "@/components/board/squareRenderer";
 import Image from "next/image";
@@ -68,8 +68,6 @@ export default function ClassificationRow({ classification }: Props) {
     }
   };
 
-  if (!gameEval?.positions.length) return null;
-
   return (
     <Grid
       container
@@ -99,6 +97,7 @@ export default function ClassificationRow({ classification }: Props) {
         alignItems="center"
         width={"7rem"}
         gap={1}
+        wrap="nowrap"
       >
         <Image
           src={`/icons/${classification}.png`}

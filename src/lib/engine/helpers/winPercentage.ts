@@ -1,4 +1,4 @@
-import { ceilsNumber } from "@/lib/helpers";
+import { ceilsNumber } from "@/lib/math";
 import { LineEval, PositionEval } from "@/types/eval";
 
 export const getPositionWinPercentage = (position: PositionEval): number => {

@@ -3,7 +3,7 @@ import {
   getHarmonicMean,
   getStandardDeviation,
   getWeightedMean,
-} from "@/lib/helpers";
+} from "@/lib/math";
 import { Accuracy, PositionEval } from "@/types/eval";
 import { getPositionWinPercentage } from "./winPercentage";
 

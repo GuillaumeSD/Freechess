@@ -17,7 +17,8 @@ export default function BoardContainer() {
   const screenSize = useScreenSize();
   const boardOrientation = useAtomValue(boardOrientationAtom);
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
-  const { whiteName, blackName } = usePlayersNames(gameAtom);
+  const { whiteName, whiteElo, blackName, blackElo } =
+    usePlayersNames(gameAtom);
 
   const boardSize = useMemo(() => {
     const width = screenSize.width;
@@ -28,7 +29,7 @@ export default function BoardContainer() {
       return Math.min(width, height - 150);
     }
 
-    return Math.min(width - 600, height * 0.95);
+    return Math.min(width - 700, height * 0.95);
   }, [screenSize]);
 
   return (
@@ -37,8 +38,8 @@ export default function BoardContainer() {
       boardSize={boardSize}
       canPlay={true}
       gameAtom={boardAtom}
-      whitePlayer={whiteName}
-      blackPlayer={blackName}
+      whitePlayer={`${whiteName} (${whiteElo})`}
+      blackPlayer={`${blackName} (${blackElo})`}
       boardOrientation={boardOrientation ? Color.White : Color.Black}
       currentPositionAtom={currentPositionAtom}
       showBestMoveArrow={showBestMoveArrow}

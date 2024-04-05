@@ -45,6 +45,7 @@ export interface CurrentPosition {
   lastMove?: Move;
   eval?: PositionEval;
   lastEval?: PositionEval;
+  currentMoveIdx?: number;
 }
 
 export interface EvaluateGameParams {
