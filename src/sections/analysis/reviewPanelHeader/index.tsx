@@ -30,7 +30,7 @@ export default function ReviewPanelHeader() {
         <Icon icon="streamline:clipboard-check" height={24} />
 
         <Typography variant="h5" align="center">
-          Game Report
+          Game Analysis
         </Typography>
       </Grid>
 
