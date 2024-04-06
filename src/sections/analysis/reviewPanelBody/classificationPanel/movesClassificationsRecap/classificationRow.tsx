@@ -1,7 +1,7 @@
 import { Color, MoveClassification } from "@/types/enums";
 import { Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom, gameAtom, gameEvalAtom } from "../../states";
+import { boardAtom, gameAtom, gameEvalAtom } from "../../../states";
 import { useMemo } from "react";
 import { moveClassificationColors } from "@/components/board/squareRenderer";
 import Image from "next/image";

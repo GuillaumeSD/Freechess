@@ -2,7 +2,7 @@ import { Grid } from "@mui/material";
 import MovesLine from "./movesLine";
 import { useMemo } from "react";
 import { useAtomValue } from "jotai";
-import { gameAtom, gameEvalAtom } from "../../states";
+import { gameAtom, gameEvalAtom } from "../../../states";
 import { MoveClassification } from "@/types/enums";
 
 export default function MovesPanel() {
@@ -36,8 +36,6 @@ export default function MovesPanel() {
 
     return moves;
   }, [game, gameEval]);
-
-  if (!gameMoves) return null;
 
   return (
     <Grid

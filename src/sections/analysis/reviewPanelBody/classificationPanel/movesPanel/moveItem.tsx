@@ -3,7 +3,7 @@ import { Grid, Typography } from "@mui/material";
 import { moveClassificationColors } from "@/components/board/squareRenderer";
 import Image from "next/image";
 import { useAtomValue } from "jotai";
-import { boardAtom, currentPositionAtom, gameAtom } from "../../states";
+import { boardAtom, currentPositionAtom, gameAtom } from "../../../states";
 import { useChessActions } from "@/hooks/useChessActions";
 import { useEffect } from "react";
 import { isInViewport } from "@/lib/helpers";

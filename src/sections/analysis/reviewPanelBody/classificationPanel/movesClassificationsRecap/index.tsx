@@ -1,6 +1,6 @@
 import { usePlayersNames } from "@/hooks/usePlayerNames";
 import { Grid, Typography } from "@mui/material";
-import { gameAtom, gameEvalAtom } from "../../states";
+import { gameAtom, gameEvalAtom } from "../../../states";
 import { MoveClassification } from "@/types/enums";
 import ClassificationRow from "./classificationRow";
 import { useAtomValue } from "jotai";

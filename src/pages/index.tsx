@@ -1,6 +1,5 @@
 import { useChessActions } from "@/hooks/useChessActions";
 import Board from "@/sections/analysis/board";
-import MovesClassificationsRecap from "@/sections/analysis/reviewPanelBody/movesClassificationsRecap";
 import ReviewPanelBody from "@/sections/analysis/reviewPanelBody";
 import ReviewPanelHeader from "@/sections/analysis/reviewPanelHeader";
 import ReviewPanelToolBar from "@/sections/analysis/reviewPanelToolbar";
@@ -15,7 +14,7 @@ import { Chess } from "chess.js";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import MovesPanel from "@/sections/analysis/reviewPanelBody/movesPanel";
+import ClassificationPanel from "@/sections/analysis/reviewPanelBody/classificationPanel";
 
 export default function GameReport() {
   const theme = useTheme();
@@ -73,21 +72,7 @@ export default function GameReport() {
 
         <ReviewPanelBody />
 
-        <Divider sx={{ marginX: "5%" }} />
-
-        <Grid
-          container
-          item
-          justifyContent="center"
-          alignItems="start"
-          height="100%"
-          minHeight={{ lg: "50px", xs: undefined }}
-          sx={{ overflow: "hidden" }}
-        >
-          <MovesPanel />
-
-          <MovesClassificationsRecap />
-        </Grid>
+        <ClassificationPanel />
 
         <Divider sx={{ marginX: "5%" }} />
 
