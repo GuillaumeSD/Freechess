@@ -37,7 +37,11 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
 
   const copyGame = useCallback(() => {
     const newGame = new Chess();
-    newGame.loadPgn(game.pgn());
+    if (game.history().length > 0) {
+      newGame.loadPgn(game.pgn());
+    } else {
+      newGame.load(game.fen());
+    }
     return newGame;
   }, [game]);
 
@@ -65,13 +69,13 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
   }, [copyGame, setGame]);
 
   const goToMove = useCallback(
-    (moveIdx: number, game: Chess) => {
+    (moveIdx: number, fullGame: Chess) => {
       if (moveIdx < 0) return;
 
       const newGame = new Chess();
-      newGame.loadPgn(game.pgn());
+      newGame.loadPgn(fullGame.pgn());
 
-      const movesNb = game.history().length;
+      const movesNb = fullGame.history().length;
       if (moveIdx > movesNb) return;
 
       let lastMove: Move | null = null;
