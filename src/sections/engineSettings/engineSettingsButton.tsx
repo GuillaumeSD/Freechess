@@ -9,7 +9,7 @@ export default function EngineSettingsButton() {
   return (
     <>
       <Tooltip title="Engine settings">
-        <IconButton onClick={() => setOpenDialog(true)}>
+        <IconButton onClick={() => setOpenDialog(true)} sx={{ paddingY: 0.3 }}>
           <Icon icon="ri:settings-3-line" height={20} />
         </IconButton>
       </Tooltip>

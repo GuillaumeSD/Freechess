@@ -14,7 +14,7 @@ export default function Accuracies() {
       xs={12}
       justifyContent="center"
       alignItems="center"
-      columnGap={{ xs: "8vw", sm: 6, md: 8 }}
+      columnGap={{ xs: "8vw", md: 10 }}
     >
       <Typography
         align="center"

@@ -65,7 +65,7 @@ export default function ReviewPanelBody() {
             color="#27f019"
             height={25}
           />
-          <Typography variant="h6" align="center">
+          <Typography variant="h6" align="center" lineHeight="25px">
             Engine evaluation
           </Typography>
         </Grid>
