@@ -13,11 +13,13 @@ export default function MovesLine({ moves, moveNb }: Props) {
       container
       item
       justifyContent="space-evenly"
-      alignItems="start"
+      alignItems="center"
       xs={12}
       wrap="nowrap"
     >
-      <Typography width="2rem">{moveNb}.</Typography>
+      <Typography width="2rem" fontSize="0.9rem">
+        {moveNb}.
+      </Typography>
 
       <MoveItem {...moves[0]} moveIdx={(moveNb - 1) * 2 + 1} />
 

@@ -43,6 +43,7 @@ export default function ReviewPanelToolBar() {
           <IconButton
             onClick={() => resetBoard({ fen: getStartingFen({ game: board }) })}
             disabled={boardHistory.length === 0}
+            sx={{ paddingX: 1.2, paddingY: 0.5 }}
           >
             <Icon icon="ri:skip-back-line" />
           </IconButton>
@@ -54,6 +55,7 @@ export default function ReviewPanelToolBar() {
           <IconButton
             onClick={() => undoBoardMove()}
             disabled={boardHistory.length === 0}
+            sx={{ paddingX: 1.2, paddingY: 0.5 }}
           >
             <Icon icon="ri:arrow-left-s-line" height={30} />
           </IconButton>

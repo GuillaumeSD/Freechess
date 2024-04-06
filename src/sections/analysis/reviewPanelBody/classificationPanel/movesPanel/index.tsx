@@ -43,7 +43,7 @@ export default function MovesPanel() {
       item
       justifyContent="center"
       alignItems="start"
-      gap={1}
+      gap={0.8}
       sx={{ scrollbarWidth: "thin", overflowY: "auto" }}
       maxHeight="100%"
       xs={6}

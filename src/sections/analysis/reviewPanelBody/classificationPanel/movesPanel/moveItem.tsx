@@ -48,7 +48,7 @@ export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
       width="5rem"
       wrap="nowrap"
       onClick={handleClick}
-      paddingY={0.5}
+      paddingY={0.6}
       sx={{
         cursor: isCurrentMove ? undefined : "pointer",
         backgroundColor: isCurrentMove ? "#4f4f4f" : undefined,
@@ -60,15 +60,21 @@ export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
         <Image
           src={`/icons/${moveClassification}.png`}
           alt="move-icon"
-          width={15}
-          height={15}
+          width={14}
+          height={14}
           style={{
-            maxWidth: "3.6vw",
-            maxHeight: "3.6vw",
+            maxWidth: "3.5vw",
+            maxHeight: "3.5vw",
           }}
         />
       )}
-      <Typography color={getMoveColor(moveClassification)}>{san}</Typography>
+      <Typography
+        color={getMoveColor(moveClassification)}
+        fontSize="0.9rem"
+        lineHeight="0.9rem"
+      >
+        {san}
+      </Typography>
     </Grid>
   );
 }

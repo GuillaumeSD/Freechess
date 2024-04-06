@@ -22,19 +22,19 @@ export default function GamePanel() {
       columnGap={3}
     >
       <Grid item container xs justifyContent="center" alignItems="center">
-        <Typography noWrap>
+        <Typography noWrap fontSize="0.9rem">
           Site : {gameFromUrl?.site || game.header().Site || "?"}
         </Typography>
       </Grid>
 
       <Grid item container xs justifyContent="center" alignItems="center">
-        <Typography noWrap>
+        <Typography noWrap fontSize="0.9rem">
           Date : {gameFromUrl?.date || game.header().Date || "?"}
         </Typography>
       </Grid>
 
       <Grid item container xs justifyContent="center" alignItems="center">
-        <Typography noWrap>
+        <Typography noWrap fontSize="0.9rem">
           Result :{" "}
           {gameFromUrl?.termination || game.header().Termination || "?"}
         </Typography>

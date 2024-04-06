@@ -41,7 +41,7 @@ export default function ReviewPanelBody() {
       xs={12}
       justifyContent="center"
       alignItems="center"
-      rowGap={1.5}
+      rowGap={1.2}
     >
       <Grid
         item

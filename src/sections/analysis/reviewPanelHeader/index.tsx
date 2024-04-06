@@ -17,7 +17,7 @@ export default function ReviewPanelHeader() {
       justifyContent="center"
       alignItems="center"
       xs={12}
-      rowGap={3}
+      rowGap={2}
     >
       <Grid
         item
@@ -40,7 +40,7 @@ export default function ReviewPanelHeader() {
         xs={12}
         justifyContent="center"
         alignItems="center"
-        rowGap={3}
+        rowGap={2}
         columnGap={12}
       >
         <GamePanel />

@@ -9,7 +9,9 @@ export default function Opening() {
 
   return (
     <Grid item xs={12}>
-      <Typography align="center">{opening}</Typography>
+      <Typography align="center" fontSize="0.9rem">
+        {opening}
+      </Typography>
     </Grid>
   );
 }

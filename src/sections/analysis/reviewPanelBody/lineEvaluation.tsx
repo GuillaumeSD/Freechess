@@ -28,6 +28,7 @@ export default function LineEvaluation({ line }: Props) {
         overflow="visible"
         width="3em"
         textAlign="center"
+        fontSize="0.9rem"
       >
         {showSkeleton ? (
           <Skeleton
@@ -45,6 +46,7 @@ export default function LineEvaluation({ line }: Props) {
       <Typography
         noWrap
         maxWidth={{ xs: "15em", sm: "25em", md: "30em", lg: "25em" }}
+        fontSize="0.9rem"
       >
         {showSkeleton ? (
           <Skeleton variant="rounded" animation="wave" width="15em" />

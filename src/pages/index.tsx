@@ -57,8 +57,8 @@ export default function GameReport() {
           borderWidth: 2,
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
-        padding={3}
-        rowGap={3}
+        padding={2.5}
+        rowGap={2}
         style={{
           maxWidth: "1200px",
         }}

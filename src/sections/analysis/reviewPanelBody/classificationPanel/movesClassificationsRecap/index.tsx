@@ -17,7 +17,7 @@ export default function MovesClassificationsRecap() {
       item
       justifyContent="center"
       alignItems="center"
-      rowGap={2}
+      rowGap={1}
       xs={6}
       sx={{ scrollbarWidth: "thin", overflowY: "auto" }}
       maxHeight="100%"
@@ -30,13 +30,13 @@ export default function MovesClassificationsRecap() {
         wrap="nowrap"
         xs={12}
       >
-        <Typography width="12rem" align="center" noWrap>
+        <Typography width="12rem" align="center" noWrap fontSize="0.9rem">
           {whiteName}
         </Typography>
 
         <Typography width="7rem" />
 
-        <Typography width="12rem" align="center" noWrap>
+        <Typography width="12rem" align="center" noWrap fontSize="0.9rem">
           {blackName}
         </Typography>
       </Grid>

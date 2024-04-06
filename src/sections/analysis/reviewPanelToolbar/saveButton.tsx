@@ -41,7 +41,7 @@ export default function SaveButton() {
       {gameFromUrl ? (
         <Tooltip title="Game saved in database">
           <Grid>
-            <IconButton disabled={true}>
+            <IconButton disabled={true} sx={{ paddingX: 1.2, paddingY: 0.5 }}>
               <Icon icon="ri:folder-check-line" />
             </IconButton>
           </Grid>
@@ -49,7 +49,11 @@ export default function SaveButton() {
       ) : (
         <Tooltip title="Save game">
           <Grid>
-            <IconButton onClick={handleSave} disabled={!enableSave}>
+            <IconButton
+              onClick={handleSave}
+              disabled={!enableSave}
+              sx={{ paddingX: 1.2, paddingY: 0.5 }}
+            >
               <Icon icon="ri:save-3-line" />
             </IconButton>
           </Grid>

@@ -52,6 +52,7 @@ export default function NextMoveButton() {
         <IconButton
           onClick={() => addNextGameMoveToBoard()}
           disabled={!isButtonEnabled}
+          sx={{ paddingX: 1.2, paddingY: 0.5 }}
         >
           <Icon icon="ri:arrow-right-s-line" height={30} />
         </IconButton>

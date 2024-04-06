@@ -37,8 +37,16 @@ export default function MoveInfo() {
 
   return (
     <Grid item container columnGap={5} xs={12} justifyContent="center">
-      {moveLabel && <Typography align="center">{moveLabel}</Typography>}
-      {bestMoveLabel && <Typography align="center">{bestMoveLabel}</Typography>}
+      {moveLabel && (
+        <Typography align="center" fontSize="0.9rem">
+          {moveLabel}
+        </Typography>
+      )}
+      {bestMoveLabel && (
+        <Typography align="center" fontSize="0.9rem">
+          {bestMoveLabel}
+        </Typography>
+      )}
     </Grid>
   );
 }

@@ -8,7 +8,10 @@ export default function FlipBoardButton() {
 
   return (
     <Tooltip title="Flip board">
-      <IconButton onClick={() => setBoardOrientation((prev) => !prev)}>
+      <IconButton
+        onClick={() => setBoardOrientation((prev) => !prev)}
+        sx={{ paddingX: 1.2, paddingY: 0.5 }}
+      >
         <Icon icon="eva:flip-fill" />
       </IconButton>
     </Tooltip>
