@@ -47,6 +47,7 @@ export default function MovesPanel() {
       sx={{ scrollbarWidth: "thin", overflowY: "auto" }}
       maxHeight="100%"
       xs={6}
+      id="moves-panel"
     >
       {gameMoves?.map((moves, idx) => (
         <MovesLine

@@ -25,7 +25,11 @@ export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
   useEffect(() => {
     if (!isCurrentMove) return;
     const moveItem = document.getElementById(`move-${moveIdx}`);
-    if (!moveItem || !isInViewport(moveItem)) return;
+    if (!moveItem) return;
+
+    const movePanel = document.getElementById("moves-panel");
+    if (!movePanel || !isInViewport(movePanel)) return;
+
     moveItem.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [isCurrentMove, moveIdx]);
 
