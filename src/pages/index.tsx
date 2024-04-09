@@ -68,7 +68,7 @@ export default function GameReport() {
           alignItems="center"
           xs={12}
           rowGap={2}
-          maxHeight={{ lg: "calc(98vh - 150px)", xs: "900px" }}
+          maxHeight={{ lg: "calc(95vh - 130px)", xs: "900px" }}
           display="grid"
           gridTemplateRows="repeat(4, auto) fit-content(100%)"
         >
