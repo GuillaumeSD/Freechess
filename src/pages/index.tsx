@@ -44,8 +44,6 @@ export default function GameReport() {
       <Grid
         container
         item
-        justifyContent="center"
-        alignItems="center"
         borderRadius={2}
         border={1}
         borderColor={"secondary.main"}
@@ -58,25 +56,34 @@ export default function GameReport() {
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
         padding={2.5}
-        rowGap={2}
         style={{
           maxWidth: "1200px",
         }}
-        maxHeight={{ lg: "calc(100vh - 150px)", xs: "900px" }}
         display="grid"
-        gridTemplateRows="repeat(4, auto) fit-content(100%)"
       >
-        {isLgOrGreater ? <ReviewPanelHeader /> : <ReviewPanelToolBar />}
+        <Grid
+          container
+          item
+          justifyContent="center"
+          alignItems="center"
+          xs={12}
+          rowGap={2}
+          maxHeight={{ lg: "calc(98vh - 150px)", xs: "900px" }}
+          display="grid"
+          gridTemplateRows="repeat(4, auto) fit-content(100%)"
+        >
+          {isLgOrGreater ? <ReviewPanelHeader /> : <ReviewPanelToolBar />}
 
-        <Divider sx={{ marginX: "5%" }} />
+          <Divider sx={{ marginX: "5%" }} />
 
-        <ReviewPanelBody />
+          <ReviewPanelBody />
 
-        <ClassificationPanel />
+          <ClassificationPanel />
 
-        <Divider sx={{ marginX: "5%" }} />
+          <Divider sx={{ marginX: "5%" }} />
 
-        {isLgOrGreater ? <ReviewPanelToolBar /> : <ReviewPanelHeader />}
+          {isLgOrGreater ? <ReviewPanelToolBar /> : <ReviewPanelHeader />}
+        </Grid>
       </Grid>
     </Grid>
   );
