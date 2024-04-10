@@ -157,7 +157,8 @@ export default function GameDatabase() {
 
       <Grid item container xs={12} justifyContent="center" alignItems="center">
         <Typography variant="subtitle2">
-          You have {games.length} games in your database
+          You have {games.length} game{games.length !== 1 && "s"} in your
+          database
         </Typography>
       </Grid>
 
