@@ -11,7 +11,7 @@ import {
 } from "@/sections/analysis/states";
 import { Divider, Grid, useMediaQuery, useTheme } from "@mui/material";
 import { Chess } from "chess.js";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import ClassificationPanel from "@/sections/analysis/reviewPanelBody/classificationPanel";
@@ -22,7 +22,7 @@ export default function GameReport() {
 
   const { reset: resetBoard } = useChessActions(boardAtom);
   const { setPgn: setGamePgn } = useChessActions(gameAtom);
-  const setGameEval = useSetAtom(gameEvalAtom);
+  const [gameEval, setGameEval] = useAtom(gameEvalAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
 
   const router = useRouter();
@@ -72,17 +72,37 @@ export default function GameReport() {
           display="grid"
           gridTemplateRows="repeat(4, auto) fit-content(100%)"
         >
-          {isLgOrGreater ? <ReviewPanelHeader /> : <ReviewPanelToolBar />}
+          {isLgOrGreater ? (
+            <>
+              <ReviewPanelHeader key="analysis-panel-header" />
 
-          <Divider sx={{ marginX: "5%" }} />
+              <Divider sx={{ marginX: "5%" }} />
 
-          <ReviewPanelBody />
+              <ReviewPanelBody key="review-panel-body" />
 
-          <ClassificationPanel />
+              <ClassificationPanel key="review-panel-class" />
 
-          <Divider sx={{ marginX: "5%" }} />
+              <Divider sx={{ marginX: "5%" }} />
 
-          {isLgOrGreater ? <ReviewPanelToolBar /> : <ReviewPanelHeader />}
+              <ReviewPanelToolBar key="review-panel-toolbar" />
+            </>
+          ) : (
+            <>
+              <ReviewPanelToolBar key="review-panel-toolbar" />
+
+              <Divider sx={{ marginX: "5%" }} />
+
+              {!gameEval && <ReviewPanelHeader key="analysis-panel-header" />}
+              {!gameEval && <Divider sx={{ marginX: "5%" }} />}
+
+              <ReviewPanelBody key="review-panel-body" />
+
+              <ClassificationPanel key="review-panel-class" />
+
+              {gameEval && <Divider sx={{ marginX: "5%" }} />}
+              {gameEval && <ReviewPanelHeader key="analysis-panel-header" />}
+            </>
+          )}
         </Grid>
       </Grid>
     </Grid>

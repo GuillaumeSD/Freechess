@@ -83,7 +83,9 @@ export default function ReviewPanelBody() {
 
       {isGameOver && (
         <Grid item xs={12}>
-          <Typography align="center">Game is over</Typography>
+          <Typography align="center" fontSize="0.9rem">
+            Game is over
+          </Typography>
         </Grid>
       )}
 

@@ -16,7 +16,6 @@ export default function CapturedPieces({ gameAtom, color }: Props) {
   const game = useAtomValue(gameAtom);
   const cssProps = useMemo(() => {
     const capturedPieces = getCapturedPieces(game.fen(), color);
-    console.log(capturedPieces, color);
     return getCapturedPiecesCSSProps(capturedPieces, color);
   }, [game, color]);
 
