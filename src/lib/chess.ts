@@ -267,3 +267,31 @@ export const isCheck = (fen: string): boolean => {
   const game = new Chess(fen);
   return game.inCheck();
 };
+
+export const getCapturedPieces = (
+  fen: string,
+  color: Color
+): Record<string, number | undefined> => {
+  const capturedPieces: Record<string, number | undefined> = {};
+  if (color === Color.White) {
+    capturedPieces.p = 8;
+    capturedPieces.r = 2;
+    capturedPieces.n = 2;
+    capturedPieces.b = 2;
+    capturedPieces.q = 1;
+  } else {
+    capturedPieces.P = 8;
+    capturedPieces.R = 2;
+    capturedPieces.N = 2;
+    capturedPieces.B = 2;
+    capturedPieces.Q = 1;
+  }
+
+  const fenPiecePlacement = fen.split(" ")[0];
+  for (const piece of Object.keys(capturedPieces)) {
+    const count = fenPiecePlacement.match(new RegExp(piece, "g"))?.length;
+    if (count) capturedPieces[piece] = (capturedPieces[piece] ?? 0) - count;
+  }
+
+  return capturedPieces;
+};

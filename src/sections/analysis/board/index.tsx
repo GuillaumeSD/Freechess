@@ -38,8 +38,8 @@ export default function BoardContainer() {
       boardSize={boardSize}
       canPlay={true}
       gameAtom={boardAtom}
-      whitePlayer={`${whiteName} (${whiteElo})`}
-      blackPlayer={`${blackName} (${blackElo})`}
+      whitePlayer={whiteElo ? `${whiteName} (${whiteElo})` : whiteName}
+      blackPlayer={blackElo ? `${blackName} (${blackElo})` : blackName}
       boardOrientation={boardOrientation ? Color.White : Color.Black}
       currentPositionAtom={currentPositionAtom}
       showBestMoveArrow={showBestMoveArrow}

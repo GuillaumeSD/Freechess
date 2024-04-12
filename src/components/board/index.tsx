@@ -14,6 +14,7 @@ import { Chess } from "chess.js";
 import { getSquareRenderer, moveClassificationColors } from "./squareRenderer";
 import { CurrentPosition } from "@/types/eval";
 import EvaluationBar from "./evaluationBar";
+import CapturedPieces from "./capturedPieces";
 
 export interface Props {
   id: string;
@@ -230,10 +231,16 @@ export default function Board({
           xs={12}
           justifyContent="center"
           alignItems="center"
+          columnGap={2}
         >
-          <Typography variant="h6">
+          <Typography>
             {boardOrientation === Color.White ? blackPlayer : whitePlayer}
           </Typography>
+
+          <CapturedPieces
+            gameAtom={gameAtom}
+            color={boardOrientation === Color.White ? Color.Black : Color.White}
+          />
         </Grid>
 
         <Grid
@@ -275,10 +282,13 @@ export default function Board({
           xs={12}
           justifyContent="center"
           alignItems="center"
+          columnGap={2}
         >
-          <Typography variant="h6">
+          <Typography>
             {boardOrientation === Color.White ? whitePlayer : blackPlayer}
           </Typography>
+
+          <CapturedPieces gameAtom={gameAtom} color={boardOrientation} />
         </Grid>
       </Grid>
     </Grid>
