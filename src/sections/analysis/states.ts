@@ -1,5 +1,5 @@
 import { EngineName } from "@/types/enums";
-import { CurrentPosition, GameEval } from "@/types/eval";
+import { CurrentPosition, GameEval, SavedEvals } from "@/types/eval";
 import { Chess } from "chess.js";
 import { atom } from "jotai";
 
@@ -16,3 +16,5 @@ export const engineNameAtom = atom<EngineName>(EngineName.Stockfish16);
 export const engineDepthAtom = atom(16);
 export const engineMultiPvAtom = atom(3);
 export const evaluationProgressAtom = atom(0);
+
+export const savedEvalsAtom = atom<SavedEvals>({});

@@ -213,7 +213,7 @@ export abstract class UciEngine {
     depth = 16,
     multiPv = this.multiPv,
     setPartialEval,
-  }: EvaluatePositionWithUpdateParams): Promise<void> {
+  }: EvaluatePositionWithUpdateParams): Promise<PositionEval> {
     this.throwErrorIfNotReady();
 
     const lichessEvalPromise = getLichessEval(fen, multiPv);
@@ -224,6 +224,7 @@ export abstract class UciEngine {
     const whiteToPlay = fen.split(" ")[1] === "w";
 
     const onNewMessage = (messages: string[]) => {
+      if (!setPartialEval) return;
       const parsedResults = parseEvaluationResults(messages, whiteToPlay);
       setPartialEval(parsedResults);
     };
@@ -235,15 +236,17 @@ export abstract class UciEngine {
       lichessEval.lines.length >= multiPv &&
       lichessEval.lines[0].depth >= depth
     ) {
-      setPartialEval(lichessEval);
-      return;
+      setPartialEval?.(lichessEval);
+      return lichessEval;
     }
 
-    await this.sendCommands(
+    const results = await this.sendCommands(
       [`position fen ${fen}`, `go depth ${depth}`],
       "bestmove",
       onNewMessage
     );
+
+    return parseEvaluationResults(results, whiteToPlay);
   }
 
   public async getEngineNextMove(

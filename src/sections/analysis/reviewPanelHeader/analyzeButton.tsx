@@ -6,13 +6,15 @@ import {
   evaluationProgressAtom,
   gameAtom,
   gameEvalAtom,
+  savedEvalsAtom,
 } from "../states";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { getEvaluateGameParams } from "@/lib/chess";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { LoadingButton } from "@mui/lab";
 import { useEngine } from "@/hooks/useEngine";
 import { logAnalyticsEvent } from "@/lib/firebase";
+import { SavedEvals } from "@/types/eval";
 
 export default function AnalyzeButton() {
   const engineName = useAtomValue(engineNameAtom);
@@ -25,6 +27,7 @@ export default function AnalyzeButton() {
   const { setGameEval, gameFromUrl } = useGameDatabase();
   const [gameEval, setEval] = useAtom(gameEvalAtom);
   const game = useAtomValue(gameAtom);
+  const setSavedEvals = useSetAtom(savedEvalsAtom);
 
   const readyToAnalyse =
     engine?.isReady() && game.history().length > 0 && !evaluationProgress;
@@ -48,6 +51,15 @@ export default function AnalyzeButton() {
     if (gameFromUrl) {
       setGameEval(gameFromUrl.id, newGameEval);
     }
+
+    const gameSavedEvals: SavedEvals = params.fens.reduce((acc, fen, idx) => {
+      acc[fen] = { ...newGameEval.positions[idx], engine: engineName };
+      return acc;
+    }, {} as SavedEvals);
+    setSavedEvals((prev) => ({
+      ...prev,
+      ...gameSavedEvals,
+    }));
 
     logAnalyticsEvent("analyze_game", {
       engine: engineName,

@@ -38,7 +38,7 @@ export interface EvaluatePositionWithUpdateParams {
   fen: string;
   depth?: number;
   multiPv?: number;
-  setPartialEval: (positionEval: PositionEval) => void;
+  setPartialEval?: (positionEval: PositionEval) => void;
 }
 
 export interface CurrentPosition {
@@ -55,3 +55,11 @@ export interface EvaluateGameParams {
   multiPv?: number;
   setEvaluationProgress?: (value: number) => void;
 }
+
+export interface SavedEval {
+  bestMove?: string;
+  lines: LineEval[];
+  engine: EngineName;
+}
+
+export type SavedEvals = Record<string, SavedEval | undefined>;
