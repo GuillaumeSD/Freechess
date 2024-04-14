@@ -24,10 +24,13 @@ import {
   playerColorAtom,
   isGameInProgressAtom,
   gameAtom,
+  enginePlayNameAtom,
 } from "../states";
 import { useChessActions } from "@/hooks/useChessActions";
 import { playGameStartSound } from "@/lib/sounds";
 import { logAnalyticsEvent } from "@/lib/firebase";
+import { Stockfish16 } from "@/lib/engine/stockfish16";
+import { useEffect } from "react";
 
 interface Props {
   open: boolean;
@@ -38,6 +41,10 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
   const [skillLevel, setSkillLevel] = useAtomLocalStorage(
     "engine-skill-level",
     engineSkillLevelAtom
+  );
+  const [engineName, setEngineName] = useAtomLocalStorage(
+    "engine-play-name",
+    enginePlayNameAtom
   );
   const [playerColor, setPlayerColor] = useAtom(playerColorAtom);
   const setIsGameInProgress = useSetAtom(isGameInProgressAtom);
@@ -55,11 +62,17 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
     setIsGameInProgress(true);
 
     logAnalyticsEvent("play_game", {
-      engine: EngineName.Stockfish16,
+      engine: engineName,
       skillLevel,
       playerColor,
     });
   };
+
+  useEffect(() => {
+    if (!Stockfish16.isSupported()) {
+      setEngineName(EngineName.Stockfish11);
+    }
+  }, [setEngineName]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -68,8 +81,10 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
       </DialogTitle>
       <DialogContent sx={{ paddingBottom: 0 }}>
         <Typography>
-          Stockfish 16 is the only engine available now, more engine choices
-          will come soon !
+          Stockfish 16 Lite (HCE) is the default engine. It offers the best
+          balance between speed and strength. Stockfish 16 is the strongest
+          engine available, but please note that it requires a one time download
+          of 40MB.
         </Typography>
         <Grid
           marginTop={4}
@@ -88,12 +103,20 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
                 id="dialog-select"
                 displayEmpty
                 input={<OutlinedInput label="Engine" />}
-                value={EngineName.Stockfish16}
-                disabled={true}
-                sx={{ width: 200 }}
+                value={engineName}
+                onChange={(e) => setEngineName(e.target.value as EngineName)}
+                sx={{ width: 280, maxWidth: "100%" }}
               >
                 {Object.values(EngineName).map((engine) => (
-                  <MenuItem key={engine} value={engine}>
+                  <MenuItem
+                    key={engine}
+                    value={engine}
+                    disabled={
+                      engine.includes("stockfish_16")
+                        ? !Stockfish16.isSupported()
+                        : false
+                    }
+                  >
                     {engineLabel[engine]}
                   </MenuItem>
                 ))}
@@ -145,5 +168,7 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
 }
 
 const engineLabel: Record<EngineName, string> = {
-  [EngineName.Stockfish16]: "Stockfish 16",
+  [EngineName.Stockfish16]: "Stockfish 16 Lite (HCE)",
+  [EngineName.Stockfish16NNUE]: "Stockfish 16 (40MB download)",
+  [EngineName.Stockfish11]: "Stockfish 11",
 };

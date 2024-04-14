@@ -26,7 +26,7 @@ const nextConfig = (phase) =>
               ],
             },
             {
-              source: "/engines/stockfish-wasm/stockfish-nnue-16.js",
+              source: "/engines/:blob*",
               headers: [
                 {
                   key: "Cross-Origin-Embedder-Policy",

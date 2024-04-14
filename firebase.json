@@ -21,7 +21,7 @@
         ]
       },
       {
-        "source": "/engines/stockfish-wasm/stockfish-nnue-16.js",
+        "source": "/engines/**",
         "headers": [
           {
             "key": "Cross-Origin-Embedder-Policy",
@@ -30,6 +30,19 @@
           {
             "key": "Cross-Origin-Opener-Policy",
             "value": "same-origin"
+          },
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600, immutable"
+          }
+        ]
+      },
+      {
+        "source": "/engines/stockfish-16-wasm/nn-5af11540bbfe.nnue",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
           }
         ]
       },

@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import {
   engineDepthAtom,
   engineMultiPvAtom,
+  engineNameAtom,
   evaluationProgressAtom,
   gameAtom,
   gameEvalAtom,
@@ -11,11 +12,11 @@ import { getEvaluateGameParams } from "@/lib/chess";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { LoadingButton } from "@mui/lab";
 import { useEngine } from "@/hooks/useEngine";
-import { EngineName } from "@/types/enums";
 import { logAnalyticsEvent } from "@/lib/firebase";
 
 export default function AnalyzeButton() {
-  const engine = useEngine(EngineName.Stockfish16);
+  const engineName = useAtomValue(engineNameAtom);
+  const engine = useEngine(engineName);
   const [evaluationProgress, setEvaluationProgress] = useAtom(
     evaluationProgressAtom
   );
@@ -49,7 +50,7 @@ export default function AnalyzeButton() {
     }
 
     logAnalyticsEvent("analyze_game", {
-      engine: EngineName.Stockfish16,
+      engine: engineName,
       depth: engineDepth,
       multiPv: engineMultiPv,
       nbPositions: params.fens.length,

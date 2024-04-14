@@ -5,11 +5,12 @@ import {
   playerColorAtom,
   isGameInProgressAtom,
   gameDataAtom,
+  enginePlayNameAtom,
 } from "./states";
 import { useChessActions } from "@/hooks/useChessActions";
 import { useEffect, useMemo } from "react";
 import { useScreenSize } from "@/hooks/useScreenSize";
-import { Color, EngineName } from "@/types/enums";
+import { Color } from "@/types/enums";
 import { useEngine } from "@/hooks/useEngine";
 import { uciMoveParams } from "@/lib/chess";
 import Board from "@/components/board";
@@ -17,7 +18,8 @@ import { useGameData } from "@/hooks/useGameData";
 
 export default function BoardContainer() {
   const screenSize = useScreenSize();
-  const engine = useEngine(EngineName.Stockfish16);
+  const engineName = useAtomValue(enginePlayNameAtom);
+  const engine = useEngine(engineName);
   const game = useAtomValue(gameAtom);
   const playerColor = useAtomValue(playerColorAtom);
   const { makeMove: makeGameMove } = useChessActions(gameAtom);
