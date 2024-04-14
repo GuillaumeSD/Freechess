@@ -37,11 +37,7 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
 
   const copyGame = useCallback(() => {
     const newGame = new Chess();
-    if (game.history().length > 0) {
-      newGame.loadPgn(game.pgn());
-    } else {
-      newGame.load(game.fen());
-    }
+    newGame.loadPgn(game.pgn());
     return newGame;
   }, [game]);
 
