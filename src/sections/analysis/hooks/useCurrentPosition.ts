@@ -95,7 +95,7 @@ export const useCurrentPosition = (engineName?: EngineName) => {
 
         const params = getEvaluateGameParams(board);
         const fens = params.fens.slice(board.turn() === "w" ? -3 : -4);
-        const uciMoves = params.uciMoves.slice(board.turn() === "w" ? -3 : -4);
+        const uciMoves = params.uciMoves.slice(board.turn() === "w" ? -2 : -3);
 
         const lastRawEval = await getFenEngineEval(fens.slice(-2)[0]);
         const rawPositions: PositionEval[] = fens.map((_, idx) => {
