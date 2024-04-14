@@ -33,9 +33,11 @@ export const getChessComUserRecentGames = async (
     games.push(...(dataPreviousMonth?.games ?? []));
   }
 
-  const gamesToReturn = games.slice(0, 50).sort((a, b) => {
-    return b.end_time - a.end_time;
-  });
+  const gamesToReturn = games
+    .sort((a, b) => {
+      return b.end_time - a.end_time;
+    })
+    .slice(0, 50);
 
   return gamesToReturn;
 };
