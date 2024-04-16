@@ -147,14 +147,31 @@ const isBrilliantMove = (
   );
   if (!isPieceSacrifice) return false;
 
-  const isNotLosing = isWhiteMove
-    ? positionWinPercentage >= 50
-    : positionWinPercentage <= 50;
+  if (
+    isLosingOrAlternateCompletelyWinning(
+      positionWinPercentage,
+      lastPositionAlternativeLineWinPercentage,
+      isWhiteMove
+    )
+  )
+    return false;
+
+  return true;
+};
+
+const isLosingOrAlternateCompletelyWinning = (
+  positionWinPercentage: number,
+  lastPositionAlternativeLineWinPercentage: number,
+  isWhiteMove: boolean
+): boolean => {
+  const isLosing = isWhiteMove
+    ? positionWinPercentage < 45
+    : positionWinPercentage > 55;
   const isAlternateCompletelyWinning = isWhiteMove
     ? lastPositionAlternativeLineWinPercentage > 70
     : lastPositionAlternativeLineWinPercentage < 30;
 
-  return isNotLosing && !isAlternateCompletelyWinning;
+  return isLosing || isAlternateCompletelyWinning;
 };
 
 const isGreatMove = (
@@ -176,6 +193,15 @@ const isGreatMove = (
     fenTwoMovesAgo &&
     uciMoves &&
     isSimplePieceRecapture(fenTwoMovesAgo, uciMoves)
+  )
+    return false;
+
+  if (
+    isLosingOrAlternateCompletelyWinning(
+      positionWinPercentage,
+      lastPositionAlternativeLineWinPercentage,
+      isWhiteMove
+    )
   )
     return false;
 
@@ -217,5 +243,5 @@ const getIsTheOnlyGoodMove = (
   const winPercentageDiff =
     (positionWinPercentage - lastPositionAlternativeLineWinPercentage) *
     (isWhiteMove ? 1 : -1);
-  return winPercentageDiff > 5;
+  return winPercentageDiff > 10;
 };
