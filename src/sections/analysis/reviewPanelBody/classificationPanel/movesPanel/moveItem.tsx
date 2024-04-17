@@ -49,11 +49,18 @@ export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
       wrap="nowrap"
       onClick={handleClick}
       paddingY={0.6}
-      sx={{
+      sx={(theme) => ({
         cursor: isCurrentMove ? undefined : "pointer",
-        backgroundColor: isCurrentMove ? "#4f4f4f" : undefined,
+        backgroundColor:
+          isCurrentMove && theme.palette.mode === "dark"
+            ? "#4f4f4f"
+            : undefined,
+        border:
+          isCurrentMove && theme.palette.mode === "light"
+            ? "1px solid #424242"
+            : undefined,
         borderRadius: 1,
-      }}
+      })}
       id={`move-${moveIdx}`}
     >
       {color && (
