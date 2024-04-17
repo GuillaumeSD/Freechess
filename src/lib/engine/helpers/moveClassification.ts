@@ -168,8 +168,8 @@ const isLosingOrAlternateCompletelyWinning = (
     ? positionWinPercentage < 45
     : positionWinPercentage > 55;
   const isAlternateCompletelyWinning = isWhiteMove
-    ? lastPositionAlternativeLineWinPercentage > 70
-    : lastPositionAlternativeLineWinPercentage < 30;
+    ? lastPositionAlternativeLineWinPercentage > 97
+    : lastPositionAlternativeLineWinPercentage < 3;
 
   return isLosing || isAlternateCompletelyWinning;
 };

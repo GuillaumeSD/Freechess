@@ -216,7 +216,7 @@ export const getIsPieceSacrifice = (
   const materialDiff = endingMaterialDifference - startingMaterialDifference;
   const materialDiffPlayerRelative = whiteToPlay ? materialDiff : -materialDiff;
 
-  return materialDiffPlayerRelative < -1;
+  return materialDiffPlayerRelative < 0;
 };
 
 export const getMaterialDifference = (fen: string): number => {
