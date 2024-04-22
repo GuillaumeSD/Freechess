@@ -197,14 +197,32 @@ export const getIsPieceSacrifice = (
   }
   let nonCapturingMovesTemp = 1;
 
+  const capturedPieces: { w: PieceSymbol[]; b: PieceSymbol[] } = {
+    w: [],
+    b: [],
+  };
   for (const move of moves) {
     const fullMove = game.move(uciMoveParams(move));
     if (fullMove.captured) {
+      capturedPieces[fullMove.color].push(fullMove.captured);
       nonCapturingMovesTemp = 1;
     } else {
       nonCapturingMovesTemp--;
       if (nonCapturingMovesTemp < 0) break;
     }
+  }
+
+  for (const p of capturedPieces["w"].slice(0)) {
+    if (capturedPieces["b"].includes(p)) {
+      capturedPieces["b"].splice(capturedPieces["b"].indexOf(p), 1);
+      capturedPieces["w"].splice(capturedPieces["w"].indexOf(p), 1);
+    }
+  }
+
+  if (
+    Math.abs(capturedPieces["w"].length - capturedPieces["b"].length) <= 1 &&
+    capturedPieces["w"].concat(capturedPieces["b"]).every((p) => p === "p")
+    return false;
   }
 
   const endingMaterialDifference = getMaterialDifference(game.fen());

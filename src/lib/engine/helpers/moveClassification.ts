@@ -153,8 +153,9 @@ const isBrilliantMove = (
       lastPositionAlternativeLineWinPercentage,
       isWhiteMove
     )
-  )
+  ) {
     return false;
+  }
 
   return true;
 };
@@ -165,8 +166,8 @@ const isLosingOrAlternateCompletelyWinning = (
   isWhiteMove: boolean
 ): boolean => {
   const isLosing = isWhiteMove
-    ? positionWinPercentage < 45
-    : positionWinPercentage > 55;
+    ? positionWinPercentage < 50
+    : positionWinPercentage > 50;
   const isAlternateCompletelyWinning = isWhiteMove
     ? lastPositionAlternativeLineWinPercentage > 97
     : lastPositionAlternativeLineWinPercentage < 3;
@@ -202,8 +203,9 @@ const isGreatMove = (
       lastPositionAlternativeLineWinPercentage,
       isWhiteMove
     )
-  )
+  ) {
     return false;
+  }
 
   const hasChangedGameOutcome = getHasChangedGameOutcome(
     lastPositionWinPercentage,
