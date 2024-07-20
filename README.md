@@ -6,9 +6,9 @@ Built with [Next.js](https://nextjs.org/docs), [React](https://react.dev/learn/d
 
 Deployed on [Firebase](https://firebase.google.com/docs/hosting), see it live [here](https://freechess.web.app).
 
-## Running the app in dev mode
+## Running the app locally in dev mode
 
-Node 18 and npm are required.
+At least [Node.js](https://nodejs.org) 18.17 is required.
 
 Install the dependencies :
 
@@ -41,3 +41,9 @@ To deploy the app, install the [Firebase CLI](https://firebase.google.com/docs/c
 ```bash
 npm run deploy
 ```
+
+## License
+
+GNU General Public License v3.0.
+
+See [COPYING](COPYING) to see the full text.
