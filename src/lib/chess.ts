@@ -202,13 +202,18 @@ export const getIsPieceSacrifice = (
     b: [],
   };
   for (const move of moves) {
-    const fullMove = game.move(uciMoveParams(move));
-    if (fullMove.captured) {
-      capturedPieces[fullMove.color].push(fullMove.captured);
-      nonCapturingMovesTemp = 1;
-    } else {
-      nonCapturingMovesTemp--;
-      if (nonCapturingMovesTemp < 0) break;
+    try {
+      const fullMove = game.move(uciMoveParams(move));
+      if (fullMove.captured) {
+        capturedPieces[fullMove.color].push(fullMove.captured);
+        nonCapturingMovesTemp = 1;
+      } else {
+        nonCapturingMovesTemp--;
+        if (nonCapturingMovesTemp < 0) break;
+      }
+    } catch (e) {
+      console.error(e);
+      return false;
     }
   }
 
