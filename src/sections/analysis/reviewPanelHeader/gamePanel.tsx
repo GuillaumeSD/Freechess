@@ -11,6 +11,13 @@ export default function GamePanel() {
 
   if (!hasGameInfo) return null;
 
+  const termination =
+    gameFromUrl?.termination || game.header().Termination || "?";
+  const result =
+    termination.split(" ").length > 2
+      ? termination
+      : gameFromUrl?.result || game.header().Result || "?";
+
   return (
     <Grid
       item
@@ -35,8 +42,7 @@ export default function GamePanel() {
 
       <Grid item container xs justifyContent="center" alignItems="center">
         <Typography noWrap fontSize="0.9rem">
-          Result :{" "}
-          {gameFromUrl?.termination || game.header().Termination || "?"}
+          Result : {result}
         </Typography>
       </Grid>
     </Grid>
