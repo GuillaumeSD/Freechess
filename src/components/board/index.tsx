@@ -86,7 +86,7 @@ export default function Board({
     return !!result;
   };
 
-  const resetMoveClick = (square?: Square) => {
+  const resetMoveClick = (square?: Square | null) => {
     setMoveClickFrom(square ?? null);
     setMoveClickTo(null);
     setShowPromotionDialog(false);
@@ -150,17 +150,35 @@ export default function Board({
     resetMoveClick();
   };
 
-  const onPromotionPieceSelect = (piece?: PromotionPieceOption) => {
-    if (piece && moveClickFrom && moveClickTo) {
+  const onPromotionPieceSelect = (
+    piece?: PromotionPieceOption,
+    from?: Square,
+    to?: Square
+  ) => {
+    if (!piece) return false;
+    const promotionPiece = piece[1]?.toLowerCase() ?? "q";
+
+    if (moveClickFrom && moveClickTo) {
       const result = makeGameMove({
         from: moveClickFrom,
         to: moveClickTo,
-        promotion: piece[1]?.toLowerCase() ?? "q",
+        promotion: promotionPiece,
       });
       resetMoveClick();
       return !!result;
     }
 
+    if (from && to) {
+      const result = makeGameMove({
+        from,
+        to,
+        promotion: promotionPiece,
+      });
+      resetMoveClick();
+      return !!result;
+    }
+
+    resetMoveClick(moveClickFrom);
     return false;
   };
 
