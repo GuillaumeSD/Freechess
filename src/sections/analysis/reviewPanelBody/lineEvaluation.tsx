@@ -12,10 +12,14 @@ export default function LineEvaluation({ line }: Props) {
   const board = useAtomValue(boardAtom);
   const lineLabel =
     line.cp !== undefined
-      ? `${line.cp / 100}`
+      ? `${line.cp > 0 ? "+" : ""}${(line.cp / 100).toFixed(2)}`
       : line.mate
-      ? `${line.mate > 0 ? "" : "-"}M${Math.abs(line.mate)}`
-      : "?";
+        ? `${line.mate > 0 ? "+" : "-"}M${Math.abs(line.mate)}`
+        : "?";
+
+  const isBlackCp =
+    (line.cp !== undefined && line.cp < 0) ||
+    (line.mate !== undefined && line.mate < 0);
 
   const showSkeleton = line.depth < 6;
 
@@ -24,11 +28,19 @@ export default function LineEvaluation({ line }: Props) {
       <Typography
         marginRight={1.5}
         marginY={0.5}
+        paddingY={0.2}
         noWrap
         overflow="visible"
-        width="3em"
+        width="3.5em"
         textAlign="center"
-        fontSize="0.9rem"
+        fontSize="0.8rem"
+        sx={{
+          backgroundColor: isBlackCp ? "black" : "white",
+          color: isBlackCp ? "white" : "black",
+        }}
+        borderRadius="5px"
+        border="1px solid #424242"
+        fontWeight="bold"
       >
         {showSkeleton ? (
           <Skeleton
@@ -45,7 +57,7 @@ export default function LineEvaluation({ line }: Props) {
 
       <Typography
         noWrap
-        maxWidth={{ xs: "15em", sm: "25em", md: "30em", lg: "25em" }}
+        maxWidth={{ xs: "12em", sm: "25em", md: "30em", lg: "25em" }}
         fontSize="0.9rem"
       >
         {showSkeleton ? (

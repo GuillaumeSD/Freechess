@@ -11,7 +11,8 @@
     "plugin:import/typescript",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
-    "next"
+    "next",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

@@ -37,8 +37,8 @@ export function getSquareRenderer({
         clickedSquares.includes(square)
           ? rightClickSquareStyle
           : fromSquare === square || toSquare === square
-          ? previousMoveSquareStyle(moveClassification)
-          : undefined;
+            ? previousMoveSquareStyle(moveClassification)
+            : undefined;
 
       const playableSquareStyle: CSSProperties | undefined =
         playableSquares.includes(square) ? playableSquareStyles : undefined;
