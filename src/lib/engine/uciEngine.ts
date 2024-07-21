@@ -159,7 +159,7 @@ export abstract class UciEngine {
       const result = await this.evaluatePosition(fen, depth);
       positions.push(result);
       setEvaluationProgress?.(
-        Math.max(((fens.indexOf(fen) + 1) / fens.length) * 100 - 2, 2)
+        99 - Math.exp(-4 * (fens.indexOf(fen) / fens.length)) * 99
       );
     }
 
@@ -171,7 +171,6 @@ export abstract class UciEngine {
     const accuracy = computeAccuracy(positions);
 
     this.ready = true;
-    setEvaluationProgress?.(99);
     return {
       positions: positionsWithClassification,
       accuracy,
