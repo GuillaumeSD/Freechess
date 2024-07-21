@@ -36,7 +36,7 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 }}
+            sx={{ mr: "min(0.5vw, 0.6rem)" }}
             onClick={() => setDrawerOpen((val) => !val)}
           >
             <Icon icon="mdi:menu" />
@@ -51,7 +51,11 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
             <Typography
               variant="h6"
               component="div"
-              sx={{ flexGrow: 1, ml: 1 }}
+              sx={{
+                flexGrow: 1,
+                ml: 1,
+                fontSize: { xs: "1rem", sm: "1.25rem" },
+              }}
             >
               Free Chess
             </Typography>
@@ -64,14 +68,19 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
           </IconButton>
           <IconButton
             color="inherit"
-            sx={{ ml: 1 }}
+            sx={{ ml: "min(0.6rem, 0.8vw)" }}
             onClick={() =>
               window.open("https://github.com/GuillaumeSD/freechess")
             }
           >
             <Icon icon="mdi:github" />
           </IconButton>
-          <IconButton sx={{ ml: 1 }} onClick={switchDarkMode} color="inherit">
+          <IconButton
+            sx={{ ml: "min(0.6rem, 0.8vw)" }}
+            onClick={switchDarkMode}
+            color="inherit"
+            edge="end"
+          >
             {darkMode ? (
               <Icon icon="mdi:brightness-7" />
             ) : (
