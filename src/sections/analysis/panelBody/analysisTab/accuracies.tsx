@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { gameEvalAtom } from "../states";
+import { gameEvalAtom } from "../../states";
 
 export default function Accuracies() {
   const gameEval = useAtomValue(gameEvalAtom);

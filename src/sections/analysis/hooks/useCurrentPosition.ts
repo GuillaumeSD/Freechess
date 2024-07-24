@@ -50,7 +50,13 @@ export const useCurrentPosition = (engineName?: EngineName) => {
 
     setCurrentPosition(position);
 
-    if (!position.eval && engine?.isReady() && engineName) {
+    if (
+      !position.eval &&
+      engine?.isReady() &&
+      engineName &&
+      !board.isCheckmate() &&
+      !board.isStalemate()
+    ) {
       const getFenEngineEval = async (
         fen: string,
         setPartialEval?: (positionEval: PositionEval) => void

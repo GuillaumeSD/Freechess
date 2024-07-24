@@ -11,10 +11,11 @@ import { useChessActions } from "@/hooks/useChessActions";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Color, MoveClassification } from "@/types/enums";
 import { Chess } from "chess.js";
-import { getSquareRenderer, moveClassificationColors } from "./squareRenderer";
+import { getSquareRenderer } from "./squareRenderer";
 import { CurrentPosition } from "@/types/eval";
 import EvaluationBar from "./evaluationBar";
 import CapturedPieces from "./capturedPieces";
+import { moveClassificationColors } from "@/lib/chess";
 
 export interface Props {
   id: string;

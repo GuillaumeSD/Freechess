@@ -1,8 +1,8 @@
 import { LineEval } from "@/types/eval";
 import { ListItem, Skeleton, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom } from "../states";
-import { moveLineUciToSan } from "@/lib/chess";
+import { boardAtom } from "../../states";
+import { getLineEvalLabel, moveLineUciToSan } from "@/lib/chess";
 
 interface Props {
   line: LineEval;
@@ -10,12 +10,7 @@ interface Props {
 
 export default function LineEvaluation({ line }: Props) {
   const board = useAtomValue(boardAtom);
-  const lineLabel =
-    line.cp !== undefined
-      ? `${line.cp > 0 ? "+" : ""}${(line.cp / 100).toFixed(2)}`
-      : line.mate
-        ? `${line.mate > 0 ? "+" : "-"}M${Math.abs(line.mate)}`
-        : "?";
+  const lineLabel = getLineEvalLabel(line);
 
   const isBlackCp =
     (line.cp !== undefined && line.cp < 0) ||

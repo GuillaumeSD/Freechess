@@ -10,7 +10,7 @@ import SaveButton from "./saveButton";
 import { useEffect } from "react";
 import { getStartingFen } from "@/lib/chess";
 
-export default function ReviewPanelToolBar() {
+export default function PanelToolBar() {
   const board = useAtomValue(boardAtom);
   const { reset: resetBoard, undoMove: undoBoardMove } =
     useChessActions(boardAtom);

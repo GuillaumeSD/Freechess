@@ -1,4 +1,4 @@
-import { IconButton, Tooltip } from "@mui/material";
+import { Fab } from "@mui/material";
 import { useState } from "react";
 import EngineSettingsDialog from "./engineSettingsDialog";
 import { Icon } from "@iconify/react";
@@ -8,11 +8,21 @@ export default function EngineSettingsButton() {
 
   return (
     <>
-      <Tooltip title="Engine settings">
-        <IconButton onClick={() => setOpenDialog(true)} sx={{ paddingY: 0.3 }}>
-          <Icon icon="ri:settings-3-line" height={20} />
-        </IconButton>
-      </Tooltip>
+      <Fab
+        title="Engine settings"
+        color="secondary"
+        size="small"
+        sx={{
+          top: "auto",
+          right: 16,
+          bottom: 16,
+          left: "auto",
+          position: "fixed",
+        }}
+        onClick={() => setOpenDialog(true)}
+      >
+        <Icon icon="mdi:settings" height={20} />
+      </Fab>
 
       <EngineSettingsDialog
         open={openDialog}

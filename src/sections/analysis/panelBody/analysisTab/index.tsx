@@ -1,21 +1,19 @@
-import { Icon } from "@iconify/react";
-import { Grid, List, Typography } from "@mui/material";
+import { Grid, GridProps, List, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import {
   boardAtom,
   engineMultiPvAtom,
   engineNameAtom,
   gameAtom,
-} from "../states";
+} from "../../states";
 import LineEvaluation from "./lineEvaluation";
-import { useCurrentPosition } from "../hooks/useCurrentPosition";
+import { useCurrentPosition } from "../../hooks/useCurrentPosition";
 import { LineEval } from "@/types/eval";
-import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
 import Accuracies from "./accuracies";
 import MoveInfo from "./moveInfo";
 import Opening from "./opening";
 
-export default function ReviewPanelBody() {
+export default function AnalysisTab(props: GridProps) {
   const linesNumber = useAtomValue(engineMultiPvAtom);
   const engineName = useAtomValue(engineNameAtom);
   const position = useCurrentPosition(engineName);
@@ -45,41 +43,16 @@ export default function ReviewPanelBody() {
       container
       xs={12}
       justifyContent="center"
-      alignItems="center"
+      alignItems="start"
+      height="100%"
       rowGap={1.2}
+      {...props}
+      sx={
+        props.hidden
+          ? { display: "none" }
+          : { overflow: "hidden", overflowY: "auto", ...props.sx }
+      }
     >
-      <Grid
-        item
-        container
-        xs={12}
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Grid item xs={1} />
-
-        <Grid
-          item
-          container
-          xs
-          justifyContent="center"
-          alignItems="center"
-          columnGap={1}
-        >
-          <Icon
-            icon="pepicons-pop:star-filled-circle"
-            color="#27f019"
-            height={25}
-          />
-          <Typography variant="h6" align="center" lineHeight="25px">
-            Engine evaluation
-          </Typography>
-        </Grid>
-
-        <Grid item container xs={1} justifyContent="center">
-          <EngineSettingsButton />
-        </Grid>
-      </Grid>
-
       <Accuracies />
 
       <MoveInfo />

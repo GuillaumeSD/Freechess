@@ -7,6 +7,7 @@ import {
   CustomSquareProps,
   Square,
 } from "react-chessboard/dist/chessboard/types";
+import { moveClassificationColors } from "@/lib/chess";
 
 export interface Props {
   currentPositionAtom: PrimitiveAtom<CurrentPosition>;
@@ -73,18 +74,6 @@ export function getSquareRenderer({
 
   return squareRenderer;
 }
-
-export const moveClassificationColors: Record<MoveClassification, string> = {
-  [MoveClassification.Book]: "#d5a47d",
-  [MoveClassification.Brilliant]: "#26c2a3",
-  [MoveClassification.Great]: "#4099ed",
-  [MoveClassification.Best]: "#3aab18",
-  [MoveClassification.Excellent]: "#3aab18",
-  [MoveClassification.Good]: "#81b64c",
-  [MoveClassification.Inaccuracy]: "#f7c631",
-  [MoveClassification.Mistake]: "#ffa459",
-  [MoveClassification.Blunder]: "#fa412d",
-};
 
 const rightClickSquareStyle: CSSProperties = {
   position: "absolute",

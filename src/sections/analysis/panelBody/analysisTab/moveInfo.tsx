@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom, currentPositionAtom } from "../states";
+import { boardAtom, currentPositionAtom } from "../../states";
 import { useMemo } from "react";
 import { moveLineUciToSan } from "@/lib/chess";
 import { MoveClassification } from "@/types/enums";

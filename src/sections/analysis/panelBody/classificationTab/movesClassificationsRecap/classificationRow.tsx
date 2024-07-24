@@ -3,10 +3,10 @@ import { Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom, gameEvalAtom } from "../../../states";
 import { useMemo } from "react";
-import { moveClassificationColors } from "@/components/board/squareRenderer";
 import Image from "next/image";
 import { capitalize } from "@/lib/helpers";
 import { useChessActions } from "@/hooks/useChessActions";
+import { moveClassificationColors } from "@/lib/chess";
 
 interface Props {
   classification: MoveClassification;

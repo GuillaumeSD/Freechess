@@ -7,7 +7,7 @@ import LinearProgressBar from "@/components/LinearProgressBar";
 import { useAtomValue } from "jotai";
 import { evaluationProgressAtom } from "../states";
 
-export default function ReviewPanelHeader() {
+export default function PanelHeader() {
   const evaluationProgress = useAtomValue(evaluationProgressAtom);
 
   return (
@@ -30,7 +30,7 @@ export default function ReviewPanelHeader() {
         <Icon icon="streamline:clipboard-check" height={24} />
 
         <Typography variant="h5" align="center">
-          Game Analysis
+          Game Review
         </Typography>
       </Grid>
 

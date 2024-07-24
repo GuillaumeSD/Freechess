@@ -1,28 +1,42 @@
 import { useChessActions } from "@/hooks/useChessActions";
 import Board from "@/sections/analysis/board";
-import ReviewPanelBody from "@/sections/analysis/reviewPanelBody";
-import ReviewPanelHeader from "@/sections/analysis/reviewPanelHeader";
-import ReviewPanelToolBar from "@/sections/analysis/reviewPanelToolbar";
+import PanelHeader from "@/sections/analysis/panelHeader";
+import PanelToolBar from "@/sections/analysis/panelToolbar";
+import AnalysisTab from "@/sections/analysis/panelBody/analysisTab";
+import ClassificationTab from "@/sections/analysis/panelBody/classificationTab";
 import {
   boardAtom,
   boardOrientationAtom,
   gameAtom,
   gameEvalAtom,
 } from "@/sections/analysis/states";
-import { Divider, Grid, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Grid,
+  Tab,
+  Tabs,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { Chess } from "chess.js";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-import ClassificationPanel from "@/sections/analysis/reviewPanelBody/classificationPanel";
+import { useEffect, useState } from "react";
+import { Icon } from "@iconify/react";
+import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
+import GraphTab from "@/sections/analysis/panelBody/graphTab";
 
-export default function GameReport() {
+export default function GameReview() {
   const theme = useTheme();
+  const [tab, setTab] = useState(0);
   const isLgOrGreater = useMediaQuery(theme.breakpoints.up("lg"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { reset: resetBoard } = useChessActions(boardAtom);
   const { setPgn: setGamePgn } = useChessActions(gameAtom);
   const [gameEval, setGameEval] = useAtom(gameEvalAtom);
+  const game = useAtomValue(gameAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
 
   const router = useRouter();
@@ -37,13 +51,22 @@ export default function GameReport() {
     }
   }, [gameId, setGameEval, setBoardOrientation, resetBoard, setGamePgn]);
 
+  const isGameLoaded = game.history().length > 0;
+
+  useEffect(() => {
+    if (tab === 1 && !isGameLoaded) setTab(0);
+    if (tab === 2 && !gameEval) setTab(0);
+  }, [isGameLoaded, gameEval, tab]);
+
   return (
-    <Grid container gap={4} justifyContent="space-evenly" alignItems="center">
+    <Grid container gap={4} justifyContent="space-evenly" alignItems="start">
       <Board />
 
       <Grid
         container
         item
+        justifyContent="center"
+        alignItems="center"
         borderRadius={2}
         border={1}
         borderColor={"secondary.main"}
@@ -59,52 +82,113 @@ export default function GameReport() {
         style={{
           maxWidth: "1200px",
         }}
+        rowGap={2}
+        maxHeight={{ lg: "calc(95vh - 130px)", xs: "900px" }}
         display="grid"
+        gridTemplateRows="repeat(4, auto) fit-content(100%)"
+        marginTop={isLgOrGreater && window.innerHeight > 780 ? 4 : 0}
       >
-        <Grid
-          container
-          item
-          justifyContent="center"
-          alignItems="center"
-          xs={12}
-          rowGap={2}
-          maxHeight={{ lg: "calc(95vh - 130px)", xs: "900px" }}
-          display="grid"
-          gridTemplateRows="repeat(4, auto) fit-content(100%)"
+        {isLgOrGreater ? (
+          <PanelHeader key="analysis-panel-header" />
+        ) : (
+          <PanelToolBar key="review-panel-toolbar" />
+        )}
+
+        {!isLgOrGreater && !gameEval && <Divider sx={{ marginX: "5%" }} />}
+        {!isLgOrGreater && !gameEval && (
+          <PanelHeader key="analysis-panel-header" />
+        )}
+
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+            marginX: { sm: "5%", xs: undefined },
+          }}
         >
-          {isLgOrGreater ? (
-            <>
-              <ReviewPanelHeader key="analysis-panel-header" />
+          <Tabs
+            value={tab}
+            onChange={(_, newValue) => setTab(newValue)}
+            aria-label="basic tabs example"
+            variant="fullWidth"
+          >
+            <Tab
+              label="Analysis"
+              id="tab0"
+              icon={
+                <Icon
+                  icon="mdi:magnify"
+                  color="#27f019"
+                  height={isMobile ? 15 : 20}
+                />
+              }
+              iconPosition="start"
+              sx={{ textTransform: "none", minHeight: 20, paddingX: 0 }}
+              disableFocusRipple
+            />
 
-              <Divider sx={{ marginX: "5%" }} />
+            <Tab
+              label="Moves"
+              id="tab1"
+              icon={
+                <Icon
+                  icon="mdi:format-list-bulleted"
+                  color="#27f019"
+                  height={isMobile ? 15 : 20}
+                />
+              }
+              iconPosition="start"
+              sx={{
+                textTransform: "none",
+                minHeight: 20,
+                display: isGameLoaded ? undefined : "none",
+                paddingX: 0,
+              }}
+              disableFocusRipple
+            />
 
-              <ReviewPanelBody key="review-panel-body" />
+            <Tab
+              label="Graph"
+              id="tab2"
+              icon={
+                <Icon
+                  icon="mdi:chart-line"
+                  color="#27f019"
+                  height={isMobile ? 15 : 20}
+                />
+              }
+              iconPosition="start"
+              sx={{
+                textTransform: "none",
+                minHeight: 20,
+                display: gameEval ? undefined : "none",
+                paddingX: 0,
+              }}
+              disableFocusRipple
+            />
+          </Tabs>
+        </Box>
 
-              <ClassificationPanel key="review-panel-class" />
+        <AnalysisTab role="tabpanel" hidden={tab !== 0} id="tabContent0" />
 
-              <Divider sx={{ marginX: "5%" }} />
+        <ClassificationTab
+          role="tabpanel"
+          hidden={tab !== 1}
+          id="tabContent1"
+        />
 
-              <ReviewPanelToolBar key="review-panel-toolbar" />
-            </>
-          ) : (
-            <>
-              <ReviewPanelToolBar key="review-panel-toolbar" />
+        <GraphTab role="tabpanel" hidden={tab !== 2} id="tabContent2" />
 
-              <Divider sx={{ marginX: "5%" }} />
+        {isLgOrGreater && <Divider sx={{ marginX: "5%" }} />}
+        {isLgOrGreater && <PanelToolBar key="review-panel-toolbar" />}
 
-              {!gameEval && <ReviewPanelHeader key="analysis-panel-header" />}
-              {!gameEval && <Divider sx={{ marginX: "5%" }} />}
-
-              <ReviewPanelBody key="review-panel-body" />
-
-              <ClassificationPanel key="review-panel-class" />
-
-              {gameEval && <Divider sx={{ marginX: "5%" }} />}
-              {gameEval && <ReviewPanelHeader key="analysis-panel-header" />}
-            </>
-          )}
-        </Grid>
+        {!isLgOrGreater && gameEval && <Divider sx={{ marginX: "5%" }} />}
+        {!isLgOrGreater && gameEval && (
+          <PanelHeader key="analysis-panel-header" />
+        )}
       </Grid>
+
+      <EngineSettingsButton />
     </Grid>
   );
 }

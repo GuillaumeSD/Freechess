@@ -58,8 +58,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
         <Typography>
           Stockfish 16 Lite (HCE) is the default engine. It offers the best
           balance between speed and strength. Stockfish 16 is the strongest
-          engine available, but please note that it requires a one time download
-          of 40MB.
+          engine available, note that it requires a one time download of 40MB.
         </Typography>
         <Grid
           marginTop={4}

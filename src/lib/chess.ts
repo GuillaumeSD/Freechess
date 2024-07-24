@@ -1,8 +1,8 @@
-import { EvaluateGameParams, PositionEval } from "@/types/eval";
+import { EvaluateGameParams, LineEval, PositionEval } from "@/types/eval";
 import { Game } from "@/types/game";
 import { Chess, PieceSymbol, Square } from "chess.js";
 import { getPositionWinPercentage } from "./engine/helpers/winPercentage";
-import { Color } from "@/types/enums";
+import { Color, MoveClassification } from "@/types/enums";
 
 export const getEvaluateGameParams = (game: Chess): EvaluateGameParams => {
   const history = game.history({ verbose: true });
@@ -314,4 +314,30 @@ export const getCapturedPieces = (
   }
 
   return capturedPieces;
+};
+
+export const getLineEvalLabel = (
+  line: Pick<LineEval, "cp" | "mate">
+): string => {
+  if (line.cp !== undefined) {
+    return `${line.cp > 0 ? "+" : ""}${(line.cp / 100).toFixed(2)}`;
+  }
+
+  if (line.mate) {
+    return `${line.mate > 0 ? "+" : "-"}M${Math.abs(line.mate)}`;
+  }
+
+  return "?";
+};
+
+export const moveClassificationColors: Record<MoveClassification, string> = {
+  [MoveClassification.Book]: "#d5a47d",
+  [MoveClassification.Brilliant]: "#26c2a3",
+  [MoveClassification.Great]: "#4099ed",
+  [MoveClassification.Best]: "#3aab18",
+  [MoveClassification.Excellent]: "#3aab18",
+  [MoveClassification.Good]: "#81b64c",
+  [MoveClassification.Inaccuracy]: "#f7c631",
+  [MoveClassification.Mistake]: "#ffa459",
+  [MoveClassification.Blunder]: "#fa412d",
 };
