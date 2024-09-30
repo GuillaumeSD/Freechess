@@ -1,18 +1,19 @@
 import { EngineName } from "@/types/enums";
 import { UciEngine } from "./uciEngine";
+import { isMultiThreadSupported, isWasmSupported } from "./shared";
 
 export class Stockfish16 extends UciEngine {
   constructor(nnue?: boolean) {
-    if (!Stockfish16.isSupported()) {
+    if (!isWasmSupported()) {
       throw new Error("Stockfish 16 is not supported");
     }
 
-    const isMultiThreadSupported = Stockfish16.isMultiThreadSupported();
-    if (!isMultiThreadSupported) console.log("Single thread mode");
+    const multiThreadIsSupported = isMultiThreadSupported();
+    if (!multiThreadIsSupported) console.log("Single thread mode");
 
-    const enginePath = isMultiThreadSupported
-      ? "engines/stockfish-16-wasm/stockfish-nnue-16.js"
-      : "engines/stockfish-16-wasm/stockfish-nnue-16-single.js";
+    const enginePath = multiThreadIsSupported
+      ? "engines/stockfish-16/stockfish-nnue-16.js"
+      : "engines/stockfish-16/stockfish-nnue-16-single.js";
 
     const customEngineInit = async () => {
       await this.sendCommands(
@@ -22,18 +23,5 @@ export class Stockfish16 extends UciEngine {
     };
 
     super(EngineName.Stockfish16, enginePath, customEngineInit);
-  }
-
-  public static isSupported() {
-    return (
-      typeof WebAssembly === "object" &&
-      WebAssembly.validate(
-        Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00)
-      )
-    );
-  }
-
-  public static isMultiThreadSupported() {
-    return SharedArrayBuffer !== undefined;
   }
 }

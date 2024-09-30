@@ -21,8 +21,8 @@ import {
 } from "../analysis/states";
 import ArrowOptions from "./arrowOptions";
 import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
-import { Stockfish16 } from "@/lib/engine/stockfish16";
 import { useEffect } from "react";
+import { isWasmSupported } from "@/lib/engine/shared";
 
 interface Props {
   open: boolean;
@@ -44,7 +44,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
   );
 
   useEffect(() => {
-    if (!Stockfish16.isSupported()) {
+    if (!isWasmSupported()) {
       setEngineName(EngineName.Stockfish11);
     }
   }, [setEngineName]);
@@ -56,9 +56,9 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
       </DialogTitle>
       <DialogContent sx={{ paddingBottom: 0 }}>
         <Typography>
-          Stockfish 16 Lite (HCE) is the default engine. It offers the best
-          balance between speed and strength. Stockfish 16 is the strongest
-          engine available, note that it requires a one time download of 40MB.
+          Stockfish 16.1 Lite is the default engine. It offers the best balance
+          between speed and strength. Stockfish 16.1 is the strongest engine
+          available, note that it requires a one time download of 64MB.
         </Typography>
         <Grid
           marginTop={4}
@@ -86,9 +86,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
                     key={engine}
                     value={engine}
                     disabled={
-                      engine.includes("stockfish_16")
-                        ? !Stockfish16.isSupported()
-                        : false
+                      engine !== EngineName.Stockfish11 && !isWasmSupported()
                     }
                   >
                     {engineLabel[engine]}
@@ -129,7 +127,9 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
 }
 
 const engineLabel: Record<EngineName, string> = {
+  [EngineName.Stockfish16_1]: "Stockfish 16.1 (64MB)",
+  [EngineName.Stockfish16_1Lite]: "Stockfish 16.1 Lite (6MB)",
+  [EngineName.Stockfish16NNUE]: "Stockfish 16 (40MB)",
   [EngineName.Stockfish16]: "Stockfish 16 Lite (HCE)",
-  [EngineName.Stockfish16NNUE]: "Stockfish 16 (40MB download)",
   [EngineName.Stockfish11]: "Stockfish 11",
 };

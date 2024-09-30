@@ -6,6 +6,8 @@ import { atom } from "jotai";
 export const gameAtom = atom(new Chess());
 export const gameDataAtom = atom<CurrentPosition>({});
 export const playerColorAtom = atom<Color>(Color.White);
-export const enginePlayNameAtom = atom<EngineName>(EngineName.Stockfish16);
+export const enginePlayNameAtom = atom<EngineName>(
+  EngineName.Stockfish16_1Lite
+);
 export const engineSkillLevelAtom = atom<number>(1);
 export const isGameInProgressAtom = atom(false);
