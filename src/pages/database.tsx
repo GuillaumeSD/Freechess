@@ -65,10 +65,8 @@ export default function GameDatabase() {
         width: 200,
         headerAlign: "center",
         align: "center",
-        valueGetter: (params) =>
-          `${params.row.white.name ?? "Unknown"} (${
-            params.row.white.rating ?? "?"
-          })`,
+        valueGetter: (_, row) =>
+          `${row.white.name ?? "Unknown"} (${row.white.rating ?? "?"})`,
       },
       {
         field: "result",
@@ -83,10 +81,8 @@ export default function GameDatabase() {
         width: 200,
         headerAlign: "center",
         align: "center",
-        valueGetter: (params) =>
-          `${params.row.black.name ?? "Unknown"} (${
-            params.row.black.rating ?? "?"
-          })`,
+        valueGetter: (_, row) =>
+          `${row.black.name ?? "Unknown"} (${row.black.rating ?? "?"})`,
       },
       {
         field: "eval",
@@ -95,7 +91,7 @@ export default function GameDatabase() {
         headerAlign: "center",
         align: "center",
         width: 100,
-        valueGetter: (params) => !!params.row.eval,
+        valueGetter: (_, row) => !!row.eval,
       },
       {
         field: "openEvaluation",
@@ -169,7 +165,6 @@ export default function GameDatabase() {
           columns={columns}
           disableColumnMenu
           hideFooter={true}
-          autoHeight={true}
           localeText={gridLocaleText}
           initialState={{
             sorting: {

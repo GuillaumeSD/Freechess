@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export const useScreenSize = () => {
   const [screenSize, setScreenSize] = useState({
     width: document?.querySelector(".MuiGrid-root")?.clientWidth ?? 500,
-    height: window?.innerHeight - 120 ?? 500,
+    height: window ? window.innerHeight - 120 : 500,
   });
 
   useEffect(() => {

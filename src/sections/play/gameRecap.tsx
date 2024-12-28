@@ -24,7 +24,7 @@ export default function GameRecap() {
     if (game.isInsufficientMaterial()) return "Draw by insufficient material";
     if (game.isStalemate()) return "Draw by stalemate";
     if (game.isThreefoldRepetition()) return "Draw by threefold repetition";
-    if (game.isDraw()) "Draw by fifty-move rule";
+    if (game.isDraw()) return "Draw by fifty-move rule";
 
     return "You resigned";
   };

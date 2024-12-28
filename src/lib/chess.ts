@@ -118,7 +118,7 @@ export const moveLineUciToSan = (
     try {
       const move = game.move(uciMoveParams(moveUci));
       return move.san;
-    } catch (e) {
+    } catch {
       return moveUci;
     }
   };
