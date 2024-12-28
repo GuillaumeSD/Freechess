@@ -16,30 +16,28 @@ export const useEngine = (engineName: EngineName | undefined) => {
       return;
     }
 
-    const engine = pickEngine(engineName);
-    engine.init().then(() => {
-      setEngine(engine);
+    pickEngine(engineName).then((newEngine) => {
+      setEngine((prev) => {
+        prev?.shutdown();
+        return newEngine;
+      });
     });
-
-    return () => {
-      engine.shutdown();
-    };
   }, [engineName]);
 
   return engine;
 };
 
-const pickEngine = (engine: EngineName): UciEngine => {
+const pickEngine = (engine: EngineName): Promise<UciEngine> => {
   switch (engine) {
     case EngineName.Stockfish16_1:
-      return new Stockfish16_1(false);
+      return Stockfish16_1.create(false);
     case EngineName.Stockfish16_1Lite:
-      return new Stockfish16_1(true);
+      return Stockfish16_1.create(true);
     case EngineName.Stockfish16:
-      return new Stockfish16(false);
+      return Stockfish16.create(false);
     case EngineName.Stockfish16NNUE:
-      return new Stockfish16(true);
+      return Stockfish16.create(true);
     case EngineName.Stockfish11:
-      return new Stockfish11();
+      return Stockfish11.create();
   }
 };

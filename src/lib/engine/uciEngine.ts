@@ -13,33 +13,36 @@ import { computeAccuracy } from "./helpers/accuracy";
 import { getWhoIsCheckmated } from "../chess";
 import { getLichessEval } from "../lichess";
 import { getMovesClassification } from "./helpers/moveClassification";
+import { EngineWorker } from "@/types/engine";
 
-export abstract class UciEngine {
-  private worker: Worker;
+export class UciEngine {
+  private worker: EngineWorker;
   private ready = false;
   private engineName: EngineName;
   private multiPv = 3;
   private skillLevel: number | undefined = undefined;
-  private customEngineInit?: () => Promise<void>;
 
-  constructor(
-    engineName: EngineName,
-    enginePath: string,
-    customEngineInit?: () => Promise<void>
-  ) {
+  private constructor(engineName: EngineName, worker: EngineWorker) {
     this.engineName = engineName;
-    this.worker = new Worker(enginePath);
-    this.customEngineInit = customEngineInit;
-
-    console.log(`${engineName} created`);
+    this.worker = worker;
   }
 
-  public async init(): Promise<void> {
-    await this.sendCommands(["uci"], "uciok");
-    await this.setMultiPv(this.multiPv, true);
-    await this.customEngineInit?.();
-    this.ready = true;
-    console.log(`${this.engineName} initialized`);
+  public static async create(
+    engineName: EngineName,
+    worker: EngineWorker,
+    customEngineInit?: (
+      sendCommands: UciEngine["sendCommands"]
+    ) => Promise<void>
+  ): Promise<UciEngine> {
+    const engine = new UciEngine(engineName, worker);
+
+    await engine.sendCommands(["uci"], "uciok");
+    await engine.setMultiPv(engine.multiPv, true);
+    await customEngineInit?.(engine.sendCommands.bind(engine));
+    engine.ready = true;
+
+    console.log(`${engineName} initialized`);
+    return engine;
   }
 
   private async setMultiPv(multiPv: number, initCase = false) {
@@ -88,8 +91,8 @@ export abstract class UciEngine {
 
   public shutdown(): void {
     this.ready = false;
-    this.worker.postMessage("quit");
-    this.worker.terminate();
+    this.worker.uci("quit");
+    this.worker.terminate?.();
     console.log(`${this.engineName} shutdown`);
   }
 
@@ -101,7 +104,7 @@ export abstract class UciEngine {
     await this.sendCommands(["stop", "isready"], "readyok");
   }
 
-  protected async sendCommands(
+  private async sendCommands(
     commands: string[],
     finalMessage: string,
     onNewMessage?: (messages: string[]) => void
@@ -109,18 +112,17 @@ export abstract class UciEngine {
     return new Promise((resolve) => {
       const messages: string[] = [];
 
-      this.worker.onmessage = (event) => {
-        const messageData: string = event.data;
-        messages.push(messageData);
+      this.worker.listen = (data) => {
+        messages.push(data);
         onNewMessage?.(messages);
 
-        if (messageData.startsWith(finalMessage)) {
+        if (data.startsWith(finalMessage)) {
           resolve(messages);
         }
       };
 
       for (const command of commands) {
-        this.worker.postMessage(command);
+        this.worker.uci(command);
       }
     });
   }
@@ -138,7 +140,7 @@ export abstract class UciEngine {
     this.ready = false;
 
     await this.sendCommands(["ucinewgame", "isready"], "readyok");
-    this.worker.postMessage("position startpos");
+    this.worker.uci("position startpos");
 
     const positions: PositionEval[] = [];
     for (const fen of fens) {

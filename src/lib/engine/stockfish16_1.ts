@@ -1,9 +1,10 @@
 import { EngineName } from "@/types/enums";
 import { UciEngine } from "./uciEngine";
 import { isMultiThreadSupported, isWasmSupported } from "./shared";
+import { getEngineWorker } from "./worker";
 
-export class Stockfish16_1 extends UciEngine {
-  constructor(lite?: boolean) {
+export class Stockfish16_1 {
+  public static async create(lite?: boolean): Promise<UciEngine> {
     if (!isWasmSupported()) {
       throw new Error("Stockfish 16.1 is not supported");
     }
@@ -14,10 +15,12 @@ export class Stockfish16_1 extends UciEngine {
     const enginePath = `engines/stockfish-16.1/stockfish-16.1${
       lite ? "-lite" : ""
     }${multiThreadIsSupported ? "" : "-single"}.js`;
+    const engineName = lite
+      ? EngineName.Stockfish16_1Lite
+      : EngineName.Stockfish16_1;
 
-    super(
-      lite ? EngineName.Stockfish16_1Lite : EngineName.Stockfish16_1,
-      enginePath
-    );
+    const worker = getEngineWorker(enginePath);
+
+    return UciEngine.create(engineName, worker);
   }
 }
