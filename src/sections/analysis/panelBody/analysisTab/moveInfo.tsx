@@ -60,7 +60,7 @@ export default function MoveInfo() {
       {bestMoveLabel && (
         <Stack direction="row" alignItems="center" spacing={1}>
           <Image
-            src={`/icons/best.png`}
+            src={"/icons/best.png"}
             alt="move-icon"
             width={16}
             height={16}
