@@ -6,6 +6,7 @@ import {
   LichessGame,
   LichessResponse,
 } from "@/types/lichess";
+import { logErrorToSentry } from "./sentry";
 
 export const getLichessEval = async (
   fen: string,
@@ -52,7 +53,8 @@ export const getLichessEval = async (
       lines: linesToKeep,
     };
   } catch (error) {
-    console.error(error);
+    const err = error instanceof Error ? error : new Error("Unknown error");
+    logErrorToSentry(err, { fen, multiPv });
     return {
       bestMove: "",
       lines: [],

@@ -15,6 +15,7 @@ import {
   Typography,
   Grid2 as Grid,
 } from "@mui/material";
+import { setContext as setSentryContext } from "@sentry/react";
 import { Chess } from "chess.js";
 import { useState } from "react";
 import GamePgnInput from "./gamePgnInput";
@@ -43,6 +44,7 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
 
     try {
       const gameToAdd = getGameFromPgn(pgn);
+      setSentryContext("loadedGame", { pgn });
 
       if (setGame) {
         setGame(gameToAdd);

@@ -8,7 +8,7 @@ Deployed on [Firebase](https://firebase.google.com/docs/hosting), see it live [h
 
 ## Running the app locally in dev mode
 
-At least [Node.js](https://nodejs.org) 18.17 is required.
+At least [Node.js](https://nodejs.org) 22.11 is required.
 
 Install the dependencies :
 
