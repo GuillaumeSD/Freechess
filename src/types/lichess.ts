@@ -14,7 +14,7 @@ export interface LichessEvalBody {
 export type LichessResponse<T> = T | LichessErrorBody;
 
 export enum LichessError {
-  NotFound = "Not found",
+  NotFound = "No cloud evaluation available for that position",
 }
 
 export interface LichessGame {
