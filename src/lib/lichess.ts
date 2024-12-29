@@ -53,7 +53,7 @@ export const getLichessEval = async (
       lines: linesToKeep,
     };
   } catch (error) {
-    if (error !== "timeout") {
+    if (!isAbortError(error)) {
       logErrorToSentry(error, { fen, multiPv });
     }
 
@@ -63,6 +63,11 @@ export const getLichessEval = async (
     };
   }
 };
+
+const isAbortError = (error: unknown): boolean =>
+  error === "timeout" ||
+  ((error instanceof Error || error instanceof DOMException) &&
+    (error.name === "AbortError" || error.message === "timeout"));
 
 export const getLichessUserRecentGames = async (
   username: string
