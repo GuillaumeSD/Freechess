@@ -1,4 +1,3 @@
-<br />
 <div align="center">
   <a href="https://github.com/GuillaumeSD/Freechess">
     <img width="120" height="120" src="https://github.com/GuillaumeSD/Freechess/blob/main/public/android-chrome-192x192.png" alt="Logo">
@@ -10,7 +9,6 @@
     <br />
     <a href="https://freechess.web.app/"><strong>freechess.web.app</strong></a>
     <br />
-    <br />
     <a href="https://discord.com/invite/Yr99abAcUr">Discord Server</a>
   </p>
 </div>
@@ -20,12 +18,13 @@ Freechess is an open-source chess web app to play, view and analyze your chess g
 
 ## Mission
 
-It aims to have all the features from the best chess apps, while being free and open-source. It is designed to be easy to use, fast, and reliable.
+It aims to offer all the features it can from the best chess apps, while being free and open-source. It is designed to be easy to use, fast, and reliable.
 
 ## Features
 
 - Load and analyze games from [lichess.org](https://lichess.org) and [chess.com](https://chess.com)
 - Analysis board with live engine evaluation, custom arrows, evaluation graph, ...
+- Moves classification (Brilliant, Great, Good, Mistake, Blunder, ...)
 - Chess960 support
 - Play against Stockfish at any elo
 - Store your games in your browser database
