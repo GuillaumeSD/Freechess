@@ -1,9 +1,10 @@
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Stack, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, currentPositionAtom } from "../../states";
 import { useMemo } from "react";
 import { moveLineUciToSan } from "@/lib/chess";
 import { MoveClassification } from "@/types/enums";
+import Image from "next/image";
 
 export default function MoveInfo() {
   const position = useAtomValue(currentPositionAtom);
@@ -38,14 +39,40 @@ export default function MoveInfo() {
   return (
     <Grid container columnGap={5} justifyContent="center" size={12}>
       {moveLabel && (
-        <Typography align="center" fontSize="0.9rem">
-          {moveLabel}
-        </Typography>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          {moveClassification && (
+            <Image
+              src={`/icons/${moveClassification}.png`}
+              alt="move-icon"
+              width={16}
+              height={16}
+              style={{
+                maxWidth: "3.5vw",
+                maxHeight: "3.5vw",
+              }}
+            />
+          )}
+          <Typography align="center" fontSize="0.9rem">
+            {moveLabel}
+          </Typography>
+        </Stack>
       )}
       {bestMoveLabel && (
-        <Typography align="center" fontSize="0.9rem">
-          {bestMoveLabel}
-        </Typography>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Image
+            src={`/icons/best.png`}
+            alt="move-icon"
+            width={16}
+            height={16}
+            style={{
+              maxWidth: "3.5vw",
+              maxHeight: "3.5vw",
+            }}
+          />
+          <Typography align="center" fontSize="0.9rem">
+            {bestMoveLabel}
+          </Typography>
+        </Stack>
       )}
     </Grid>
   );
