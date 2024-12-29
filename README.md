@@ -1,12 +1,44 @@
-# Freechess
+<br />
+<div align="center">
+  <a href="https://github.com/GuillaumeSD/Freechess">
+    <img width="120" height="120" src="https://github.com/GuillaumeSD/Freechess/blob/main/public/android-chrome-192x192.png" alt="Logo">
+  </a>
 
-Freechess is an open-source chess web app to play, view and analyze your chess games for free from anywhere with Stockfish !
+<h3 align="center">Freechess</h3>
+  <p align="center">
+    The Ultimate Chess Web App
+    <br />
+    <a href="https://freechess.web.app/"><strong>freechess.web.app</strong></a>
+    <br />
+    <br />
+    <a href="https://discord.com/invite/Yr99abAcUr">Discord Server</a>
+  </p>
+</div>
+<br />
+
+Freechess is an open-source chess web app to play, view and analyze your chess games for free on any device with Stockfish !
+
+## Mission
+
+It aims to have all the features from the best chess apps, while being free and open-source. It is designed to be easy to use, fast, and reliable.
+
+## Features
+
+- Load and analyze games from [lichess.org](https://lichess.org) and [chess.com](https://chess.com)
+- Analysis board with live engine evaluation, custom arrows, evaluation graph, ...
+- Chess960 support
+- Play against Stockfish at any elo
+- Store your games in your browser database
+
+<img src="https://github.com/GuillaumeSD/Freechess/blob/main/assets/showcase.png" />
+
+## Stack
 
 Built with [Next.js](https://nextjs.org/docs), [React](https://react.dev/learn/describing-the-ui), [Material UI](https://mui.com/material-ui/getting-started/overview/), and [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html).
 
 Deployed on [Firebase](https://firebase.google.com/docs/hosting), see it live [here](https://freechess.web.app).
 
-## Running the app locally in dev mode
+## Running the app in dev mode
 
 At least [Node.js](https://nodejs.org) 22.11 is required.
 
