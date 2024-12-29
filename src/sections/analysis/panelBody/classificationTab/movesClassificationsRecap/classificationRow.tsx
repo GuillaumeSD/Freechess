@@ -1,5 +1,5 @@
 import { Color, MoveClassification } from "@/types/enums";
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom, gameEvalAtom } from "../../../states";
 import { useMemo } from "react";
@@ -71,16 +71,14 @@ export default function ClassificationRow({ classification }: Props) {
   return (
     <Grid
       container
-      item
       justifyContent="space-evenly"
       alignItems="center"
-      xs={12}
       wrap="nowrap"
       color={moveClassificationColors[classification]}
+      size={12}
     >
       <Grid
         container
-        item
         justifyContent="center"
         alignItems="center"
         width={"3rem"}
@@ -93,7 +91,6 @@ export default function ClassificationRow({ classification }: Props) {
 
       <Grid
         container
-        item
         justifyContent="start"
         alignItems="center"
         width={"7rem"}
@@ -118,7 +115,6 @@ export default function ClassificationRow({ classification }: Props) {
 
       <Grid
         container
-        item
         justifyContent="center"
         alignItems="center"
         width={"3rem"}

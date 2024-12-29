@@ -1,4 +1,4 @@
-import { Grid, Slider as MuiSlider, Typography } from "@mui/material";
+import { Grid2 as Grid, Slider as MuiSlider, Typography } from "@mui/material";
 
 interface Props {
   value: number;
@@ -6,7 +6,7 @@ interface Props {
   min: number;
   max: number;
   label: string;
-  xs?: number;
+  size?: number;
   marksFilter?: number;
 }
 
@@ -16,16 +16,15 @@ export default function Slider({
   label,
   value,
   setValue,
-  xs,
+  size,
   marksFilter = 1,
 }: Props) {
   return (
     <Grid
-      item
       container
-      xs={xs ?? 11}
       justifyContent="center"
       alignItems="center"
+      size={size ?? 11}
     >
       <Typography id={`input-${label}`} textAlign="left" width="100%">
         {label}

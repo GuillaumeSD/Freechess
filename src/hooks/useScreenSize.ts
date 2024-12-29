@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 
 export const useScreenSize = () => {
   const [screenSize, setScreenSize] = useState({
-    width: document?.querySelector(".MuiGrid-root")?.clientWidth ?? 500,
+    width: document?.querySelector(".MuiGrid2-root")?.clientWidth ?? 500,
     height: window ? window.innerHeight - 120 : 500,
   });
 
   useEffect(() => {
-    const mainDiv = document?.querySelector(".MuiGrid-root");
+    const mainDiv = document?.querySelector(".MuiGrid2-root");
     if (!mainDiv) return;
 
     const observer = new ResizeObserver(() =>

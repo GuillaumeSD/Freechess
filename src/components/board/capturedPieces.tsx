@@ -1,6 +1,6 @@
 import { getCapturedPieces, getMaterialDifference } from "@/lib/chess";
 import { Color } from "@/types/enums";
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import { Chess } from "chess.js";
 import { PrimitiveAtom, useAtomValue } from "jotai";
 import { CSSProperties, useMemo } from "react";
@@ -25,7 +25,7 @@ export default function CapturedPieces({ gameAtom, color }: Props) {
   }, [game, color]);
 
   return (
-    <Grid item container alignItems="end" xs="auto" columnGap={0.6}>
+    <Grid container alignItems="end" columnGap={0.6} size="auto">
       {cssProps.map((cssProp, i) => (
         <span
           key={i}

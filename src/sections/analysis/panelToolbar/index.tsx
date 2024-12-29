@@ -1,4 +1,4 @@
-import { Grid, IconButton, Tooltip } from "@mui/material";
+import { Grid2 as Grid, IconButton, Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useAtomValue } from "jotai";
 import { boardAtom } from "../states";
@@ -35,7 +35,7 @@ export default function PanelToolBar() {
   }, [undoBoardMove, boardHistory, resetBoard, board]);
 
   return (
-    <Grid container item justifyContent="center" alignItems="center" xs={12}>
+    <Grid container justifyContent="center" alignItems="center" size={12}>
       <FlipBoardButton />
 
       <Tooltip title="Reset board">

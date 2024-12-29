@@ -1,5 +1,5 @@
 import { MoveClassification } from "@/types/enums";
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import MoveItem from "./moveItem";
 
 interface Props {
@@ -11,11 +11,10 @@ export default function MovesLine({ moves, moveNb }: Props) {
   return (
     <Grid
       container
-      item
       justifyContent="space-evenly"
       alignItems="center"
-      xs={12}
       wrap="nowrap"
+      size={12}
     >
       <Typography width="2rem" fontSize="0.9rem">
         {moveNb}.

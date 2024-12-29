@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import GamePanel from "./gamePanel";
 import LoadGame from "./loadGame";
 import AnalyzeButton from "./analyzeButton";
@@ -12,20 +12,18 @@ export default function PanelHeader() {
 
   return (
     <Grid
-      item
       container
       justifyContent="center"
       alignItems="center"
-      xs={12}
       rowGap={2}
+      size={12}
     >
       <Grid
-        item
         container
-        xs={12}
         justifyContent="center"
         alignItems="center"
         columnGap={1}
+        size={12}
       >
         <Icon icon="streamline:clipboard-check" height={24} />
 
@@ -35,13 +33,12 @@ export default function PanelHeader() {
       </Grid>
 
       <Grid
-        item
         container
-        xs={12}
         justifyContent="center"
         alignItems="center"
         rowGap={2}
         columnGap={12}
+        size={12}
       >
         <GamePanel />
         <LoadGame />

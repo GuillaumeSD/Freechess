@@ -1,5 +1,5 @@
 import { usePlayersNames } from "@/hooks/usePlayerNames";
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import { gameAtom, gameEvalAtom } from "../../../states";
 import { MoveClassification } from "@/types/enums";
 import ClassificationRow from "./classificationRow";
@@ -14,21 +14,19 @@ export default function MovesClassificationsRecap() {
   return (
     <Grid
       container
-      item
       justifyContent="center"
       alignItems="center"
       rowGap={1}
-      xs={6}
       sx={{ scrollbarWidth: "thin", overflowY: "auto" }}
       maxHeight="100%"
+      size={6}
     >
       <Grid
-        item
         container
         alignItems="center"
         justifyContent="space-evenly"
         wrap="nowrap"
-        xs={12}
+        size={12}
       >
         <Typography width="12rem" align="center" noWrap fontSize="0.9rem">
           {whiteName}

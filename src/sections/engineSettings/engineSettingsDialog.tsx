@@ -12,7 +12,7 @@ import {
   OutlinedInput,
   DialogActions,
   Typography,
-  Grid,
+  Grid2 as Grid,
 } from "@mui/material";
 import {
   engineNameAtom,
@@ -62,14 +62,13 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
         </Typography>
         <Grid
           marginTop={4}
-          item
           container
           justifyContent="center"
           alignItems="center"
-          xs={12}
           rowGap={3}
+          size={12}
         >
-          <Grid item container xs={12} justifyContent="center">
+          <Grid container justifyContent="center" size={12}>
             <FormControl variant="outlined">
               <InputLabel id="dialog-select-label">Engine</InputLabel>
               <Select
@@ -111,7 +110,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
             setValue={setMultiPv}
             min={2}
             max={6}
-            xs={6}
+            size={6}
           />
 
           <ArrowOptions />

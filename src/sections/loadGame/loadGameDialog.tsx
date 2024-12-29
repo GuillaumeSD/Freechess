@@ -13,7 +13,7 @@ import {
   OutlinedInput,
   DialogActions,
   Typography,
-  Grid,
+  Grid2 as Grid,
 } from "@mui/material";
 import { Chess } from "chess.js";
 import { useState } from "react";

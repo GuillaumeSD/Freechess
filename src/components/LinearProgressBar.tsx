@@ -1,5 +1,5 @@
 import {
-  Grid,
+  Grid2 as Grid,
   LinearProgress,
   LinearProgressProps,
   Typography,
@@ -12,21 +12,20 @@ const LinearProgressBar = (
   if (props.value === 0) return null;
 
   return (
-    <Grid item container alignItems="center" justifyContent="center" xs={12}>
+    <Grid container alignItems="center" justifyContent="center" size={12}>
       <Typography variant="caption" align="center">
         {props.label}
       </Typography>
       <Grid
-        item
         container
-        xs={12}
         width="90%"
         alignItems="center"
         justifyContent="center"
         wrap="nowrap"
         columnGap={2}
+        size={12}
       >
-        <Grid item sx={{ width: "100%" }}>
+        <Grid sx={{ width: "100%" }}>
           <LinearProgress
             variant="determinate"
             {...props}
@@ -46,7 +45,7 @@ const LinearProgressBar = (
             })}
           />
         </Grid>
-        <Grid item>
+        <Grid>
           <Typography variant="body2" color="text.secondary">{`${Math.round(
             props.value
           )}%`}</Typography>

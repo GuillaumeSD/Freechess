@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import { PrimitiveAtom, atom, useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import { getEvaluationBarValue } from "@/lib/chess";
@@ -32,7 +32,6 @@ export default function EvaluationBar({
 
   return (
     <Grid
-      item
       container
       justifyContent="center"
       alignItems="center"

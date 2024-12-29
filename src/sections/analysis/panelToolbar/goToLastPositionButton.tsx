@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Grid, IconButton, Tooltip } from "@mui/material";
+import { Grid2 as Grid, IconButton, Tooltip } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom } from "../states";
 import { useChessActions } from "@/hooks/useChessActions";

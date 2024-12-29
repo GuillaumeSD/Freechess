@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, Grid } from "@mui/material";
+import { Checkbox, FormControlLabel, Grid2 as Grid } from "@mui/material";
 import {
   showBestMoveArrowAtom,
   showPlayerMoveIconAtom,
@@ -18,10 +18,9 @@ export default function ArrowOptions() {
   return (
     <Grid
       container
-      item
       justifyContent="space-evenly"
       alignItems="center"
-      xs={12}
+      size={12}
       gap={3}
     >
       <FormControlLabel

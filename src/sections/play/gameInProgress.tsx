@@ -1,4 +1,9 @@
-import { Button, CircularProgress, Grid, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Grid2 as Grid,
+  Typography,
+} from "@mui/material";
 import { useAtom, useAtomValue } from "jotai";
 import { gameAtom, isGameInProgressAtom } from "./states";
 import { useEffect } from "react";
@@ -22,30 +27,28 @@ export default function GameInProgress() {
 
   return (
     <Grid
-      item
       container
-      xs={12}
       justifyContent="center"
       alignItems="center"
       gap={2}
+      size={12}
     >
       <Grid
         container
-        item
         justifyContent="center"
         alignItems="center"
-        xs={12}
         gap={2}
+        size={12}
       >
         <Typography>Game in progress</Typography>
         <CircularProgress size={20} color="info" />
       </Grid>
 
-      <Grid item container justifyContent="center" alignItems="center" xs={12}>
+      <Grid container justifyContent="center" alignItems="center" size={12}>
         <UndoMoveButton />
       </Grid>
 
-      <Grid item container justifyContent="center" alignItems="center" xs={12}>
+      <Grid container justifyContent="center" alignItems="center" size={12}>
         <Button variant="outlined" onClick={handleResign}>
           Resign
         </Button>

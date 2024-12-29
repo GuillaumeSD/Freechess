@@ -1,5 +1,5 @@
 import { MoveClassification } from "@/types/enums";
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import Image from "next/image";
 import { useAtomValue } from "jotai";
 import { boardAtom, currentPositionAtom, gameAtom } from "../../../states";
@@ -40,7 +40,6 @@ export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
 
   return (
     <Grid
-      item
       container
       justifyContent="center"
       alignItems="center"

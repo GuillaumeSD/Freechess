@@ -26,6 +26,7 @@
     "prettier/prettier": ["error", {"endOfLine": "auto"}],
     "require-jsdoc": "off",
     "@typescript-eslint/no-unused-vars": "error",
-    "react/no-unescaped-entities": 0
+    "react/no-unescaped-entities": 0,
+    "@typescript-eslint/no-deprecated": 1
   }
 }

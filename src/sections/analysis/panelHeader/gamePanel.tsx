@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { useAtomValue } from "jotai";
 import { gameAtom } from "../states";
@@ -20,27 +20,26 @@ export default function GamePanel() {
 
   return (
     <Grid
-      item
       container
-      xs={11}
       justifyContent="space-evenly"
       alignItems="center"
       rowGap={1}
       columnGap={3}
+      size={11}
     >
-      <Grid item container xs justifyContent="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center" size="grow">
         <Typography noWrap fontSize="0.9rem">
           Site : {gameFromUrl?.site || game.header().Site || "?"}
         </Typography>
       </Grid>
 
-      <Grid item container xs justifyContent="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center" size="grow">
         <Typography noWrap fontSize="0.9rem">
           Date : {gameFromUrl?.date || game.header().Date || "?"}
         </Typography>
       </Grid>
 
-      <Grid item container xs justifyContent="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center" size="grow">
         <Typography noWrap fontSize="0.9rem">
           Result : {result}
         </Typography>

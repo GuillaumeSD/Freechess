@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import { Icon } from "@iconify/react";
 import {
   DataGrid,
@@ -147,18 +147,18 @@ export default function GameDatabase() {
       gap={4}
       marginTop={6}
     >
-      <Grid item container xs={12} justifyContent="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center" size={12}>
         <LoadGameButton />
       </Grid>
 
-      <Grid item container xs={12} justifyContent="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center" size={12}>
         <Typography variant="subtitle2">
           You have {games.length} game{games.length !== 1 && "s"} in your
           database
         </Typography>
       </Grid>
 
-      <Grid item maxWidth="100%" minWidth="50px">
+      <Grid maxWidth="100%" minWidth="50px">
         <DataGrid
           aria-label="Games list"
           rows={games}

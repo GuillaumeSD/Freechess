@@ -13,7 +13,7 @@ import {
 import {
   Box,
   Divider,
-  Grid,
+  Grid2 as Grid,
   Tab,
   Tabs,
   useMediaQuery,
@@ -64,14 +64,11 @@ export default function GameReview() {
 
       <Grid
         container
-        item
         justifyContent="center"
         alignItems="center"
         borderRadius={2}
         border={1}
         borderColor={"secondary.main"}
-        xs={12}
-        lg
         sx={{
           backgroundColor: "secondary.main",
           borderColor: "primary.main",
@@ -87,6 +84,10 @@ export default function GameReview() {
         display="grid"
         gridTemplateRows="repeat(4, auto) fit-content(100%)"
         marginTop={isLgOrGreater && window.innerHeight > 780 ? 4 : 0}
+        size={{
+          xs: 12,
+          lg: "grow",
+        }}
       >
         {isLgOrGreater ? (
           <PanelHeader key="analysis-panel-header" />

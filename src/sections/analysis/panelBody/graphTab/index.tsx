@@ -1,4 +1,4 @@
-import { Box, Grid, GridProps } from "@mui/material";
+import { Box, Grid2 as Grid, Grid2Props as GridProps } from "@mui/material";
 import { useAtomValue } from "jotai";
 import {
   Area,
@@ -35,7 +35,6 @@ export default function GraphTab(props: GridProps) {
   return (
     <Grid
       container
-      item
       justifyContent="center"
       alignItems="start"
       height="100%"

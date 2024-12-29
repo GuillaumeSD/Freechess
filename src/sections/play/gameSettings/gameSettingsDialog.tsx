@@ -12,7 +12,7 @@ import {
   OutlinedInput,
   DialogActions,
   Typography,
-  Grid,
+  Grid2 as Grid,
   FormGroup,
   FormControlLabel,
   Switch,
@@ -87,14 +87,13 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
         </Typography>
         <Grid
           marginTop={4}
-          item
           container
           justifyContent="center"
           alignItems="center"
-          xs={12}
           rowGap={3}
+          size={12}
         >
-          <Grid item container xs={12} justifyContent="center">
+          <Grid container justifyContent="center" size={12}>
             <FormControl variant="outlined">
               <InputLabel id="dialog-select-label">Bot's engine</InputLabel>
               <Select

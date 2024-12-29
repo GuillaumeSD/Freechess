@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, currentPositionAtom } from "../../states";
 import { useMemo } from "react";
@@ -36,7 +36,7 @@ export default function MoveInfo() {
       : `${bestMoveSan} was the best move`;
 
   return (
-    <Grid item container columnGap={5} xs={12} justifyContent="center">
+    <Grid container columnGap={5} justifyContent="center" size={12}>
       {moveLabel && (
         <Typography align="center" fontSize="0.9rem">
           {moveLabel}

@@ -1,4 +1,9 @@
-import { Grid, GridProps, List, Typography } from "@mui/material";
+import {
+  Grid2 as Grid,
+  Grid2Props as GridProps,
+  List,
+  Typography,
+} from "@mui/material";
 import { useAtomValue } from "jotai";
 import {
   boardAtom,
@@ -39,9 +44,8 @@ export default function AnalysisTab(props: GridProps) {
 
   return (
     <Grid
-      item
       container
-      xs={12}
+      size={12}
       justifyContent="center"
       alignItems="start"
       height="100%"
@@ -60,14 +64,14 @@ export default function AnalysisTab(props: GridProps) {
       <Opening />
 
       {isGameOver && (
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Typography align="center" fontSize="0.9rem">
             Game is over
           </Typography>
         </Grid>
       )}
 
-      <Grid item container xs={12} justifyContent="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center" size={12}>
         <List sx={{ maxWidth: "95%", padding: 0 }}>
           {!board.isCheckmate() &&
             engineLines.map((line) => (

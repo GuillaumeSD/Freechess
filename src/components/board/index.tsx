@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import { Chessboard } from "react-chessboard";
 import { PrimitiveAtom, atom, useAtomValue, useSetAtom } from "jotai";
 import {
@@ -220,7 +220,6 @@ export default function Board({
 
   return (
     <Grid
-      item
       container
       justifyContent="center"
       alignItems="center"
@@ -236,21 +235,19 @@ export default function Board({
       )}
 
       <Grid
-        item
         container
         rowGap={1}
         justifyContent="center"
         alignItems="center"
         paddingLeft={showEvaluationBar ? 2 : 0}
-        xs
+        size="grow"
       >
         <Grid
-          item
           container
-          xs={12}
           justifyContent="center"
           alignItems="center"
           columnGap={2}
+          size={12}
         >
           <Typography>
             {boardOrientation === Color.White ? blackPlayer : whitePlayer}
@@ -263,12 +260,11 @@ export default function Board({
         </Grid>
 
         <Grid
-          item
           container
           justifyContent="center"
           alignItems="center"
           ref={boardRef}
-          xs={12}
+          size={12}
         >
           <Chessboard
             id={`${boardId}-${canPlay}`}
@@ -296,12 +292,11 @@ export default function Board({
         </Grid>
 
         <Grid
-          item
           container
-          xs={12}
           justifyContent="center"
           alignItems="center"
           columnGap={2}
+          size={12}
         >
           <Typography>
             {boardOrientation === Color.White ? whitePlayer : blackPlayer}

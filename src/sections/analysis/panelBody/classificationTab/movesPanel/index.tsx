@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid2 as Grid } from "@mui/material";
 import MovesLine from "./movesLine";
 import { useMemo } from "react";
 import { useAtomValue } from "jotai";
@@ -40,13 +40,12 @@ export default function MovesPanel() {
   return (
     <Grid
       container
-      item
       justifyContent="center"
       alignItems="start"
       gap={0.8}
       sx={{ scrollbarWidth: "thin", overflowY: "auto" }}
       maxHeight="100%"
-      xs={6}
+      size={6}
       id="moves-panel"
     >
       {gameMoves?.map((moves, idx) => (

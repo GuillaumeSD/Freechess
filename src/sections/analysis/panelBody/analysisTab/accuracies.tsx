@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { gameEvalAtom } from "../../states";
 
@@ -9,12 +9,11 @@ export default function Accuracies() {
 
   return (
     <Grid
-      item
       container
-      xs={12}
       justifyContent="center"
       alignItems="center"
       columnGap={{ xs: "8vw", md: 10 }}
+      size={12}
     >
       <Typography
         align="center"

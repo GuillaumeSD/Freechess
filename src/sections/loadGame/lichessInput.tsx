@@ -5,7 +5,7 @@ import { LichessGame } from "@/types/lichess";
 import {
   CircularProgress,
   FormControl,
-  Grid,
+  Grid2 as Grid,
   ListItemButton,
   ListItemText,
   TextField,
@@ -60,12 +60,11 @@ export default function LichessInput({ pgn, setPgn }: Props) {
       {lichessUsername && (
         <Grid
           container
-          item
-          xs={12}
           gap={2}
           justifyContent="center"
           alignContent="center"
           minHeight={100}
+          size={12}
         >
           {games.map((game) => (
             <ListItemButton
@@ -87,8 +86,10 @@ export default function LichessInput({ pgn, setPgn }: Props) {
                 )
                   .toLocaleString()
                   .slice(0, -3)}`}
-                primaryTypographyProps={{ noWrap: true }}
-                secondaryTypographyProps={{ noWrap: true }}
+                slotProps={{
+                  primary: { noWrap: true },
+                  secondary: { noWrap: true },
+                }}
               />
             </ListItemButton>
           ))}
