@@ -14,7 +14,7 @@ export const getLichessEval = async (
 ): Promise<PositionEval> => {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 200);
+    const timeoutId = setTimeout(() => controller.abort("timeout"), 200);
     const res = await fetch(
       `https://lichess.org/api/cloud-eval?fen=${fen}&multiPv=${multiPv}`,
       { method: "GET", signal: controller.signal }
@@ -52,9 +52,14 @@ export const getLichessEval = async (
       bestMove,
       lines: linesToKeep,
     };
-  } catch (error) {
-    const err = error instanceof Error ? error : new Error("Unknown error");
-    logErrorToSentry(err, { fen, multiPv });
+  } catch (rawError) {
+    const error =
+      rawError instanceof Error ? rawError : new Error("Unknown error");
+
+    if (error.name !== "AbortError") {
+      logErrorToSentry(error, { fen, multiPv });
+    }
+
     return {
       bestMove: "",
       lines: [],
