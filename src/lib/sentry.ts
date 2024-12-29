@@ -4,7 +4,7 @@ export const isSentryEnabled = () =>
   !!process.env.NEXT_PUBLIC_SENTRY_DSN && Sentry.isInitialized();
 
 export const logErrorToSentry = (
-  error: Error,
+  error: unknown,
   context?: Record<string, unknown>
 ) => {
   if (isSentryEnabled()) {

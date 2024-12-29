@@ -52,11 +52,8 @@ export const getLichessEval = async (
       bestMove,
       lines: linesToKeep,
     };
-  } catch (rawError) {
-    const error =
-      rawError instanceof Error ? rawError : new Error("Unknown error");
-
-    if (error.name !== "AbortError") {
+  } catch (error) {
+    if (error !== "timeout") {
       logErrorToSentry(error, { fen, multiPv });
     }
 
