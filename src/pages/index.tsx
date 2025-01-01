@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
 import GraphTab from "@/sections/analysis/panelBody/graphTab";
+import { PageTitle } from "@/components/pageTitle";
 
 export default function GameReview() {
   const theme = useTheme();
@@ -60,6 +61,8 @@ export default function GameReview() {
 
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start">
+      <PageTitle title="Freechess Game Review" />
+
       <Board />
 
       <Grid

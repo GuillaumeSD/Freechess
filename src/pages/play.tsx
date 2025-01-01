@@ -1,3 +1,4 @@
+import { PageTitle } from "@/components/pageTitle";
 import Board from "@/sections/play/board";
 import GameInProgress from "@/sections/play/gameInProgress";
 import GameRecap from "@/sections/play/gameRecap";
@@ -11,6 +12,8 @@ export default function Play() {
 
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start">
+      <PageTitle title="Freechess Play vs Stockfish" />
+
       <Board />
 
       <Grid

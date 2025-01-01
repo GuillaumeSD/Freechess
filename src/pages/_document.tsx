@@ -24,12 +24,11 @@ export default function Document() {
         />
         <meta
           name="description"
-          content="Open-source chess app to play, view and analyze your chess games for free from anywhere with Stockfish !"
+          content="Analyze your chess games for free on any device with Stockfish !"
         />
 
         {/* Balises OG (Facebook & Twitter) */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="FreeChess" />
         <meta property="og:site_name" content="Freechess.web.app" />
         <meta property="og:url" content="https://freechess.web.app/" />
         <meta
@@ -38,7 +37,7 @@ export default function Document() {
         />
         <meta
           property="og:description"
-          content="Open-source chess app to play, view and analyze your chess games for free from anywhere with Stockfish !"
+          content="Analyze your chess games for free on any device with Stockfish !"
         />
 
         {/* Balise Twitter */}
