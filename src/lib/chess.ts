@@ -147,6 +147,11 @@ export const getEvaluationBarValue = (
   return { whiteBarPercentage, label };
 };
 
+export const getIsStalemate = (fen: string): boolean => {
+  const game = new Chess(fen);
+  return game.isStalemate();
+};
+
 export const getWhoIsCheckmated = (fen: string): "w" | "b" | null => {
   const game = new Chess(fen);
   if (!game.isCheckmate()) return null;

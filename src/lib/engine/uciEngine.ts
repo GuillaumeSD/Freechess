@@ -10,7 +10,7 @@ import {
   parseEvaluationResults,
 } from "./helpers/parseResults";
 import { computeAccuracy } from "./helpers/accuracy";
-import { getWhoIsCheckmated } from "../chess";
+import { getIsStalemate, getWhoIsCheckmated } from "../chess";
 import { getLichessEval } from "../lichess";
 import { getMovesClassification } from "./helpers/moveClassification";
 import { EngineWorker } from "@/types/engine";
@@ -158,6 +158,22 @@ export class UciEngine {
         });
         continue;
       }
+
+      const isStalemate = getIsStalemate(fen);
+      if (isStalemate) {
+        positions.push({
+          lines: [
+            {
+              pv: [],
+              depth: 0,
+              multiPv: 1,
+              cp: 0,
+            },
+          ],
+        });
+        continue;
+      }
+
       const result = await this.evaluatePosition(fen, depth);
       positions.push(result);
       setEvaluationProgress?.(
