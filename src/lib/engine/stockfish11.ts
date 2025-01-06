@@ -8,4 +8,8 @@ export class Stockfish11 {
 
     return UciEngine.create(EngineName.Stockfish11, worker);
   }
+
+  public static isSupported() {
+    return true;
+  }
 }

@@ -22,7 +22,8 @@ import {
 import ArrowOptions from "./arrowOptions";
 import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
 import { useEffect } from "react";
-import { isWasmSupported } from "@/lib/engine/shared";
+import { isEngineSupported } from "@/lib/engine/shared";
+import { Stockfish16_1 } from "@/lib/engine/stockfish16_1";
 
 interface Props {
   open: boolean;
@@ -44,10 +45,14 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
   );
 
   useEffect(() => {
-    if (!isWasmSupported()) {
-      setEngineName(EngineName.Stockfish11);
+    if (!isEngineSupported(engineName)) {
+      if (Stockfish16_1.isSupported()) {
+        setEngineName(EngineName.Stockfish16_1Lite);
+      } else {
+        setEngineName(EngineName.Stockfish11);
+      }
     }
-  }, [setEngineName]);
+  }, [setEngineName, engineName]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -56,9 +61,10 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
       </DialogTitle>
       <DialogContent sx={{ paddingBottom: 0 }}>
         <Typography>
-          Stockfish 16.1 Lite is the default engine. It offers the best balance
-          between speed and strength. Stockfish 16.1 is the strongest engine
-          available, note that it requires a one time download of 64MB.
+          Stockfish 17 Lite is the default engine if your device support its
+          requirements. It offers the best balance between speed and strength.
+          Stockfish 17 is the strongest engine available, note that it requires
+          a one time download of 75MB.
         </Typography>
         <Grid
           marginTop={4}
@@ -84,9 +90,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
                   <MenuItem
                     key={engine}
                     value={engine}
-                    disabled={
-                      engine !== EngineName.Stockfish11 && !isWasmSupported()
-                    }
+                    disabled={!isEngineSupported(engine)}
                   >
                     {engineLabel[engine]}
                   </MenuItem>
@@ -126,6 +130,8 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
 }
 
 const engineLabel: Record<EngineName, string> = {
+  [EngineName.Stockfish17]: "Stockfish 17 (75MB)",
+  [EngineName.Stockfish17Lite]: "Stockfish 17 Lite (6MB)",
   [EngineName.Stockfish16_1]: "Stockfish 16.1 (64MB)",
   [EngineName.Stockfish16_1Lite]: "Stockfish 16.1 Lite (6MB)",
   [EngineName.Stockfish16NNUE]: "Stockfish 16 (40MB)",

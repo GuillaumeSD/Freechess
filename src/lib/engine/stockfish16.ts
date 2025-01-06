@@ -5,7 +5,7 @@ import { getEngineWorker } from "./worker";
 
 export class Stockfish16 {
   public static async create(nnue?: boolean): Promise<UciEngine> {
-    if (!isWasmSupported()) {
+    if (!Stockfish16.isSupported()) {
       throw new Error("Stockfish 16 is not supported");
     }
 
@@ -28,5 +28,9 @@ export class Stockfish16 {
     const worker = getEngineWorker(enginePath);
 
     return UciEngine.create(EngineName.Stockfish16, worker, customEngineInit);
+  }
+
+  public static isSupported() {
+    return isWasmSupported();
   }
 }
