@@ -7,9 +7,9 @@
   <p align="center">
     The Ultimate Chess Web App
     <br />
-    <a href="https://freechess.web.app/"><strong>freechess.web.app</strong></a>
+    <a href="https://freechess.web.app/" target="_blank" rel="noopener noreferrer"><strong>freechess.web.app</strong></a>
     <br />
-    <a href="https://discord.com/invite/Yr99abAcUr">Discord Server</a>
+    <a href="https://discord.com/invite/Yr99abAcUr" target="_blank" rel="noopener noreferrer">Discord Server</a>
   </p>
 </div>
 <br />
@@ -22,10 +22,10 @@ It aims to offer all the features it can from the best chess apps, while being f
 
 ## Features
 
-- Load and analyze games from [lichess.org](https://lichess.org) and [chess.com](https://chess.com)
+- Load and analyze games from [chess.com](https://chess.com) and [lichess.org](https://lichess.org)
 - Analysis board with live engine evaluation, custom arrows, evaluation graph, ...
 - Moves classification (Brilliant, Great, Good, Mistake, Blunder, ...)
-- Chess960 support
+- Chess960 and Puzzles support
 - Play against Stockfish at any elo
 - Store your games in your browser database
 

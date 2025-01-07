@@ -57,7 +57,7 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
                 fontSize: { xs: "1rem", sm: "1.25rem" },
               }}
             >
-              Free Chess
+              Freechess
             </Typography>
           </NavLink>
           <IconButton
