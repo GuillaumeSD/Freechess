@@ -67,9 +67,13 @@ export const useCurrentPosition = (engineName?: EngineName) => {
         if (
           savedEval &&
           savedEval.engine === engineName &&
-          savedEval.lines[0].depth >= depth
+          (savedEval.lines?.length ?? 0) >= multiPv &&
+          (savedEval.lines[0].depth ?? 0) >= depth
         ) {
-          setPartialEval?.(savedEval);
+          setPartialEval?.({
+            ...savedEval,
+            lines: savedEval.lines.slice(0, multiPv),
+          });
           return savedEval;
         }
 
