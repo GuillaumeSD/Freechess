@@ -11,7 +11,7 @@
     <br />
     <a href="https://discord.com/invite/Yr99abAcUr" target="_blank" rel="noopener noreferrer">Discord Server</a>
     ·
-    <a href="https://www.notion.so/freechess/4cf7823836724432b71aa8932ba7d5bb?v=d60f328f46f649a1b6edaab38d230b1b" target="_blank" rel="noopener noreferrer">Features Backlog</a>
+    <a href="https://freechess.notion.site/4cf7823836724432b71aa8932ba7d5bb" target="_blank" rel="noopener noreferrer">Features Backlog</a>
   </p>
 </div>
 <br />
