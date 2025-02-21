@@ -10,8 +10,8 @@ export class Stockfish17 {
     }
 
     const enginePath = lite
-      ? "engines/stockfish-17/stockfish-17-lite-02843c1.js"
-      : "engines/stockfish-17/stockfish-17-aaa11cd.js";
+      ? "engines/stockfish-17/stockfish-17-lite.js"
+      : "engines/stockfish-17/stockfish-17.js";
     const engineName = lite
       ? EngineName.Stockfish17Lite
       : EngineName.Stockfish17;
