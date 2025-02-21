@@ -27,7 +27,11 @@
     "react": "18.3.1",
     "react-chessboard": "^4.7.2",
     "react-dom": "18.3.1",
-    "recharts": "^2.15.0"
+    "recharts": "^2.15.0",
+    "stockfish.js": "^10.0.2",
+    "stockfish-17": "nmrugg/stockfish.js#fe65b88",
+    "stockfish-16.1": "nmrugg/stockfish.js#v16.1.0",
+    "stockfish-16": "nmrugg/stockfish.js#v16.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
