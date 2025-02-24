@@ -18,3 +18,9 @@ out/
 
 # ts build
 tsconfig.tsbuildinfo
+
+# Auto Generated PWA files
+**/public/sw.js
+**/public/workbox-*.js
+
+certificates
