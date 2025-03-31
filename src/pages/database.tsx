@@ -9,7 +9,7 @@ import {
   GridRowId,
 } from "@mui/x-data-grid";
 import { useCallback, useMemo } from "react";
-import { red } from "@mui/material/colors";
+import { blue, red } from "@mui/material/colors";
 import LoadGameButton from "@/sections/loadGame/loadGameButton";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { useRouter } from "next/router";
@@ -34,6 +34,16 @@ export default function GameDatabase() {
       await deleteGame(id);
     },
     [deleteGame]
+  );
+
+  const handleCopyGameRow = useCallback(
+    (id: GridRowId) => async () => {
+      if (typeof id !== "number") {
+        throw new Error("Unable to copy game");
+      }
+      await navigator.clipboard.writeText(games[id - 1].pgn);
+    },
+    [games]
   );
 
   const columns: GridColDef[] = useMemo(
@@ -136,8 +146,28 @@ export default function GameDatabase() {
           ];
         },
       },
+      {
+        field: "copy pgn",
+        type: "actions",
+        headerName: "Copy pgn",
+        width: 100,
+        cellClassName: "actions",
+        getActions: ({ id }) => {
+          return [
+            <GridActionsCellItem
+              icon={
+                <Icon icon="ri:clipboard-line" color={blue[400]} width="20px" />
+              }
+              label="Copy pgn"
+              onClick={handleCopyGameRow(id)}
+              color="inherit"
+              key={`${id}-copy-button`}
+            />,
+          ];
+        },
+      },
     ],
-    [handleDeleteGameRow, router]
+    [handleDeleteGameRow, handleCopyGameRow, router]
   );
 
   return (
