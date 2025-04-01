@@ -22,6 +22,7 @@ export default function Document() {
           sizes="16x16"
           href="/favicon-16x16.png"
         />
+        <link rel="manifest" href="/manifest.json" />
         <meta
           name="description"
           content="Analyze your chess games for free on any device with Stockfish !"
