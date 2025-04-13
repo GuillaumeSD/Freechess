@@ -13,7 +13,7 @@ export const isWasmSupported = () =>
 export const isMultiThreadSupported = () => {
   try {
     return SharedArrayBuffer !== undefined;
-  } catch(e) {
+  } catch {
     return false;
   }
 };
