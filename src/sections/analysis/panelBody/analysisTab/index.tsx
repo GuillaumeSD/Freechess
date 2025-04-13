@@ -57,7 +57,8 @@ export default function AnalysisTab(props: GridProps) {
           : { overflow: "hidden", overflowY: "auto", ...props.sx }
       }
     >
-      <Accuracies />
+      <Accuracies params={"accurecy"} />
+      <Accuracies params={"rating"} />
 
       <MoveInfo />
 

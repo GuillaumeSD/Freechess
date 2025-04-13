@@ -21,6 +21,10 @@ export interface Accuracy {
   black: number;
 }
 
+export interface EstimatedElo {
+  white: number | null;
+  black: number | null;
+}
 export interface EngineSettings {
   engine: EngineName;
   depth: number;
@@ -31,6 +35,7 @@ export interface EngineSettings {
 export interface GameEval {
   positions: PositionEval[];
   accuracy: Accuracy;
+  estimatedElo: EstimatedElo;
   settings: EngineSettings;
 }
 
