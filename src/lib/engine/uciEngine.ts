@@ -15,34 +15,68 @@ import { getLichessEval } from "../lichess";
 import { getMovesClassification } from "./helpers/moveClassification";
 import { EngineWorker } from "@/types/engine";
 
+type WorkerJob = {
+  commands: string[];
+  finalMessage: string;
+  onNewMessage?: (messages: string[]) => void;
+  resolve: (messages: string[]) => void;
+};
+
 export class UciEngine {
-  private worker: EngineWorker;
+  private workers: EngineWorker[];
+  private isBusy: boolean[] = [];
+  private workerQueue: WorkerJob[] = [];
   private ready = false;
   private engineName: EngineName;
   private multiPv = 3;
   private skillLevel: number | undefined = undefined;
 
-  private constructor(engineName: EngineName, worker: EngineWorker) {
+  private constructor(engineName: EngineName, workers: EngineWorker[]) {
     this.engineName = engineName;
-    this.worker = worker;
+    this.workers = workers;
+    this.isBusy = new Array(workers.length).fill(false);
   }
 
   public static async create(
     engineName: EngineName,
-    worker: EngineWorker,
+    workers: EngineWorker[],
     customEngineInit?: (
       sendCommands: UciEngine["sendCommands"]
     ) => Promise<void>
   ): Promise<UciEngine> {
-    const engine = new UciEngine(engineName, worker);
+    const engine = new UciEngine(engineName, workers);
 
-    await engine.sendCommands(["uci"], "uciok");
+    await engine.broadcastCommands(["uci"], "uciok");
     await engine.setMultiPv(engine.multiPv, true);
     await customEngineInit?.(engine.sendCommands.bind(engine));
     engine.ready = true;
 
     console.log(`${engineName} initialized`);
     return engine;
+  }
+
+  private acquireWorker(): { index: number; worker: EngineWorker } | undefined {
+    for (let i = 0; i < this.workers.length; i++) {
+      if (!this.isBusy[i]) {
+        this.isBusy[i] = true;
+        return { index: i, worker: this.workers[i] };
+      }
+    }
+
+    return undefined;
+  }
+
+  private releaseWorker(index: number) {
+    this.isBusy[index] = false;
+
+    if (this.workerQueue.length > 0) {
+      const nextJob = this.workerQueue.shift()!;
+      this.sendCommands(
+        nextJob.commands,
+        nextJob.finalMessage,
+        nextJob.onNewMessage
+      ).then(nextJob.resolve);
+    }
   }
 
   private async setMultiPv(multiPv: number, initCase = false) {
@@ -56,7 +90,7 @@ export class UciEngine {
       throw new Error(`Invalid MultiPV value : ${multiPv}`);
     }
 
-    await this.sendCommands(
+    await this.broadcastCommands(
       [`setoption name MultiPV value ${multiPv}`, "isready"],
       "readyok"
     );
@@ -91,8 +125,15 @@ export class UciEngine {
 
   public shutdown(): void {
     this.ready = false;
-    this.worker.uci("quit");
-    this.worker.terminate?.();
+
+    for (const worker of this.workers) {
+      worker.uci("quit");
+      worker.terminate?.();
+    }
+
+    this.isBusy = Array(this.workers.length).fill(false);
+    this.workerQueue = [];
+
     console.log(`${this.engineName} shutdown`);
   }
 
@@ -109,22 +150,63 @@ export class UciEngine {
     finalMessage: string,
     onNewMessage?: (messages: string[]) => void
   ): Promise<string[]> {
+    const acquired = this.acquireWorker();
+    if (!acquired) {
+      return new Promise((resolve) => {
+        this.workerQueue.push({
+          commands,
+          finalMessage,
+          onNewMessage,
+          resolve,
+        });
+      });
+    }
     return new Promise((resolve) => {
       const messages: string[] = [];
-
-      this.worker.listen = (data) => {
+      acquired.worker.listen = (data) => {
         messages.push(data);
         onNewMessage?.(messages);
 
         if (data.startsWith(finalMessage)) {
+          this.releaseWorker(acquired.index);
           resolve(messages);
         }
       };
-
       for (const command of commands) {
-        this.worker.uci(command);
+        acquired.worker.uci(command);
       }
     });
+  }
+
+  private async sendCommandsToWorker(
+    worker: EngineWorker,
+    commands: string[],
+    finalMessage: string,
+    onNewMessage?: (messages: string[]) => void
+  ): Promise<string[]> {
+    return new Promise((resolve) => {
+      const messages: string[] = [];
+      worker.listen = (data) => {
+        messages.push(data);
+        onNewMessage?.(messages);
+        if (data.startsWith(finalMessage)) {
+          resolve(messages);
+        }
+      };
+      for (const command of commands) {
+        worker.uci(command);
+      }
+    });
+  }
+
+  private broadcastCommands(
+    commands: string[],
+    finalMessage: string,
+    onNewMessage?: (messages: string[]) => void
+  ): Promise<string[]>[] {
+    return this.workers.map((worker) =>
+      this.sendCommandsToWorker(worker, commands, finalMessage, onNewMessage)
+    );
   }
 
   public async evaluateGame({
@@ -139,47 +221,61 @@ export class UciEngine {
     await this.setMultiPv(multiPv);
     this.ready = false;
 
-    await this.sendCommands(["ucinewgame", "isready"], "readyok");
-    this.worker.uci("position startpos");
+    await this.sendCommands(
+      ["ucinewgame", "position startpos", "isready"],
+      "readyok"
+    );
 
-    const positions: PositionEval[] = [];
-    for (const fen of fens) {
-      const whoIsCheckmated = getWhoIsCheckmated(fen);
-      if (whoIsCheckmated) {
-        positions.push({
-          lines: [
-            {
-              pv: [],
-              depth: 0,
-              multiPv: 1,
-              mate: whoIsCheckmated === "w" ? -1 : 1,
-            },
-          ],
-        });
-        continue;
-      }
+    const positions: PositionEval[] = new Array(fens.length);
+    let completed = 0;
 
-      const isStalemate = getIsStalemate(fen);
-      if (isStalemate) {
-        positions.push({
-          lines: [
-            {
-              pv: [],
-              depth: 0,
-              multiPv: 1,
-              cp: 0,
-            },
-          ],
-        });
-        continue;
-      }
+    const updateProgress = () => {
+      const progress = completed / fens.length;
+      setEvaluationProgress?.(99 - Math.exp(-4 * progress) * 99);
+    };
 
-      const result = await this.evaluatePosition(fen, depth);
-      positions.push(result);
-      setEvaluationProgress?.(
-        99 - Math.exp(-4 * (fens.indexOf(fen) / fens.length)) * 99
-      );
-    }
+    await Promise.all(
+      fens.map(async (fen, i) => {
+        const whoIsCheckmated = getWhoIsCheckmated(fen);
+        if (whoIsCheckmated) {
+          positions[i] = {
+            lines: [
+              {
+                pv: [],
+                depth: 0,
+                multiPv: 1,
+                mate: whoIsCheckmated === "w" ? -1 : 1,
+              },
+            ],
+          };
+          completed++;
+          updateProgress();
+          return;
+        }
+
+        const isStalemate = getIsStalemate(fen);
+        if (isStalemate) {
+          positions[i] = {
+            lines: [
+              {
+                pv: [],
+                depth: 0,
+                multiPv: 1,
+                cp: 0,
+              },
+            ],
+          };
+          completed++;
+          updateProgress();
+          return;
+        }
+
+        const result = await this.evaluatePosition(fen, depth);
+        positions[i] = result;
+        completed++;
+        updateProgress();
+      })
+    );
 
     const positionsWithClassification = getMovesClassification(
       positions,
