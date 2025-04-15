@@ -15,6 +15,7 @@ export class Stockfish16_1 {
     const enginePath = `engines/stockfish-16.1/stockfish-16.1${
       lite ? "-lite" : ""
     }${multiThreadIsSupported ? "" : "-single"}.js`;
+
     const engineName = lite
       ? EngineName.Stockfish16_1Lite
       : EngineName.Stockfish16_1;
