@@ -1,17 +1,26 @@
 import { EngineWorker } from "@/types/engine";
 
-export const getEngineWorker = (enginePath: string): EngineWorker => {
-  const worker = new Worker(enginePath);
+export const getEngineWorkers = (enginePath: string): EngineWorker[] => {
+  const engineWorkers: EngineWorker[] = [];
 
-  const engineWorker: EngineWorker = {
-    uci: (command: string) => worker.postMessage(command),
-    listen: () => null,
-    terminate: () => worker.terminate(),
-  };
+  const instanceCount =
+    navigator.hardwareConcurrency - (navigator.hardwareConcurrency % 2 ? 0 : 1);
 
-  worker.onmessage = (event) => {
-    engineWorker.listen(event.data);
-  };
+  for (let i = 0; i < instanceCount; i++) {
+    const worker = new Worker(enginePath);
 
-  return engineWorker;
+    const engineWorker: EngineWorker = {
+      uci: (command: string) => worker.postMessage(command),
+      listen: () => null,
+      terminate: () => worker.terminate(),
+    };
+
+    worker.onmessage = (event) => {
+      engineWorker.listen(event.data);
+    };
+
+    engineWorkers.push(engineWorker);
+  }
+
+  return engineWorkers;
 };
