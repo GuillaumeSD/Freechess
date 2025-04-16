@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint && tsc --noEmit",
-    "deploy": "firebase deploy --project=freechessproject --only hosting"
+    "deploy": "cdk deploy",
+    "deploy:firebase": "firebase deploy --project=freechessproject --only hosting"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -40,6 +41,9 @@
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "aws-cdk": "^2.1007.0",
+    "aws-cdk-lib": "^2.186.0",
+    "constructs": "^10.0.0"
   }
 }
