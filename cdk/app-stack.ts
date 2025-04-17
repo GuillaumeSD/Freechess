@@ -13,10 +13,18 @@ import {
   Source,
 } from "aws-cdk-lib/aws-s3-deployment";
 import path from "path";
+import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
+import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
+import { DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
+
+interface AppStackProps extends cdk.StackProps {
+  domainName: string;
+}
 
 export class AppStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: AppStackProps) {
     super(scope, id, props);
+    const { domainName } = props;
 
     const bucket = new Bucket(this, "Bucket", {
       accessControl: BucketAccessControl.PRIVATE,
@@ -82,7 +90,17 @@ export class AppStack extends cdk.Stack {
       }
     );
 
-    new Distribution(this, "Distribution", {
+    const hostedZone = HostedZone.fromLookup(this, "HostedZone", {
+      domainName,
+    });
+
+    const certificate = new DnsValidatedCertificate(this, "Certificate", {
+      domainName,
+      hostedZone,
+      region: "us-east-1",
+    });
+
+    const distribution = new Distribution(this, "Distribution", {
       defaultRootObject: "index.html",
       errorResponses: [
         {
@@ -100,6 +118,15 @@ export class AppStack extends cdk.Stack {
         origin: originAccessControl,
         responseHeadersPolicy,
       },
+      domainNames: [domainName],
+      certificate,
     });
+
+    new ARecord(this, "AliasRecord", {
+      zone: hostedZone,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+    });
+
+    new cdk.CfnOutput(this, "SiteUrl", { value: `https://${domainName}` });
   }
 }
