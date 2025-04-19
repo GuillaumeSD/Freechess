@@ -70,7 +70,7 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
             color="inherit"
             sx={{ ml: "min(0.6rem, 0.8vw)" }}
             onClick={() =>
-              window.open("https://github.com/GuillaumeSD/freechess")
+              window.open("https://github.com/GuillaumeSD/Chesskit")
             }
           >
             <Icon icon="mdi:github" />
