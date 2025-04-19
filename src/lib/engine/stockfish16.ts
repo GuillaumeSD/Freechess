@@ -1,7 +1,7 @@
 import { EngineName } from "@/types/enums";
 import { UciEngine } from "./uciEngine";
 import { isMultiThreadSupported, isWasmSupported } from "./shared";
-import { getEngineWorker } from "./worker";
+import { getEngineWorkers } from "./worker";
 
 export class Stockfish16 {
   public static async create(nnue?: boolean): Promise<UciEngine> {
@@ -25,9 +25,9 @@ export class Stockfish16 {
       );
     };
 
-    const worker = getEngineWorker(enginePath);
+    const workers = getEngineWorkers(enginePath);
 
-    return UciEngine.create(EngineName.Stockfish16, worker, customEngineInit);
+    return UciEngine.create(EngineName.Stockfish16, workers, customEngineInit);
   }
 
   public static isSupported() {
