@@ -3,11 +3,11 @@
     <img width="120" height="120" src="https://github.com/GuillaumeSD/Freechess/blob/main/public/android-chrome-192x192.png" alt="Logo">
   </a>
 
-<h3 align="center">Freechess</h3>
+<h3 align="center">Chesskit</h3>
   <p align="center">
     The Ultimate Chess Web App
     <br />
-    <a href="https://freechess.web.app/" target="_blank" rel="noopener noreferrer"><strong>freechess.web.app</strong></a>
+    <a href="https://chesskit.org/" target="_blank" rel="noopener noreferrer"><strong>chesskit.org</strong></a>
     <br />
     <a href="https://discord.com/invite/Yr99abAcUr" target="_blank" rel="noopener noreferrer">Discord Server</a>
     ·
@@ -16,7 +16,7 @@
 </div>
 <br />
 
-Freechess is an open-source chess web app to play, view and analyze your chess games for free on any device with Stockfish !
+Chesskit is an open-source chess web app to play, view and analyze your chess games for free on any device with Stockfish !
 
 ## Mission
 

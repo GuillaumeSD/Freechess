@@ -61,7 +61,7 @@ export default function GameReview() {
 
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start">
-      <PageTitle title="Freechess Game Review" />
+      <PageTitle title="Chesskit Game Review" />
 
       <Board />
 

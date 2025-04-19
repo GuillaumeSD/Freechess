@@ -43,7 +43,7 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
           </IconButton>
           <Image
             src="/favicon-32x32.png"
-            alt="FreeChess logo"
+            alt="Chesskit logo"
             width={32}
             height={32}
           />
@@ -57,7 +57,7 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
                 fontSize: { xs: "1rem", sm: "1.25rem" },
               }}
             >
-              Freechess
+              Chesskit
             </Typography>
           </NavLink>
           <IconButton

@@ -1,5 +1,5 @@
 {
-  "name": "freechess",
+  "name": "chesskit",
   "version": "0.1.0",
   "private": true,
   "license": "GPL-3.0-only",
@@ -8,8 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint && tsc --noEmit",
-    "deploy": "cdk deploy",
-    "deploy:firebase": "firebase deploy --project=freechessproject --only hosting"
+    "deploy": "npm run lint && npm run build && cdk deploy"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
