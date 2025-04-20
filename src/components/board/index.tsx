@@ -31,6 +31,8 @@ export interface Props {
   showEvaluationBar?: boolean;
 }
 
+const pieceCodes: string[] = ["wP" , "wB" , "wN" , "wR" , "wQ" , "wK" , "bP" , "bB" , "bN" , "bR" , "bQ" , "bK"];
+
 export default function Board({
   id: boardId,
   canPlay,
@@ -217,7 +219,23 @@ export default function Board({
     playableSquaresAtom,
     showPlayerMoveIconAtom,
   ]);
+  const pieceSet = "horsey";
 
+  const customPieces = pieceCodes.reduce((acc: {[pieceCode: string]: any}, code) => {
+    acc[code] = ({ squareWidth }: { squareWidth: number}) => (
+      <img
+    src={`/piece/${pieceSet}/${code}.svg`} // Adjust path if needed
+    alt=""
+    width={squareWidth}
+    height={squareWidth}
+    style={{
+      objectFit: 'contain',
+      cursor: 'grab',
+    }}
+  />
+    );
+    return acc;
+  }, {});;
   return (
     <Grid
       container
@@ -288,6 +306,7 @@ export default function Board({
             showPromotionDialog={showPromotionDialog}
             promotionToSquare={moveClickTo}
             animationDuration={200}
+            customPieces={customPieces}
           />
         </Grid>
 
