@@ -26,7 +26,7 @@ export const useEngine = (
         return newEngine;
       });
     });
-  }, [engineName]);
+  }, [engineName, workersNb]);
 
   return engine;
 };
