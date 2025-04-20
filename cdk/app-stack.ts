@@ -26,15 +26,22 @@ export class AppStack extends cdk.Stack {
     super(scope, id, props);
     const { domainName } = props;
 
-    const bucket = new Bucket(this, "Bucket", {
+    const mainBucket = new Bucket(this, "Bucket", {
       accessControl: BucketAccessControl.PRIVATE,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
       publicReadAccess: false,
     });
 
-    const mainDeployment = new BucketDeployment(this, "BucketDeployment", {
-      destinationBucket: bucket,
+    const enginesBucket = new Bucket(this, "EnginesBucket", {
+      accessControl: BucketAccessControl.PRIVATE,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+      publicReadAccess: false,
+    });
+
+    new BucketDeployment(this, "BucketDeployment", {
+      destinationBucket: mainBucket,
       sources: [
         Source.asset(path.resolve(__dirname, "../out"), {
           exclude: ["engines"],
@@ -47,27 +54,31 @@ export class AppStack extends cdk.Stack {
       ],
     });
 
-    const enginesDeployment = new BucketDeployment(
-      this,
-      "BucketEnginesDeployment",
+    new BucketDeployment(this, "BucketEnginesDeployment", {
+      destinationBucket: enginesBucket,
+      sources: [Source.asset(path.resolve(__dirname, "../out/engines"))],
+      memoryLimit: 512,
+      ephemeralStorageSize: cdk.Size.gibibytes(1),
+      cacheControl: [
+        CacheControl.setPublic(),
+        CacheControl.maxAge(cdk.Duration.days(365)),
+        CacheControl.immutable(),
+      ],
+    });
+
+    const mainOriginAccessControl = S3BucketOrigin.withOriginAccessControl(
+      mainBucket,
       {
-        destinationBucket: bucket,
-        destinationKeyPrefix: "engines/",
-        sources: [Source.asset(path.resolve(__dirname, "../out/engines"))],
-        memoryLimit: 512,
-        ephemeralStorageSize: cdk.Size.gibibytes(1),
-        cacheControl: [
-          CacheControl.setPublic(),
-          CacheControl.maxAge(cdk.Duration.days(365)),
-          CacheControl.immutable(),
-        ],
+        originAccessLevels: [AccessLevel.READ],
       }
     );
-    enginesDeployment.node.addDependency(mainDeployment);
 
-    const originAccessControl = S3BucketOrigin.withOriginAccessControl(bucket, {
-      originAccessLevels: [AccessLevel.READ],
-    });
+    const enginesOriginAccessControl = S3BucketOrigin.withOriginAccessControl(
+      enginesBucket,
+      {
+        originAccessLevels: [AccessLevel.READ],
+      }
+    );
 
     const responseHeadersPolicy = new ResponseHeadersPolicy(
       this,
@@ -115,8 +126,14 @@ export class AppStack extends cdk.Stack {
         },
       ],
       defaultBehavior: {
-        origin: originAccessControl,
+        origin: mainOriginAccessControl,
         responseHeadersPolicy,
+      },
+      additionalBehaviors: {
+        "/engines/*": {
+          origin: enginesOriginAccessControl,
+          responseHeadersPolicy,
+        },
       },
       domainNames: [domainName],
       certificate,
