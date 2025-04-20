@@ -30,11 +30,15 @@ export default function AnalyzeButton() {
   const setSavedEvals = useSetAtom(savedEvalsAtom);
 
   const readyToAnalyse =
-    engine?.isReady() && game.history().length > 0 && !evaluationProgress;
+    engine?.getIsReady() && game.history().length > 0 && !evaluationProgress;
 
   const handleAnalyze = async () => {
     const params = getEvaluateGameParams(game);
-    if (!engine?.isReady() || params.fens.length === 0 || evaluationProgress) {
+    if (
+      !engine?.getIsReady() ||
+      params.fens.length === 0 ||
+      evaluationProgress
+    ) {
       return;
     }
 

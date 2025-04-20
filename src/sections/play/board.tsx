@@ -19,7 +19,7 @@ import { useGameData } from "@/hooks/useGameData";
 export default function BoardContainer() {
   const screenSize = useScreenSize();
   const engineName = useAtomValue(enginePlayNameAtom);
-  const engine = useEngine(engineName);
+  const engine = useEngine(engineName, 1);
   const game = useAtomValue(gameAtom);
   const playerColor = useAtomValue(playerColorAtom);
   const { makeMove: makeGameMove } = useChessActions(gameAtom);
@@ -32,7 +32,7 @@ export default function BoardContainer() {
   useEffect(() => {
     const playEngineMove = async () => {
       if (
-        !engine?.isReady() ||
+        !engine?.getIsReady() ||
         game.turn() === playerColor ||
         isGameFinished ||
         !isGameInProgress

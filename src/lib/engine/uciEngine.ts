@@ -13,20 +13,12 @@ import { computeAccuracy } from "./helpers/accuracy";
 import { getIsStalemate, getWhoIsCheckmated } from "../chess";
 import { getLichessEval } from "../lichess";
 import { getMovesClassification } from "./helpers/moveClassification";
-import { EngineWorker } from "@/types/engine";
-
-type WorkerJob = {
-  commands: string[];
-  finalMessage: string;
-  onNewMessage?: (messages: string[]) => void;
-  resolve: (messages: string[]) => void;
-};
+import { EngineWorker, WorkerJob } from "@/types/engine";
 
 export class UciEngine {
   private workers: EngineWorker[];
-  private isBusy: boolean[] = [];
   private workerQueue: WorkerJob[] = [];
-  private ready = false;
+  private isReady = false;
   private engineName: EngineName;
   private multiPv = 3;
   private skillLevel: number | undefined = undefined;
@@ -34,7 +26,6 @@ export class UciEngine {
   private constructor(engineName: EngineName, workers: EngineWorker[]) {
     this.engineName = engineName;
     this.workers = workers;
-    this.isBusy = new Array(workers.length).fill(false);
   }
 
   public static async create(
@@ -49,28 +40,31 @@ export class UciEngine {
     await engine.broadcastCommands(["uci"], "uciok");
     await engine.setMultiPv(engine.multiPv, true);
     await customEngineInit?.(engine.sendCommands.bind(engine));
-    engine.ready = true;
+    for (const worker of workers) {
+      worker.isReady = true;
+    }
+    engine.isReady = true;
 
     console.log(`${engineName} initialized`);
     return engine;
   }
 
-  private acquireWorker(): { index: number; worker: EngineWorker } | undefined {
-    for (let i = 0; i < this.workers.length; i++) {
-      if (!this.isBusy[i]) {
-        this.isBusy[i] = true;
-        return { index: i, worker: this.workers[i] };
-      }
+  private acquireWorker(): EngineWorker | undefined {
+    for (const worker of this.workers) {
+      if (!worker.isReady) continue;
+
+      worker.isReady = false;
+      return worker;
     }
 
     return undefined;
   }
 
-  private releaseWorker(index: number) {
-    this.isBusy[index] = false;
+  private releaseWorker(worker: EngineWorker) {
+    worker.isReady = true;
+    const nextJob = this.workerQueue.shift();
 
-    if (this.workerQueue.length > 0) {
-      const nextJob = this.workerQueue.shift()!;
+    if (nextJob) {
       this.sendCommands(
         nextJob.commands,
         nextJob.finalMessage,
@@ -109,7 +103,7 @@ export class UciEngine {
       throw new Error(`Invalid SkillLevel value : ${skillLevel}`);
     }
 
-    await this.sendCommands(
+    await this.broadcastCommands(
       [`setoption name Skill Level value ${skillLevel}`, "isready"],
       "readyok"
     );
@@ -118,31 +112,35 @@ export class UciEngine {
   }
 
   private throwErrorIfNotReady() {
-    if (!this.ready) {
+    if (!this.isReady) {
       throw new Error(`${this.engineName} is not ready`);
     }
   }
 
   public shutdown(): void {
-    this.ready = false;
+    this.isReady = false;
+    this.workerQueue = [];
 
     for (const worker of this.workers) {
       worker.uci("quit");
       worker.terminate?.();
+      worker.isReady = false;
     }
-
-    this.isBusy = Array(this.workers.length).fill(false);
-    this.workerQueue = [];
 
     console.log(`${this.engineName} shutdown`);
   }
 
-  public isReady(): boolean {
-    return this.ready;
+  public getIsReady(): boolean {
+    return this.isReady;
   }
 
   public async stopSearch(): Promise<void> {
-    await this.sendCommands(["stop", "isready"], "readyok");
+    this.workerQueue = [];
+    await this.broadcastCommands(["stop", "isready"], "readyok");
+
+    for (const worker of this.workers) {
+      this.releaseWorker(worker);
+    }
   }
 
   private async sendCommands(
@@ -150,8 +148,9 @@ export class UciEngine {
     finalMessage: string,
     onNewMessage?: (messages: string[]) => void
   ): Promise<string[]> {
-    const acquired = this.acquireWorker();
-    if (!acquired) {
+    const worker = this.acquireWorker();
+
+    if (!worker) {
       return new Promise((resolve) => {
         this.workerQueue.push({
           commands,
@@ -161,21 +160,13 @@ export class UciEngine {
         });
       });
     }
-    return new Promise((resolve) => {
-      const messages: string[] = [];
-      acquired.worker.listen = (data) => {
-        messages.push(data);
-        onNewMessage?.(messages);
 
-        if (data.startsWith(finalMessage)) {
-          this.releaseWorker(acquired.index);
-          resolve(messages);
-        }
-      };
-      for (const command of commands) {
-        acquired.worker.uci(command);
-      }
-    });
+    return this.sendCommandsToWorker(
+      worker,
+      commands,
+      finalMessage,
+      onNewMessage
+    );
   }
 
   private async sendCommandsToWorker(
@@ -189,7 +180,9 @@ export class UciEngine {
       worker.listen = (data) => {
         messages.push(data);
         onNewMessage?.(messages);
+
         if (data.startsWith(finalMessage)) {
+          this.releaseWorker(worker);
           resolve(messages);
         }
       };
@@ -199,13 +192,15 @@ export class UciEngine {
     });
   }
 
-  private broadcastCommands(
+  private async broadcastCommands(
     commands: string[],
     finalMessage: string,
     onNewMessage?: (messages: string[]) => void
-  ): Promise<string[]>[] {
-    return this.workers.map((worker) =>
-      this.sendCommandsToWorker(worker, commands, finalMessage, onNewMessage)
+  ): Promise<void> {
+    await Promise.all(
+      this.workers.map((worker) =>
+        this.sendCommandsToWorker(worker, commands, finalMessage, onNewMessage)
+      )
     );
   }
 
@@ -219,17 +214,16 @@ export class UciEngine {
     this.throwErrorIfNotReady();
     setEvaluationProgress?.(1);
     await this.setMultiPv(multiPv);
-    this.ready = false;
+    this.isReady = false;
 
-    await this.sendCommands(
-      ["ucinewgame", "position startpos", "isready"],
-      "readyok"
-    );
+    await this.broadcastCommands(["ucinewgame", "isready"], "readyok");
 
     const positions: PositionEval[] = new Array(fens.length);
     let completed = 0;
 
-    const updateProgress = () => {
+    const updateEval = (index: number, positionEval: PositionEval) => {
+      completed++;
+      positions[index] = positionEval;
       const progress = completed / fens.length;
       setEvaluationProgress?.(99 - Math.exp(-4 * progress) * 99);
     };
@@ -238,7 +232,7 @@ export class UciEngine {
       fens.map(async (fen, i) => {
         const whoIsCheckmated = getWhoIsCheckmated(fen);
         if (whoIsCheckmated) {
-          positions[i] = {
+          updateEval(i, {
             lines: [
               {
                 pv: [],
@@ -247,15 +241,13 @@ export class UciEngine {
                 mate: whoIsCheckmated === "w" ? -1 : 1,
               },
             ],
-          };
-          completed++;
-          updateProgress();
+          });
           return;
         }
 
         const isStalemate = getIsStalemate(fen);
         if (isStalemate) {
-          positions[i] = {
+          updateEval(i, {
             lines: [
               {
                 pv: [],
@@ -264,16 +256,12 @@ export class UciEngine {
                 cp: 0,
               },
             ],
-          };
-          completed++;
-          updateProgress();
+          });
           return;
         }
 
         const result = await this.evaluatePosition(fen, depth);
-        positions[i] = result;
-        completed++;
-        updateProgress();
+        updateEval(i, result);
       })
     );
 
@@ -284,7 +272,7 @@ export class UciEngine {
     );
     const accuracy = computeAccuracy(positions);
 
-    this.ready = true;
+    this.isReady = true;
     return {
       positions: positionsWithClassification,
       accuracy,
@@ -301,14 +289,14 @@ export class UciEngine {
     fen: string,
     depth = 16
   ): Promise<PositionEval> {
-    console.log(`Evaluating position: ${fen}`);
-
-    const lichessEval = await getLichessEval(fen, this.multiPv);
-    if (
-      lichessEval.lines.length >= this.multiPv &&
-      lichessEval.lines[0].depth >= depth
-    ) {
-      return lichessEval;
+    if (this.workers.length < 2) {
+      const lichessEval = await getLichessEval(fen, this.multiPv);
+      if (
+        lichessEval.lines.length >= this.multiPv &&
+        lichessEval.lines[0].depth >= depth
+      ) {
+        return lichessEval;
+      }
     }
 
     const results = await this.sendCommands(

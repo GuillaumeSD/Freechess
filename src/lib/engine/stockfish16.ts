@@ -4,7 +4,10 @@ import { isMultiThreadSupported, isWasmSupported } from "./shared";
 import { getEngineWorkers } from "./worker";
 
 export class Stockfish16 {
-  public static async create(nnue?: boolean): Promise<UciEngine> {
+  public static async create(
+    nnue?: boolean,
+    workersNb?: number
+  ): Promise<UciEngine> {
     if (!Stockfish16.isSupported()) {
       throw new Error("Stockfish 16 is not supported");
     }
@@ -25,9 +28,13 @@ export class Stockfish16 {
       );
     };
 
-    const workers = getEngineWorkers(enginePath);
+    const engineName = nnue
+      ? EngineName.Stockfish16NNUE
+      : EngineName.Stockfish16;
 
-    return UciEngine.create(EngineName.Stockfish16, workers, customEngineInit);
+    const workers = getEngineWorkers(enginePath, workersNb);
+
+    return UciEngine.create(engineName, workers, customEngineInit);
   }
 
   public static isSupported() {
