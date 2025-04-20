@@ -45,7 +45,7 @@ export class UciEngine {
     }
     engine.isReady = true;
 
-    console.log(`${engineName} initialized`);
+    console.log(`${engineName} initialized with ${workers.length} workers`);
     return engine;
   }
 

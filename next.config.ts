@@ -37,6 +37,14 @@ const nextConfig = (phase: string): NextConfig => ({
                 key: "Cross-Origin-Opener-Policy",
                 value: "same-origin",
               },
+              {
+                key: "Cache-Control",
+                value: "public, max-age=31536000, immutable",
+              },
+              {
+                key: "Age",
+                value: "181921",
+              },
             ],
           },
           {
