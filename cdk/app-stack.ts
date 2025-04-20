@@ -56,6 +56,7 @@ export class AppStack extends cdk.Stack {
 
     new BucketDeployment(this, "BucketEnginesDeployment", {
       destinationBucket: enginesBucket,
+      destinationKeyPrefix: "engines",
       sources: [Source.asset(path.resolve(__dirname, "../out/engines"))],
       memoryLimit: 512,
       ephemeralStorageSize: cdk.Size.gibibytes(1),
