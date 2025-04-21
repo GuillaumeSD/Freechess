@@ -11,6 +11,7 @@
     "plugin:import/typescript",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
+    "plugin:deprecation/recommended",
     "next",
     "prettier"
   ],

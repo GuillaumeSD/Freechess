@@ -106,6 +106,7 @@ export class AppStack extends cdk.Stack {
       domainName,
     });
 
+    // eslint-disable-next-line
     const certificate = new DnsValidatedCertificate(this, "Certificate", {
       domainName,
       hostedZone,

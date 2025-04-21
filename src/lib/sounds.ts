@@ -34,7 +34,7 @@ export const playSoundFromMove = async (move: Move | null) => {
     playPromoteSound();
   } else if (move.captured) {
     playCaptureSound();
-  } else if (move.flags.includes("k") || move.flags.includes("q")) {
+  } else if (move.isKingsideCastle() || move.isQueensideCastle()) {
     playCastleSound();
   } else {
     playMoveSound();

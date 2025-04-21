@@ -49,7 +49,7 @@ export default function LoadGame() {
     loadGame();
   }, [gameFromUrl, game, resetAndSetGamePgn, setEval]);
 
-  const isGameLoaded = gameFromUrl !== undefined || !!game.header().White;
+  const isGameLoaded = gameFromUrl !== undefined || !!game.getHeaders().White;
 
   if (evaluationProgress) return null;
 

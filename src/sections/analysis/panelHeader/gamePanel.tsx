@@ -6,17 +6,18 @@ import { gameAtom } from "../states";
 export default function GamePanel() {
   const { gameFromUrl } = useGameDatabase();
   const game = useAtomValue(gameAtom);
+  const gameHeaders = game.getHeaders();
 
-  const hasGameInfo = gameFromUrl !== undefined || !!game.header().White;
+  const hasGameInfo = gameFromUrl !== undefined || !!gameHeaders.White;
 
   if (!hasGameInfo) return null;
 
   const termination =
-    gameFromUrl?.termination || game.header().Termination || "?";
+    gameFromUrl?.termination || gameHeaders.Termination || "?";
   const result =
     termination.split(" ").length > 2
       ? termination
-      : gameFromUrl?.result || game.header().Result || "?";
+      : gameFromUrl?.result || gameHeaders.Result || "?";
 
   return (
     <Grid
@@ -29,13 +30,13 @@ export default function GamePanel() {
     >
       <Grid container justifyContent="center" alignItems="center" size="grow">
         <Typography noWrap fontSize="0.9rem">
-          Site : {gameFromUrl?.site || game.header().Site || "?"}
+          Site : {gameFromUrl?.site || gameHeaders.Site || "?"}
         </Typography>
       </Grid>
 
       <Grid container justifyContent="center" alignItems="center" size="grow">
         <Typography noWrap fontSize="0.9rem">
-          Date : {gameFromUrl?.date || game.header().Date || "?"}
+          Date : {gameFromUrl?.date || gameHeaders.Date || "?"}
         </Typography>
       </Grid>
 
