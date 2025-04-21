@@ -18,5 +18,9 @@ if (
     replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: 1.0,
     debug: false,
+    ignoreErrors: [
+      "AbortError: The user aborted a request.",
+      "Failed to fetch",
+    ],
   });
 }
