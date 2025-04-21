@@ -17,6 +17,7 @@ export default function PanelToolBar() {
 
   const boardHistory = board.history();
   const game = useAtomValue(gameAtom);
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (boardHistory.length === 0) return;

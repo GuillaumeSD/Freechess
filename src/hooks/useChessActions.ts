@@ -41,7 +41,10 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
 
     if (game.history().length === 0) {
       const pgnSplitted = game.pgn().split("]");
-      if (pgnSplitted.at(-1)?.includes("1-0")) {
+      if (
+        pgnSplitted.at(-1)?.includes("1-0") ||
+        pgnSplitted.at(-1) === "\n *"
+      ) {
         newGame.loadPgn(pgnSplitted.slice(0, -1).join("]") + "]");
         return newGame;
       }

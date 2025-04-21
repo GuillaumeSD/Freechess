@@ -6,7 +6,7 @@ import { gameAtom } from "../states";
 export default function GamePanel() {
   const { gameFromUrl } = useGameDatabase();
   const game = useAtomValue(gameAtom);
-  const gameHeaders = game.header();
+  const gameHeaders = game.getHeaders();
 
   const hasGameInfo =
     gameFromUrl !== undefined ||

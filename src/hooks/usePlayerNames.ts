@@ -5,7 +5,7 @@ import { useGameDatabase } from "./useGameDatabase";
 export const usePlayersNames = (gameAtom: PrimitiveAtom<Chess>) => {
   const game = useAtomValue(gameAtom);
   const { gameFromUrl } = useGameDatabase();
-  const headers = game.header();
+  const headers = game.getHeaders();
 
   const headersWhiteName =
     headers.White && headers.White !== "?" ? headers.White : undefined;
