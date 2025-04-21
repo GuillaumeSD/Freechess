@@ -13,13 +13,10 @@ out/
 .env*.local
 .env
 
-# firebase
-.firebase
-
 # ts build
 tsconfig.tsbuildinfo
 
-# CDK asset staging directory
+# CDK assets
 .cdk.staging
 cdk.out
 cdk.context.json

@@ -69,7 +69,7 @@ npm run lint
 
 ## Deploy
 
-To deploy the app, install the [Firebase CLI](https://firebase.google.com/docs/cli) and authenticate, then run :
+To deploy the app, install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [authenticate](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html), then run :
 
 ```bash
 npm run deploy
