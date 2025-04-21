@@ -12,6 +12,7 @@ export interface resetGameParams {
   fen?: string;
   whiteName?: string;
   blackName?: string;
+  noHeaders?: boolean;
 }
 
 export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
@@ -29,7 +30,7 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
   const reset = useCallback(
     (params?: resetGameParams) => {
       const newGame = new Chess(params?.fen);
-      setGameHeaders(newGame, params);
+      if (!params?.noHeaders) setGameHeaders(newGame, params);
       setGame(newGame);
     },
     [setGame]
@@ -40,7 +41,10 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
 
     if (game.history().length === 0) {
       const pgnSplitted = game.pgn().split("]");
-      if (pgnSplitted.at(-1)?.includes("1-0")) {
+      if (
+        pgnSplitted.at(-1)?.includes("1-0") ||
+        pgnSplitted.at(-1) === "\n *"
+      ) {
         newGame.loadPgn(pgnSplitted.slice(0, -1).join("]") + "]");
         return newGame;
       }

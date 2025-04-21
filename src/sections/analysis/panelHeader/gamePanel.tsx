@@ -8,7 +8,9 @@ export default function GamePanel() {
   const game = useAtomValue(gameAtom);
   const gameHeaders = game.getHeaders();
 
-  const hasGameInfo = gameFromUrl !== undefined || !!gameHeaders.White;
+  const hasGameInfo =
+    gameFromUrl !== undefined ||
+    (!!gameHeaders.White && gameHeaders.White !== "?");
 
   if (!hasGameInfo) return null;
 
