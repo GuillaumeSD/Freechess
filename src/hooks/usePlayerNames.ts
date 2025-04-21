@@ -5,10 +5,15 @@ import { useGameDatabase } from "./useGameDatabase";
 export const usePlayersNames = (gameAtom: PrimitiveAtom<Chess>) => {
   const game = useAtomValue(gameAtom);
   const { gameFromUrl } = useGameDatabase();
-  const headers = game.getHeaders();
+  const headers = game.header();
 
-  const whiteName = gameFromUrl?.white?.name || headers.White || "White";
-  const blackName = gameFromUrl?.black?.name || headers.Black || "Black";
+  const headersWhiteName =
+    headers.White && headers.White !== "?" ? headers.White : undefined;
+  const headersBlackName =
+    headers.Black && headers.Black !== "?" ? headers.Black : undefined;
+
+  const whiteName = gameFromUrl?.white?.name || headersWhiteName || "White";
+  const blackName = gameFromUrl?.black?.name || headersBlackName || "Black";
 
   const whiteElo = gameFromUrl?.white?.rating || headers.WhiteElo || undefined;
   const blackElo = gameFromUrl?.black?.rating || headers.BlackElo || undefined;

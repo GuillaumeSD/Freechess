@@ -1,28 +1,25 @@
 import { getCapturedPieces, getMaterialDifference } from "@/lib/chess";
 import { Color } from "@/types/enums";
 import { Grid2 as Grid, Typography } from "@mui/material";
-import { Chess } from "chess.js";
-import { PrimitiveAtom, useAtomValue } from "jotai";
 import { CSSProperties, useMemo } from "react";
 
 export interface Props {
-  gameAtom: PrimitiveAtom<Chess>;
+  fen: string;
   color: Color;
 }
 
 const PIECE_SCALE = 0.6;
 
-export default function CapturedPieces({ gameAtom, color }: Props) {
-  const game = useAtomValue(gameAtom);
+export default function CapturedPieces({ fen, color }: Props) {
   const cssProps = useMemo(() => {
-    const capturedPieces = getCapturedPieces(game.fen(), color);
+    const capturedPieces = getCapturedPieces(fen, color);
     return getCapturedPiecesCSSProps(capturedPieces, color);
-  }, [game, color]);
+  }, [fen, color]);
 
   const materialDiff = useMemo(() => {
-    const materialDiff = getMaterialDifference(game.fen());
+    const materialDiff = getMaterialDifference(fen);
     return color === Color.White ? materialDiff : -materialDiff;
-  }, [game, color]);
+  }, [fen, color]);
 
   return (
     <Grid container alignItems="end" columnGap={0.6} size="auto">

@@ -254,7 +254,7 @@ export default function Board({
           </Typography>
 
           <CapturedPieces
-            gameAtom={gameAtom}
+            fen={gameFen}
             color={boardOrientation === Color.White ? Color.Black : Color.White}
           />
         </Grid>
@@ -302,7 +302,7 @@ export default function Board({
             {boardOrientation === Color.White ? whitePlayer : blackPlayer}
           </Typography>
 
-          <CapturedPieces gameAtom={gameAtom} color={boardOrientation} />
+          <CapturedPieces fen={gameFen} color={boardOrientation} />
         </Grid>
       </Grid>
     </Grid>

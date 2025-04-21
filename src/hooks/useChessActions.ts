@@ -12,6 +12,7 @@ export interface resetGameParams {
   fen?: string;
   whiteName?: string;
   blackName?: string;
+  noHeaders?: boolean;
 }
 
 export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
@@ -29,7 +30,7 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
   const reset = useCallback(
     (params?: resetGameParams) => {
       const newGame = new Chess(params?.fen);
-      setGameHeaders(newGame, params);
+      if (!params?.noHeaders) setGameHeaders(newGame, params);
       setGame(newGame);
     },
     [setGame]

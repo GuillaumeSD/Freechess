@@ -25,7 +25,7 @@ export const getGameFromPgn = (pgn: string): Chess => {
 };
 
 export const formatGameToDatabase = (game: Chess): Omit<Game, "id"> => {
-  const headers: Record<string, string | undefined> = game.getHeaders();
+  const headers: Record<string, string | undefined> = game.header();
 
   return {
     pgn: game.pgn(),
@@ -56,24 +56,24 @@ export const setGameHeaders = (
   game: Chess,
   params: { whiteName?: string; blackName?: string; resigned?: Color } = {}
 ): Chess => {
-  game.setHeader("Event", "Chesskit Game");
-  game.setHeader("Site", "Chesskit");
-  game.setHeader(
+  game.header("Event", "Chesskit Game");
+  game.header("Site", "Chesskit");
+  game.header(
     "Date",
     new Date().toISOString().split("T")[0].replaceAll("-", ".")
   );
 
   const { whiteName, blackName, resigned } = params;
 
-  if (whiteName) game.setHeader("White", whiteName);
-  if (blackName) game.setHeader("Black", blackName);
+  if (whiteName) game.header("White", whiteName);
+  if (blackName) game.header("Black", blackName);
 
-  const whiteNameToUse = game.getHeaders().White || "White";
-  const blackNameToUse = game.getHeaders().Black || "Black";
+  const whiteNameToUse = game.header().White || "White";
+  const blackNameToUse = game.header().Black || "Black";
 
   if (resigned) {
-    game.setHeader("Result", resigned === "w" ? "0-1" : "1-0");
-    game.setHeader(
+    game.header("Result", resigned === "w" ? "0-1" : "1-0");
+    game.header(
       "Termination",
       `${resigned === "w" ? blackNameToUse : whiteNameToUse} won by resignation`
     );
@@ -82,8 +82,8 @@ export const setGameHeaders = (
   if (!game.isGameOver()) return game;
 
   if (game.isCheckmate()) {
-    game.setHeader("Result", game.turn() === "w" ? "0-1" : "1-0");
-    game.setHeader(
+    game.header("Result", game.turn() === "w" ? "0-1" : "1-0");
+    game.header(
       "Termination",
       `${
         game.turn() === "w" ? blackNameToUse : whiteNameToUse
@@ -92,18 +92,18 @@ export const setGameHeaders = (
   }
 
   if (game.isInsufficientMaterial()) {
-    game.setHeader("Result", "1/2-1/2");
-    game.setHeader("Termination", "Draw by insufficient material");
+    game.header("Result", "1/2-1/2");
+    game.header("Termination", "Draw by insufficient material");
   }
 
   if (game.isStalemate()) {
-    game.setHeader("Result", "1/2-1/2");
-    game.setHeader("Termination", "Draw by stalemate");
+    game.header("Result", "1/2-1/2");
+    game.header("Termination", "Draw by stalemate");
   }
 
   if (game.isThreefoldRepetition()) {
-    game.setHeader("Result", "1/2-1/2");
-    game.setHeader("Termination", "Draw by threefold repetition");
+    game.header("Result", "1/2-1/2");
+    game.header("Termination", "Draw by threefold repetition");
   }
 
   return game;
