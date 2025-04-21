@@ -12,7 +12,11 @@ export const getEngineWorkers = (
 
   const engineWorkers: EngineWorker[] = [];
 
-  const maxWorkersNb = Math.max(1, navigator.hardwareConcurrency - 4);
+  const maxWorkersNb = Math.max(
+    1,
+    navigator.hardwareConcurrency - 4,
+    Math.ceil((navigator.hardwareConcurrency * 2) / 3)
+  );
   const workersNb = workersInputNb ?? maxWorkersNb;
 
   for (let i = 0; i < workersNb; i++) {
