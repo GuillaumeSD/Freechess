@@ -119,7 +119,16 @@ export default function LineEvaluation({ line }: Props) {
                       } else if (params.from === "e8" && params.to === "h8") {
                         params.to = "g8";
                       }
-                      const mv = clone.move(params);
+                      let mv;
+                      try {
+                        mv = clone.move(params);
+                      } catch (err) {
+                        console.error(
+                          `Error applying PV move ${j}: ${uciMove}`,
+                          err
+                        );
+                        return; // abort on illegal
+                      }
                       if (!mv) {
                         console.error(`Illegal PV move ${j}: ${uciMove}`);
                         return; // abort on illegal
@@ -135,7 +144,7 @@ export default function LineEvaluation({ line }: Props) {
                     mr: i < line.pv.length - 1 ? 0.5 : 0,
                     transition: "opacity 0.2s ease-in-out",
                     "&:hover": {
-                      opacity: 0.8,
+                      opacity: 0.5,
                     },
                   }}
                 >
