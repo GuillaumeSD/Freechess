@@ -3,3 +3,12 @@ ender62.txt.gz
 ender128-90l.pb.gz
 weights_11248.dat.gz
 weights_32195.dat.gz
+MaiaWeights/maia-1100.pb.gz
+MaiaWeights/maia-1200.pb.gz
+MaiaWeights/maia-1300.pb.gz
+MaiaWeights/maia-1400.pb.gz
+MaiaWeights/maia-1500.pb.gz
+MaiaWeights/maia-1600.pb.gz
+MaiaWeights/maia-1700.pb.gz
+MaiaWeights/maia-1800.pb.gz
+MaiaWeights/maia-1900.pb.gz
