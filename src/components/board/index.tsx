@@ -16,6 +16,7 @@ import { CurrentPosition } from "@/types/eval";
 import EvaluationBar from "./evaluationBar";
 import CapturedPieces from "./capturedPieces";
 import { moveClassificationColors } from "@/lib/chess";
+import Avatar from "@mui/material/Avatar";
 
 export interface Props {
   id: string;
@@ -24,6 +25,8 @@ export interface Props {
   boardSize?: number;
   whitePlayer?: string;
   blackPlayer?: string;
+  whiteAvatar?: string;
+  blackAvatar?: string;
   boardOrientation?: Color;
   currentPositionAtom?: PrimitiveAtom<CurrentPosition>;
   showBestMoveArrow?: boolean;
@@ -38,6 +41,8 @@ export default function Board({
   boardSize,
   whitePlayer,
   blackPlayer,
+  whiteAvatar,
+  blackAvatar,
   boardOrientation = Color.White,
   currentPositionAtom = atom({}),
   showBestMoveArrow = false,
@@ -249,6 +254,11 @@ export default function Board({
           columnGap={2}
           size={12}
         >
+          <Avatar
+            src={boardOrientation === Color.White ? blackAvatar : whiteAvatar}
+            variant="square"
+            sx={{ width: 24, height: 24 }}
+          />
           <Typography>
             {boardOrientation === Color.White ? blackPlayer : whitePlayer}
           </Typography>
@@ -298,6 +308,11 @@ export default function Board({
           columnGap={2}
           size={12}
         >
+          <Avatar
+            src={boardOrientation === Color.White ? whiteAvatar : blackAvatar}
+            variant="square"
+            sx={{ width: 24, height: 24 }}
+          />
           <Typography>
             {boardOrientation === Color.White ? whitePlayer : blackPlayer}
           </Typography>
