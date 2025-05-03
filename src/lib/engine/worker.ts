@@ -17,7 +17,11 @@ export const getEngineWorkers = (
     navigator.hardwareConcurrency - 4,
     Math.ceil((navigator.hardwareConcurrency * 2) / 3)
   );
-  const workersNb = workersInputNb ?? maxWorkersNb;
+  const deviceMemory =
+    "deviceMemory" in navigator && typeof navigator.deviceMemory === "number"
+      ? navigator.deviceMemory
+      : 4;
+  const workersNb = workersInputNb ?? Math.min(maxWorkersNb, deviceMemory, 10);
 
   for (let i = 0; i < workersNb; i++) {
     const worker = new Worker(enginePath);
