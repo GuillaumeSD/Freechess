@@ -1,0 +1,243 @@
+/*
+ This file is part of Leela Chess Zero.
+ Copyright (C) 2018 The LCZero Authors
+
+ Leela Chess is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Leela Chess is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Leela Chess.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+body {
+  background-color: #f0f0f0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  max-width: 800px;
+}
+
+#title {
+  padding: 5px 5px;
+  font-size: 150%;
+  font-weight: bold;
+  font-family: 'Sedgwick Ave', cursive;
+}
+
+#gameinfo {
+  float: left;
+  font-size: 70%;
+}
+
+#board {
+  width: 400px;
+  float: left;
+}
+
+#movelist {
+  padding: 10px;
+  font-size: 80%;
+  min-width: 200px;
+  overflow: hidden;
+}
+
+#analysis {
+  padding: 10px;
+  height: 100%;
+  overflow: hidden;
+  font-size: 80%;
+}
+
+#parameters {
+  padding: 10px;
+  height: 100%;
+  overflow: hidden;
+  font-size: 80%;
+}
+
+#variations {
+  padding: 10px;
+  min-width: 200px;
+  overflow: hidden;
+}
+
+#control {
+  float: left;
+  width: 100%;
+}
+
+#error {
+  font-weight: bold;
+  font-size: 100%;
+  display: none;
+  background-color: #D00000;
+  color: white;
+  float: left;
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+#error-content {
+  float: left;
+}
+
+#error-cross {
+  float: right;
+}
+
+.buttons {
+  float: left;
+  font-size: 80% ;
+  font-weight: bold;
+  margin: 4px;
+  padding: 4px;
+}
+
+.buttons button {
+  padding: 4px 16px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  background-color: white;
+}
+
+.buttons button:hover:enabled {
+  background-color: #aaa;
+}
+
+.buttons button:disabled {
+  border: 1px solid #ddd;
+  color: #888;
+  background-color: #f8f8f8;
+}
+
+#status {
+  margin: 4px;
+  padding: 4px;
+  font-size: 80%;
+}
+
+#output {
+  float: left;
+  width: 100%;
+  background-color: #f8f8f8;
+  margin: 5px;
+  padding: 5px;
+  color: black;
+  font-family: 'Lucida Console', Monaco, monospace;
+  font-size: 8pt;
+}
+
+#credits {
+  font-size: 70%;
+  float: left;
+  width: 100%;
+}
+
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+.tab button {
+  background-color: inherit;
+  font-weight: bold;
+  font-size: 100%;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 8px 10px;
+  transition: 0.25s;
+}
+
+.tab button:hover {
+  background-color: #ddd;
+}
+
+.tab button.active {
+  background-color: #ccc;
+}
+
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border-top: none;
+}
+
+.defaulttab {
+  display: block;
+}
+
+fieldset {
+  margin: 8px;
+  border: 1px solid grey;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+#parameters table input {
+  margin: 5px;
+}
+
+.applyButton {
+  float: right;
+}
+
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.1);
+  transition: visibility 0s linear 0.15s, opacity 0.15s 0s, transform 0.15s;
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 8px;
+  width: 400px;
+  border-radius: 8px;
+}
+
+.modal-content h1,h2,h3 {
+  text-align: center;
+}
+
+.close-button {
+  float: right;
+  width: 24px;
+  line-height: 24px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: lightgray;
+}
+
+.close-button:hover {
+  background-color: darkgray;
+}
+
+.show-modal {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1.0);
+  transition: visibility 0s linear 0s, opacity 0.15s 0s, transform 0.15s;
+}
+
