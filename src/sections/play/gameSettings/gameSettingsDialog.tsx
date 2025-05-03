@@ -130,7 +130,7 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
             setValue={setEngineElo}
             min={100}
             max={3200}
-            marksFilter={100}
+            step={100}
           />
 
           <FormGroup>
