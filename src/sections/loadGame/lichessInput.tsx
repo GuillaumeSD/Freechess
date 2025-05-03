@@ -13,13 +13,10 @@ import {
 import { useEffect, useState } from "react";
 
 interface Props {
-  pgn: string;
-  setPgn: (pgn: string) => void;
-  /** Called when a game is selected; if provided, bypasses manual 'Add' */
-  onSelect?: (pgn: string) => void;
+  onSelect: (pgn: string) => void;
 }
 
-export default function LichessInput({ pgn, setPgn, onSelect }: Props) {
+export default function LichessInput({ onSelect }: Props) {
   const [requestCount, setRequestCount] = useState(0);
   const [lichessUsername, setLichessUsername] = useLocalStorage(
     "lichess-username",
@@ -70,15 +67,7 @@ export default function LichessInput({ pgn, setPgn, onSelect }: Props) {
         >
           {games.map((game) => (
             <ListItemButton
-              onClick={() => {
-                const selectedPgn: string = game.pgn;
-                if (onSelect) {
-                  onSelect(selectedPgn);
-                } else {
-                  setPgn(selectedPgn);
-                }
-              }}
-              selected={pgn === game.pgn}
+              onClick={() => onSelect(game.pgn)}
               style={{ width: 350, maxWidth: 350 }}
               key={game.id}
             >

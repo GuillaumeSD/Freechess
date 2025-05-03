@@ -38,14 +38,13 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
   const [parsingError, setParsingError] = useState("");
   const { addGame } = useGameDatabase();
 
-  const handleAddGame = (overridePgn?: string) => {
-    const usedPgn = overridePgn ?? pgn;
-    if (!usedPgn) return;
+  const handleAddGame = (pgn: string) => {
+    if (!pgn) return;
     setParsingError("");
 
     try {
-      const gameToAdd = getGameFromPgn(usedPgn);
-      setSentryContext("loadedGame", { pgn: usedPgn });
+      const gameToAdd = getGameFromPgn(pgn);
+      setSentryContext("loadedGame", { pgn });
 
       if (setGame) {
         setGame(gameToAdd);
@@ -71,7 +70,18 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        sx: {
+          position: "fixed",
+          top: 0,
+        },
+      }}
+    >
       <DialogTitle marginY={1} variant="h5">
         {setGame ? "Load a game" : "Add a game to your database"}
       </DialogTitle>
@@ -106,25 +116,11 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
           )}
 
           {gameOrigin === GameOrigin.ChessCom && (
-            <ChessComInput
-              pgn={pgn}
-              setPgn={setPgn}
-              onSelect={(selectedPgn: string) => {
-                setPgn(selectedPgn);
-                handleAddGame(selectedPgn);
-              }}
-            />
+            <ChessComInput onSelect={handleAddGame} />
           )}
 
           {gameOrigin === GameOrigin.Lichess && (
-            <LichessInput
-              pgn={pgn}
-              setPgn={setPgn}
-              onSelect={(selectedPgn: string) => {
-                setPgn(selectedPgn);
-                handleAddGame(selectedPgn);
-              }}
-            />
+            <LichessInput onSelect={handleAddGame} />
           )}
 
           {parsingError && (
@@ -140,6 +136,15 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
         <Button variant="outlined" onClick={handleClose}>
           Cancel
         </Button>
+        {gameOrigin === GameOrigin.Pgn && (
+          <Button
+            variant="contained"
+            sx={{ marginLeft: 2 }}
+            onClick={() => handleAddGame(pgn)}
+          >
+            Add
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

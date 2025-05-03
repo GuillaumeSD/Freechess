@@ -21,6 +21,7 @@ if (
     ignoreErrors: [
       "AbortError: The user aborted a request.",
       "Failed to fetch",
+      "Fetch is aborted",
     ],
   });
 }
