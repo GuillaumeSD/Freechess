@@ -12,6 +12,7 @@ interface Props {
 
 export default function LineEvaluation({ line }: Props) {
   const board = useAtomValue(boardAtom);
+  const game = useAtomValue(gameAtom);
   const { setPgn: setBoardPgn } = useChessActions(boardAtom);
   const { setPgn: setGamePgn } = useChessActions(gameAtom);
   const lineLabel = getLineEvalLabel(line);
@@ -93,21 +94,44 @@ export default function LineEvaluation({ line }: Props) {
                   component="span"
                   key={i}
                   onClick={() => {
-                    // Clone current board position and replay PV moves
-                    const clone = new Chess(board.fen());
+                    // Build a fresh clone from the full game history (via verbose moves)
+                    const clone = new Chess();
+                    const history = game.history({ verbose: true });
+                    history.forEach((mv) => {
+                      clone.move({
+                        from: mv.from,
+                        to: mv.to,
+                        promotion: mv.promotion,
+                      });
+                    });
+                    const currentIndex = board.history().length;
+                    // Prune any future moves beyond the current board position
+                    while (clone.history().length > currentIndex) {
+                      clone.undo();
+                    }
+                    // Append PV moves up to the clicked index
                     for (let j = 0; j <= i; j++) {
                       const uciMove = line.pv[j];
                       const params = uciMoveParams(uciMove);
-                      // handle non-standard castling UCI
+                      // handle non-standard castling UCI (e1h1 -> e1g1, e8h8 -> e8g8)
                       if (params.from === "e1" && params.to === "h1") {
                         params.to = "g1";
                       } else if (params.from === "e8" && params.to === "h8") {
                         params.to = "g8";
                       }
-                      const mv = clone.move(params);
+                      let mv;
+                      try {
+                        mv = clone.move(params);
+                      } catch (err) {
+                        console.error(
+                          `Error applying PV move ${j}: ${uciMove}`,
+                          err
+                        );
+                        return; // abort on illegal
+                      }
                       if (!mv) {
                         console.error(`Illegal PV move ${j}: ${uciMove}`);
-                        return; // abort on illegal move
+                        return; // abort on illegal
                       }
                     }
                     // Persist the updated PGN back into both atoms
