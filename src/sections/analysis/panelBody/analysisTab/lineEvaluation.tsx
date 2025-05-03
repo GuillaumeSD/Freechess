@@ -1,8 +1,9 @@
 import { LineEval } from "@/types/eval";
-import { ListItem, Skeleton, Typography } from "@mui/material";
+import { ListItem, Skeleton, Typography, Box } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom } from "../../states";
-import { getLineEvalLabel, moveLineUciToSan } from "@/lib/chess";
+import { getLineEvalLabel, moveLineUciToSan, uciMoveParams } from "@/lib/chess";
+import { useChessActions } from "@/hooks/useChessActions";
 
 interface Props {
   line: LineEval;
@@ -10,6 +11,7 @@ interface Props {
 
 export default function LineEvaluation({ line }: Props) {
   const board = useAtomValue(boardAtom);
+  const { makeMove } = useChessActions(boardAtom);
   const lineLabel = getLineEvalLabel(line);
 
   const isBlackCp =
@@ -58,7 +60,22 @@ export default function LineEvaluation({ line }: Props) {
         {showSkeleton ? (
           <Skeleton variant="rounded" animation="wave" width="15em" />
         ) : (
-          line.pv.map(moveLineUciToSan(board.fen())).join(", ")
+          <Box component="span">
+            {line.pv.map((uci, i) => {
+              const san = moveLineUciToSan(board.fen())(uci);
+              return (
+                <Box
+                  component="span"
+                  key={i}
+                  onClick={() => makeMove(uciMoveParams(uci))}
+                  sx={{ cursor: "pointer", textDecoration: "underline", mr: i < line.pv.length - 1 ? 0.5 : 0 }}
+                >
+                  {san}
+                  {i < line.pv.length - 1 && ","}
+                </Box>
+              );
+            })}
+          </Box>
         )}
       </Typography>
     </ListItem>
