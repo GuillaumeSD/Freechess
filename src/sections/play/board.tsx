@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
 import {
-  engineSkillLevelAtom,
+  engineEloAtom,
   gameAtom,
   playerColorAtom,
   isGameInProgressAtom,
@@ -23,7 +23,7 @@ export default function BoardContainer() {
   const game = useAtomValue(gameAtom);
   const playerColor = useAtomValue(playerColorAtom);
   const { makeMove: makeGameMove } = useChessActions(gameAtom);
-  const engineSkillLevel = useAtomValue(engineSkillLevelAtom);
+  const engineElo = useAtomValue(engineEloAtom);
   const isGameInProgress = useAtomValue(isGameInProgressAtom);
 
   const gameFen = game.fen();
@@ -39,10 +39,7 @@ export default function BoardContainer() {
       ) {
         return;
       }
-      const move = await engine.getEngineNextMove(
-        gameFen,
-        engineSkillLevel - 1
-      );
+      const move = await engine.getEngineNextMove(gameFen, engineElo);
       if (move) makeGameMove(uciMoveParams(move));
     };
     playEngineMove();
@@ -75,12 +72,12 @@ export default function BoardContainer() {
       whitePlayer={
         playerColor === Color.White
           ? "You 🧠"
-          : `Stockfish level ${engineSkillLevel} 🤖`
+          : `Stockfish Elo ${engineElo} 🤖`
       }
       blackPlayer={
         playerColor === Color.Black
           ? "You 🧠"
-          : `Stockfish level ${engineSkillLevel} 🤖`
+          : `Stockfish Elo ${engineElo} 🤖`
       }
       boardOrientation={playerColor}
       currentPositionAtom={gameDataAtom}
