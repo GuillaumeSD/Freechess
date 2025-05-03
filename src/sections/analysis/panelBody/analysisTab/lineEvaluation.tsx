@@ -1,17 +1,16 @@
 import { LineEval } from "@/types/eval";
 import { ListItem, Skeleton, Typography, Box } from "@mui/material";
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { boardAtom } from "../../states";
 import { getLineEvalLabel, moveLineUciToSan, uciMoveParams } from "@/lib/chess";
-import { useChessActions } from "@/hooks/useChessActions";
+import { Chess } from "chess.js";
 
 interface Props {
   line: LineEval;
 }
 
 export default function LineEvaluation({ line }: Props) {
-  const board = useAtomValue(boardAtom);
-  const { makeMove } = useChessActions(boardAtom);
+  const [board, setBoard] = useAtom(boardAtom);
   const lineLabel = getLineEvalLabel(line);
 
   const isBlackCp =
@@ -67,7 +66,14 @@ export default function LineEvaluation({ line }: Props) {
                 <Box
                   component="span"
                   key={i}
-                  onClick={() => makeMove(uciMoveParams(uci))}
+                  onClick={() => {
+                    // Apply all moves up to the clicked one on a fresh board
+                    const newBoard = new Chess(board.fen());
+                    for (let j = 0; j <= i; j++) {
+                      newBoard.move(uciMoveParams(line.pv[j]));
+                    }
+                    setBoard(newBoard);
+                  }}
                   sx={{ cursor: "pointer", textDecoration: "underline", mr: i < line.pv.length - 1 ? 0.5 : 0 }}
                 >
                   {san}
