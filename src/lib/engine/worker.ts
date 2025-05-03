@@ -1,7 +1,7 @@
 import { EngineWorker } from "@/types/engine";
 
 export const getEngineWorkers = (
-  enginePath: string,
+  workerFactory: () => Worker,
   workersInputNb?: number
 ): EngineWorker[] => {
   if (workersInputNb !== undefined && workersInputNb < 1) {
@@ -20,7 +20,7 @@ export const getEngineWorkers = (
   const workersNb = workersInputNb ?? maxWorkersNb;
 
   for (let i = 0; i < workersNb; i++) {
-    const worker = new Worker(enginePath);
+    const worker = workerFactory();
 
     const engineWorker: EngineWorker = {
       isReady: false,

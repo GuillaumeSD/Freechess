@@ -38,13 +38,14 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
   const [parsingError, setParsingError] = useState("");
   const { addGame } = useGameDatabase();
 
-  const handleAddGame = () => {
-    if (!pgn) return;
+  const handleAddGame = (overridePgn?: string) => {
+    const usedPgn = overridePgn ?? pgn;
+    if (!usedPgn) return;
     setParsingError("");
 
     try {
-      const gameToAdd = getGameFromPgn(pgn);
-      setSentryContext("loadedGame", { pgn });
+      const gameToAdd = getGameFromPgn(usedPgn);
+      setSentryContext("loadedGame", { pgn: usedPgn });
 
       if (setGame) {
         setGame(gameToAdd);
@@ -105,11 +106,25 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
           )}
 
           {gameOrigin === GameOrigin.ChessCom && (
-            <ChessComInput pgn={pgn} setPgn={setPgn} />
+            <ChessComInput
+              pgn={pgn}
+              setPgn={setPgn}
+              onSelect={(selectedPgn: string) => {
+                setPgn(selectedPgn);
+                handleAddGame(selectedPgn);
+              }}
+            />
           )}
 
           {gameOrigin === GameOrigin.Lichess && (
-            <LichessInput pgn={pgn} setPgn={setPgn} />
+            <LichessInput
+              pgn={pgn}
+              setPgn={setPgn}
+              onSelect={(selectedPgn: string) => {
+                setPgn(selectedPgn);
+                handleAddGame(selectedPgn);
+              }}
+            />
           )}
 
           {parsingError && (
@@ -122,15 +137,8 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
         </Grid>
       </DialogContent>
       <DialogActions sx={{ m: 2 }}>
-        <Button
-          variant="outlined"
-          sx={{ marginRight: 2 }}
-          onClick={handleClose}
-        >
+        <Button variant="outlined" onClick={handleClose}>
           Cancel
-        </Button>
-        <Button variant="contained" onClick={handleAddGame}>
-          Add
         </Button>
       </DialogActions>
     </Dialog>
