@@ -9,10 +9,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { DotProps } from "recharts";
-import { currentPositionAtom, gameEvalAtom } from "../../states";
-import { useMemo } from "react";
+import {
+  boardAtom,
+  currentPositionAtom,
+  gameAtom,
+  gameEvalAtom,
+} from "../../states";
+import { useCallback, useMemo } from "react";
 import type { ReactElement } from "react";
 import CustomTooltip from "./tooltip";
 import { ChartItemData } from "./types";
@@ -20,10 +24,13 @@ import { PositionEval } from "@/types/eval";
 import { moveClassificationColors } from "@/lib/chess";
 import CustomDot from "./dot";
 import { MoveClassification } from "@/types/enums";
+import { useChessActions } from "@/hooks/useChessActions";
 
 export default function GraphTab(props: GridProps) {
   const gameEval = useAtomValue(gameEvalAtom);
   const currentPosition = useAtomValue(currentPositionAtom);
+  const { goToMove } = useChessActions(boardAtom);
+  const game = useAtomValue(gameAtom);
 
   const chartData: ChartItemData[] = useMemo(
     () => gameEval?.positions.map(formatEvalToChartData) ?? [],
@@ -48,25 +55,31 @@ export default function GraphTab(props: GridProps) {
     : "grey";
 
   // Render a dot only on selected classifications (always returns an element)
-  const renderDot = (
-    props: DotProps & { payload?: ChartItemData }
-  ): ReactElement => {
-    const payload: ChartItemData | undefined = props.payload;
-    if (!payload) {
-      return <g />;
-    }
-    const c = payload.moveClassification;
-    if (
-      c === MoveClassification.Brilliant ||
-      c === MoveClassification.Great ||
-      c === MoveClassification.Blunder ||
-      c === MoveClassification.Mistake ||
-      (c === MoveClassification.Best && bestDotIndices.has(payload.moveNb))
-    ) {
-      return <CustomDot {...props} payload={payload} />;
-    }
-    return <g />;
-  };
+  const renderDot = useCallback(
+    (
+      props: DotProps & { payload?: ChartItemData }
+    ): ReactElement<SVGElement> => {
+      const payload = props.payload;
+      const moveClass = payload?.moveClassification;
+      if (!moveClass) return <svg key={props.key} />;
+
+      if (
+        [
+          MoveClassification.Brilliant,
+          MoveClassification.Great,
+          MoveClassification.Blunder,
+          MoveClassification.Mistake,
+        ].includes(moveClass) ||
+        (moveClass === MoveClassification.Best &&
+          bestDotIndices.has(payload.moveNb))
+      ) {
+        return <CustomDot {...props} key={props.key} payload={payload} />;
+      }
+
+      return <svg key={props.key} />;
+    },
+    [bestDotIndices]
+  );
 
   if (!gameEval) return null;
 
@@ -100,6 +113,15 @@ export default function GraphTab(props: GridProps) {
             height={400}
             data={chartData}
             margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            onClick={(e) => {
+              const payload = e?.activePayload?.[0]?.payload as
+                | ChartItemData
+                | undefined;
+              if (!payload) return;
+
+              goToMove(payload.moveNb, game);
+            }}
+            style={{ cursor: "pointer" }}
           >
             <XAxis dataKey="moveNb" hide stroke="red" />
             <YAxis domain={[0, 20]} hide />
