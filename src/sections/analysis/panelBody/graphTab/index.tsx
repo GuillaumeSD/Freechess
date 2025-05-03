@@ -9,13 +9,17 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { DotProps } from "recharts";
 import { currentPositionAtom, gameEvalAtom } from "../../states";
 import { useMemo } from "react";
+import type { ReactElement } from "react";
 import CustomTooltip from "./tooltip";
 import { ChartItemData } from "./types";
 import { PositionEval } from "@/types/eval";
 import { moveClassificationColors } from "@/lib/chess";
 import CustomDot from "./dot";
+import { MoveClassification } from "@/types/enums";
 
 export default function GraphTab(props: GridProps) {
   const gameEval = useAtomValue(gameEvalAtom);
@@ -26,9 +30,43 @@ export default function GraphTab(props: GridProps) {
     [gameEval]
   );
 
+  const bestDotIndices = useMemo(() => {
+    const bestItems = chartData.filter(
+      (item) => item.moveClassification === MoveClassification.Best
+    );
+    const count = Math.ceil(bestItems.length * 0.15);
+    const indices = bestItems.map((item) => item.moveNb);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    return new Set(indices.slice(0, count));
+  }, [chartData]);
+
   const boardMoveColor = currentPosition.eval?.moveClassification
     ? moveClassificationColors[currentPosition.eval.moveClassification]
     : "grey";
+
+  // Render a dot only on selected classifications (always returns an element)
+  const renderDot = (
+    props: DotProps & { payload?: ChartItemData }
+  ): ReactElement => {
+    const payload: ChartItemData | undefined = props.payload;
+    if (!payload) {
+      return <g />;
+    }
+    const c = payload.moveClassification;
+    if (
+      c === MoveClassification.Brilliant ||
+      c === MoveClassification.Great ||
+      c === MoveClassification.Blunder ||
+      c === MoveClassification.Mistake ||
+      (c === MoveClassification.Best && bestDotIndices.has(payload.moveNb))
+    ) {
+      return <CustomDot {...props} payload={payload} />;
+    }
+    return <g />;
+  };
 
   if (!gameEval) return null;
 
@@ -80,6 +118,7 @@ export default function GraphTab(props: GridProps) {
               stroke="none"
               fill="#ffffff"
               fillOpacity={1}
+              dot={renderDot}
               activeDot={<CustomDot />}
               isAnimationActive={false}
             />
