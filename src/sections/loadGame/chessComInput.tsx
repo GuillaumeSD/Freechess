@@ -15,9 +15,11 @@ import { useEffect, useState } from "react";
 interface Props {
   pgn: string;
   setPgn: (pgn: string) => void;
+  /** Called when a game is selected; if provided, bypasses manual 'Add' */
+  onSelect?: (pgn: string) => void;
 }
 
-export default function ChessComInput({ pgn, setPgn }: Props) {
+export default function ChessComInput({ pgn, setPgn, onSelect }: Props) {
   const [requestCount, setRequestCount] = useState(0);
   const [chessComUsername, setChessComUsername] = useLocalStorage(
     "chesscom-username",
@@ -68,7 +70,13 @@ export default function ChessComInput({ pgn, setPgn }: Props) {
         >
           {games.map((game) => (
             <ListItemButton
-              onClick={() => setPgn(game.pgn)}
+              onClick={() => {
+                if (onSelect) {
+                  onSelect(game.pgn);
+                } else {
+                  setPgn(game.pgn);
+                }
+              }}
               selected={pgn === game.pgn}
               style={{ width: 350, maxWidth: 350 }}
               key={game.uuid}
