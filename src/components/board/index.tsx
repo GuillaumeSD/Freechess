@@ -256,7 +256,7 @@ export default function Board({
         >
           <Avatar
             src={boardOrientation === Color.White ? blackAvatar : whiteAvatar}
-            variant="square"
+            variant="circular"
             sx={{ width: 24, height: 24 }}
           />
           <Typography>
@@ -310,7 +310,7 @@ export default function Board({
         >
           <Avatar
             src={boardOrientation === Color.White ? whiteAvatar : blackAvatar}
-            variant="square"
+            variant="circular"
             sx={{ width: 24, height: 24 }}
           />
           <Typography>
