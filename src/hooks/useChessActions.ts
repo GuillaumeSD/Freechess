@@ -96,7 +96,11 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
       if (lastMove) {
         playSoundFromMove(lastMove);
       } else {
-        playGameEndSound();
+        const headers = newGame.getHeaders();
+        const hasResult = headers.Result && headers.Result !== "*";
+        if (newGame.isCheckmate() || hasResult) {
+          playGameEndSound();
+        }
       }
     },
     [setGame]
