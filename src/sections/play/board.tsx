@@ -69,16 +69,8 @@ export default function BoardContainer() {
       canPlay={isGameInProgress ? playerColor : false}
       gameAtom={gameAtom}
       boardSize={boardSize}
-      whitePlayer={
-        playerColor === Color.White
-          ? "You 🧠"
-          : `Stockfish Elo ${engineElo} 🤖`
-      }
-      blackPlayer={
-        playerColor === Color.Black
-          ? "You 🧠"
-          : `Stockfish Elo ${engineElo} 🤖`
-      }
+      whitePlayer={playerColor === Color.White ? "You 🧠" : `Stockfish Elo ${engineElo} 🤖`}
+      blackPlayer={playerColor === Color.Black ? "You 🧠" : `Stockfish Elo ${engineElo} 🤖`}
       boardOrientation={playerColor}
       currentPositionAtom={gameDataAtom}
     />
