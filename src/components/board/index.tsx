@@ -254,11 +254,14 @@ export default function Board({
           columnGap={2}
           size={12}
         >
-          <Avatar
-            src={boardOrientation === Color.White ? blackAvatar : whiteAvatar}
-            variant="circular"
-            sx={{ width: 24, height: 24 }}
-          />
+          {/* Player avatar, only render if URL is available */}
+          {(boardOrientation === Color.White ? blackAvatar : whiteAvatar) && (
+            <Avatar
+              src={boardOrientation === Color.White ? blackAvatar : whiteAvatar}
+              variant="circular"
+              sx={{ width: 24, height: 24 }}
+            />
+          ) }
           <Typography>
             {boardOrientation === Color.White ? blackPlayer : whitePlayer}
           </Typography>
@@ -308,11 +311,14 @@ export default function Board({
           columnGap={2}
           size={12}
         >
-          <Avatar
-            src={boardOrientation === Color.White ? whiteAvatar : blackAvatar}
-            variant="circular"
-            sx={{ width: 24, height: 24 }}
-          />
+          {/* Player avatar, only render if URL is available */}
+          { (boardOrientation === Color.White ? whiteAvatar : blackAvatar) && (
+            <Avatar
+              src={boardOrientation === Color.White ? whiteAvatar : blackAvatar}
+              variant="circular"
+              sx={{ width: 24, height: 24 }}
+            />
+          ) }
           <Typography>
             {boardOrientation === Color.White ? whitePlayer : blackPlayer}
           </Typography>
