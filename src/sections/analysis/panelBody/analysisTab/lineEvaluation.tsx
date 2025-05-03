@@ -135,7 +135,7 @@ export default function LineEvaluation({ line }: Props) {
                     mr: i < line.pv.length - 1 ? 0.5 : 0,
                     transition: "opacity 0.2s ease-in-out",
                     "&:hover": {
-                      opacity: 0.5,
+                      opacity: 0.8,
                     },
                   }}
                 >
