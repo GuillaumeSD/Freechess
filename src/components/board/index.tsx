@@ -16,6 +16,7 @@ import { CurrentPosition } from "@/types/eval";
 import EvaluationBar from "./evaluationBar";
 import CapturedPieces from "./capturedPieces";
 import { moveClassificationColors } from "@/lib/chess";
+import { gameAtom as globalGameAtom } from "@/sections/analysis/states";
 
 export interface Props {
   id: string;
@@ -46,7 +47,10 @@ export default function Board({
 }: Props) {
   const boardRef = useRef<HTMLDivElement>(null);
   const game = useAtomValue(gameAtom);
+  const boardGame = game;
+  const globalGame = useAtomValue(globalGameAtom);
   const { makeMove: makeGameMove } = useChessActions(gameAtom);
+  const { setPgn: setGlobalPgn } = useChessActions(globalGameAtom);
   const clickedSquaresAtom = useMemo(() => atom<Square[]>([]), []);
   const setClickedSquares = useSetAtom(clickedSquaresAtom);
   const playableSquaresAtom = useMemo(() => atom<Square[]>([]), []);
@@ -61,6 +65,19 @@ export default function Board({
   useEffect(() => {
     setClickedSquares([]);
   }, [gameFen, setClickedSquares]);
+
+  // Prune global game only when diverging from current board timeline (branching), not on undo
+  useEffect(() => {
+    const boardHist = boardGame.history();
+    const globalHist = globalGame.history();
+    const isPrefix =
+      globalHist.slice(0, boardHist.length).join() === boardHist.join();
+
+    // If we've advanced beyond the previous global end or diverged, sync global history
+    if (boardHist.length > globalHist.length || !isPrefix) {
+      setGlobalPgn(boardGame.pgn());
+    }
+  }, [boardGame.pgn(), globalGame.fen(), setGlobalPgn]);
 
   const isPiecePlayable = useCallback(
     ({ piece }: { piece: string }): boolean => {
@@ -78,12 +95,9 @@ export default function Board({
   ): boolean => {
     if (!isPiecePlayable({ piece })) return false;
 
-    const result = makeGameMove({
-      from: source,
-      to: target,
-      promotion: piece[1]?.toLowerCase() ?? "q",
-    });
-
+    const promotion = piece[1]?.toLowerCase() ?? "q";
+    const moveParams = { from: source, to: target, promotion };
+    const result = makeGameMove(moveParams);
     return !!result;
   };
 
@@ -127,12 +141,9 @@ export default function Board({
       return;
     }
 
-    const result = makeGameMove({
-      from: moveClickFrom,
-      to: square,
-    });
-
-    resetMoveClick(result ? undefined : square);
+    const moveParams2 = { from: moveClickFrom, to: square };
+    const result2 = makeGameMove(moveParams2);
+    resetMoveClick(result2 ? undefined : square);
   };
 
   const handleSquareRightClick = (square: Square) => {
@@ -160,23 +171,17 @@ export default function Board({
     const promotionPiece = piece[1]?.toLowerCase() ?? "q";
 
     if (moveClickFrom && moveClickTo) {
-      const result = makeGameMove({
-        from: moveClickFrom,
-        to: moveClickTo,
-        promotion: promotionPiece,
-      });
+      const params = { from: moveClickFrom, to: moveClickTo, promotion: promotionPiece };
+      const res = makeGameMove(params);
       resetMoveClick();
-      return !!result;
+      return !!res;
     }
 
     if (from && to) {
-      const result = makeGameMove({
-        from,
-        to,
-        promotion: promotionPiece,
-      });
+      const params = { from, to, promotion: promotionPiece };
+      const res = makeGameMove(params);
       resetMoveClick();
-      return !!result;
+      return !!res;
     }
 
     resetMoveClick(moveClickFrom);

@@ -54,7 +54,6 @@ export default function GameReview() {
   const isGameLoaded = game.history().length > 0;
 
   useEffect(() => {
-    if (tab === 1 && !isGameLoaded) setTab(0);
     if (tab === 2 && !gameEval) setTab(0);
   }, [isGameLoaded, gameEval, tab]);
 
@@ -144,7 +143,6 @@ export default function GameReview() {
               sx={{
                 textTransform: "none",
                 minHeight: 20,
-                display: isGameLoaded ? undefined : "none",
                 paddingX: 0,
               }}
               disableFocusRipple

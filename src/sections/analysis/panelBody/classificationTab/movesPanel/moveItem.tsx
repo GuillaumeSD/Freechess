@@ -16,7 +16,7 @@ interface Props {
 
 export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
   const game = useAtomValue(gameAtom);
-  const { goToMove } = useChessActions(boardAtom);
+  const { goToMove: goToBoardMove } = useChessActions(boardAtom);
   const position = useAtomValue(currentPositionAtom);
   const color = getMoveColor(moveClassification);
 
@@ -35,7 +35,7 @@ export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
 
   const handleClick = () => {
     if (isCurrentMove) return;
-    goToMove(moveIdx, game);
+    goToBoardMove(moveIdx, game);
   };
 
   return (
