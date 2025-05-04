@@ -13,6 +13,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { Chess } from "chess.js";
 import { useRouter } from "next/router";
 import { getStartingFen } from "@/lib/chess";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 export default function LoadGame() {
   const router = useRouter();
@@ -24,14 +25,51 @@ export default function LoadGame() {
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
   const evaluationProgress = useAtomValue(evaluationProgressAtom);
 
+  // Retrieve stored usernames for Chess.com and Lichess (ensure non-null strings)
+  const [chessComUsernameRaw] = useLocalStorage("chesscom-username", "");
+  const [lichessUsernameRaw] = useLocalStorage("lichess-username", "");
+  const chessComUsername = chessComUsernameRaw ?? "";
+  const lichessUsername = lichessUsernameRaw ?? "";
+
   const resetAndSetGamePgn = useCallback(
     (pgn: string) => {
       resetBoard({ fen: getStartingFen({ pgn }) });
       setEval(undefined);
-      setBoardOrientation(true);
+
+      // Determine board orientation so that the user is always at the bottom
+      let orientation = true;
+      try {
+        const tmp = new Chess();
+        tmp.loadPgn(pgn);
+        const headers = tmp.getHeaders();
+        const whiteHeader = headers.White?.toLowerCase() || "";
+        const blackHeader = headers.Black?.toLowerCase() || "";
+
+        const userChess = chessComUsername.toLowerCase();
+        const userLichess = lichessUsername.toLowerCase();
+
+        if (userChess) {
+          if (whiteHeader === userChess) orientation = true;
+          else if (blackHeader === userChess) orientation = false;
+        } else if (userLichess) {
+          if (whiteHeader === userLichess) orientation = true;
+          else if (blackHeader === userLichess) orientation = false;
+        }
+      } catch (error) {
+        console.error("Error determining board orientation", error);
+      }
+      setBoardOrientation(orientation);
+
       setGamePgn(pgn);
     },
-    [resetBoard, setGamePgn, setEval, setBoardOrientation]
+    [
+      resetBoard,
+      setGamePgn,
+      setEval,
+      setBoardOrientation,
+      chessComUsername,
+      lichessUsername,
+    ]
   );
 
   useEffect(() => {
