@@ -113,10 +113,18 @@ export default function LineEvaluation({ line }: Props) {
                     for (let j = 0; j <= i; j++) {
                       const uciMove = line.pv[j];
                       const params = uciMoveParams(uciMove);
-                      // handle non-standard castling UCI (e1h1 -> e1g1, e8h8 -> e8g8)
-                      if (params.from === "e1" && params.to === "h1") {
+                      // handle non-standard castling UCI in either direction
+                      if (
+                        (params.from === "e1" && params.to === "h1") ||
+                        (params.from === "h1" && params.to === "e1")
+                      ) {
+                        params.from = "e1";
                         params.to = "g1";
-                      } else if (params.from === "e8" && params.to === "h8") {
+                      } else if (
+                        (params.from === "e8" && params.to === "h8") ||
+                        (params.from === "h8" && params.to === "e8")
+                      ) {
+                        params.from = "e8";
                         params.to = "g8";
                       }
                       let mv;
