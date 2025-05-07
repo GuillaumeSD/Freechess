@@ -29,6 +29,15 @@ export const getMovesClassification = (
       };
     }
 
+    const prevPosition = rawPositions[index - 1];
+    if (prevPosition.bestMove && prevPosition.lines.length <= 1) {
+      return {
+        ...rawPosition,
+        opening: currentOpening,
+        moveClassification: MoveClassification.Forced,
+      };
+    }
+
     const playedMove = uciMoves[index - 1];
     const bestMove = rawPositions[index - 1].bestMove;
 
