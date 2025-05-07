@@ -15,6 +15,7 @@ import { LoadingButton } from "@mui/lab";
 import { useEngine } from "@/hooks/useEngine";
 import { logAnalyticsEvent } from "@/lib/firebase";
 import { SavedEvals } from "@/types/eval";
+import { useEffect, useCallback } from "react";
 
 export default function AnalyzeButton() {
   const engineName = useAtomValue(engineNameAtom);
@@ -32,7 +33,7 @@ export default function AnalyzeButton() {
   const readyToAnalyse =
     engine?.getIsReady() && game.history().length > 0 && !evaluationProgress;
 
-  const handleAnalyze = async () => {
+  const handleAnalyze = useCallback(async () => {
     const params = getEvaluateGameParams(game);
     if (
       !engine?.getIsReady() ||
@@ -71,7 +72,26 @@ export default function AnalyzeButton() {
       multiPv: engineMultiPv,
       nbPositions: params.fens.length,
     });
-  };
+  }, [
+    engine,
+    engineName,
+    game,
+    engineDepth,
+    engineMultiPv,
+    evaluationProgress,
+    setEvaluationProgress,
+    setEval,
+    gameFromUrl,
+    setGameEval,
+    setSavedEvals,
+  ]);
+
+  // Automatically analyze when a new game is loaded and ready to analyze
+  useEffect(() => {
+    if (!gameEval && readyToAnalyse) {
+      handleAnalyze();
+    }
+  }, [gameEval, readyToAnalyse, handleAnalyze]);
 
   if (evaluationProgress) return null;
 
