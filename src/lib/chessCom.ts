@@ -39,3 +39,15 @@ export const getChessComUserRecentGames = async (
 
   return gamesToReturn;
 };
+
+export const getChessComUserAvatar = async (
+  username: string
+): Promise<string | null> => {
+  const usernameParam = encodeURIComponent(username.trim().toLowerCase());
+
+  const res = await fetch(`https://api.chess.com/pub/player/${usernameParam}`);
+  const data = await res.json();
+  const avatarUrl = data?.avatar;
+
+  return typeof avatarUrl === "string" ? avatarUrl : null;
+};

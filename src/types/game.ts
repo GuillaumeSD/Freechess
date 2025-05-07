@@ -16,6 +16,7 @@ export interface Game {
 }
 
 export interface Player {
-  name?: string;
+  name: string;
   rating?: number;
+  avatarUrl?: string;
 }

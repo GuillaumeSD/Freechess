@@ -32,6 +32,7 @@ import { logAnalyticsEvent } from "@/lib/firebase";
 import { useEffect } from "react";
 import { isEngineSupported } from "@/lib/engine/shared";
 import { Stockfish16_1 } from "@/lib/engine/stockfish16_1";
+import { engineLabel } from "@/sections/engineSettings/engineSettingsDialog";
 
 interface Props {
   open: boolean;
@@ -55,9 +56,13 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
     onClose();
     resetGame({
       whiteName:
-        playerColor === Color.White ? "You" : `Stockfish level ${skillLevel}`,
+        playerColor === Color.White
+          ? "You"
+          : `${engineLabel[engineName].small} level ${skillLevel}`,
       blackName:
-        playerColor === Color.Black ? "You" : `Stockfish level ${skillLevel}`,
+        playerColor === Color.Black
+          ? "You"
+          : `${engineLabel[engineName].small} level ${skillLevel}`,
     });
     playGameStartSound();
     setIsGameInProgress(true);
@@ -117,7 +122,7 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
                     value={engine}
                     disabled={!isEngineSupported(engine)}
                   >
-                    {engineLabel[engine]}
+                    {engineLabel[engine].full}
                   </MenuItem>
                 ))}
               </Select>
@@ -166,13 +171,3 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
     </Dialog>
   );
 }
-
-const engineLabel: Record<EngineName, string> = {
-  [EngineName.Stockfish17]: "Stockfish 17 (75MB)",
-  [EngineName.Stockfish17Lite]: "Stockfish 17 Lite (6MB)",
-  [EngineName.Stockfish16_1]: "Stockfish 16.1 (64MB)",
-  [EngineName.Stockfish16_1Lite]: "Stockfish 16.1 Lite (6MB)",
-  [EngineName.Stockfish16NNUE]: "Stockfish 16 (40MB)",
-  [EngineName.Stockfish16]: "Stockfish 16 Lite (HCE)",
-  [EngineName.Stockfish11]: "Stockfish 11",
-};

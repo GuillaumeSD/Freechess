@@ -1,9 +1,13 @@
 import { Chess } from "chess.js";
 import { PrimitiveAtom, useAtomValue } from "jotai";
 import { useGameDatabase } from "./useGameDatabase";
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getChessComUserAvatar } from "@/lib/chessCom";
+import { Player } from "@/types/game";
 
-export const usePlayersNames = (gameAtom: PrimitiveAtom<Chess>) => {
+export const usePlayersData = (
+  gameAtom: PrimitiveAtom<Chess>
+): { white: Player; black: Player } => {
   const game = useAtomValue(gameAtom);
   const { gameFromUrl } = useGameDatabase();
   const headers = game.getHeaders();
@@ -16,57 +20,49 @@ export const usePlayersNames = (gameAtom: PrimitiveAtom<Chess>) => {
   const whiteName = gameFromUrl?.white?.name || headersWhiteName || "White";
   const blackName = gameFromUrl?.black?.name || headersBlackName || "Black";
 
-  const whiteElo = gameFromUrl?.white?.rating || headers.WhiteElo || undefined;
-  const blackElo = gameFromUrl?.black?.rating || headers.BlackElo || undefined;
+  const whiteElo =
+    gameFromUrl?.white?.rating || Number(headers.WhiteElo) || undefined;
+  const blackElo =
+    gameFromUrl?.black?.rating || Number(headers.BlackElo) || undefined;
 
-  // Determine if this game came from Chess.com (via PGN header or URL)
-  const siteHeader = gameFromUrl?.site || headers.Site || "";
+  const siteHeader = gameFromUrl?.site || headers.Site || "unknown";
   const isChessCom = siteHeader.toLowerCase().includes("chess.com");
 
-  // Avatars fetched only for Chess.com games
-  const [whiteAvatar, setWhiteAvatar] = useState<string | undefined>(undefined);
-  const [blackAvatar, setBlackAvatar] = useState<string | undefined>(undefined);
+  const whiteAvatarUrl = usePlayerAvatarUrl(
+    whiteName,
+    isChessCom && !!whiteName && whiteName !== "White"
+  );
 
-  // Fetch white avatar
-  useEffect(() => {
-    if (isChessCom && whiteName && whiteName !== "White") {
-      // Normalize and encode username
-      const trimmedWhiteName = whiteName.trim().toLowerCase();
-      const usernameParam = encodeURIComponent(trimmedWhiteName);
-      fetch(`https://api.chess.com/pub/player/${usernameParam}`)
-        .then((res) => res.json())
-        .then((data) => setWhiteAvatar(data.avatar || undefined))
-        .catch(() => {
-          setWhiteAvatar(undefined);
-        });
-    } else {
-      setWhiteAvatar(undefined);
-    }
-  }, [isChessCom, whiteName]);
-
-  // Fetch black avatar
-  useEffect(() => {
-    if (isChessCom && blackName && blackName !== "Black") {
-      // Normalize and encode username
-      const trimmedBlackName = blackName.trim().toLowerCase();
-      const usernameParamBlack = encodeURIComponent(trimmedBlackName);
-      fetch(`https://api.chess.com/pub/player/${usernameParamBlack}`)
-        .then((res) => res.json())
-        .then((data) => setBlackAvatar(data.avatar || undefined))
-        .catch(() => {
-          setBlackAvatar(undefined);
-        });
-    } else {
-      setBlackAvatar(undefined);
-    }
-  }, [isChessCom, blackName]);
+  const blackAvatarUrl = usePlayerAvatarUrl(
+    blackName,
+    isChessCom && !!blackName && blackName !== "Black"
+  );
 
   return {
-    whiteName,
-    blackName,
-    whiteElo,
-    blackElo,
-    whiteAvatar,
-    blackAvatar,
+    white: {
+      name: whiteName,
+      rating: whiteElo,
+      avatarUrl: whiteAvatarUrl ?? undefined,
+    },
+    black: {
+      name: blackName,
+      rating: blackElo,
+      avatarUrl: blackAvatarUrl ?? undefined,
+    },
   };
+};
+
+const usePlayerAvatarUrl = (
+  playerName: string,
+  enabled: boolean
+): string | null | undefined => {
+  const { data: avatarUrl } = useQuery({
+    queryKey: ["CCAvatar", playerName],
+    enabled,
+    queryFn: () => getChessComUserAvatar(playerName),
+    staleTime: 1000 * 60 * 60, // 1 hour
+    gcTime: 1000 * 60 * 60 * 24, // 1 day
+  });
+
+  return avatarUrl;
 };

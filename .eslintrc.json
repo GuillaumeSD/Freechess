@@ -9,6 +9,7 @@
     "eslint:recommended",
     "plugin:import/recommended",
     "plugin:import/typescript",
+    "plugin:@tanstack/eslint-plugin-query/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
     "plugin:deprecation/recommended",
@@ -21,7 +22,7 @@
     "sourceType": "module"
   },
   "ignorePatterns": [".out/*"],
-  "plugins": ["@typescript-eslint", "import", "prettier"],
+  "plugins": ["@typescript-eslint", "import", "prettier", "@tanstack/query"],
   "rules": {
     "quotes": ["error", "double", { "avoidEscape": true }],
     "prettier/prettier": ["error", {"endOfLine": "auto"}],
