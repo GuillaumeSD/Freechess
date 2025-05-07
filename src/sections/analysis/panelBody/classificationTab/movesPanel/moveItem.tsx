@@ -74,11 +74,7 @@ export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
           }}
         />
       )}
-      <Typography
-        color={getMoveColor(moveClassification)}
-        fontSize="0.9rem"
-        lineHeight="0.9rem"
-      >
+      <Typography color={color} fontSize="0.9rem" lineHeight="0.9rem">
         {san}
       </Typography>
     </Grid>
@@ -99,4 +95,5 @@ const getMoveColor = (moveClassification?: MoveClassification) => {
 const moveClassificationsToIgnore: MoveClassification[] = [
   MoveClassification.Good,
   MoveClassification.Excellent,
+  MoveClassification.Forced,
 ];

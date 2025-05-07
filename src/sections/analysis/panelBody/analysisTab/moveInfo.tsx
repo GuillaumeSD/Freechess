@@ -48,6 +48,7 @@ export default function MoveInfo() {
   const bestMoveLabel =
     moveClassification === MoveClassification.Best ||
     moveClassification === MoveClassification.Book ||
+    moveClassification === MoveClassification.Forced ||
     moveClassification === MoveClassification.Brilliant ||
     moveClassification === MoveClassification.Great
       ? null
@@ -97,6 +98,7 @@ export default function MoveInfo() {
 
 const moveClassificationLabels: Record<MoveClassification, string> = {
   [MoveClassification.Book]: "a book move",
+  [MoveClassification.Forced]: "forced",
   [MoveClassification.Brilliant]: "brilliant !!",
   [MoveClassification.Great]: "a great move !",
   [MoveClassification.Best]: "the best move",

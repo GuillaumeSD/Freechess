@@ -337,6 +337,7 @@ export const getLineEvalLabel = (
 
 export const moveClassificationColors: Record<MoveClassification, string> = {
   [MoveClassification.Book]: "#d5a47d",
+  [MoveClassification.Forced]: "#d5a47d",
   [MoveClassification.Brilliant]: "#26c2a3",
   [MoveClassification.Great]: "#4099ed",
   [MoveClassification.Best]: "#3aab18",
