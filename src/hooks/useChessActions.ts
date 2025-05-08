@@ -4,14 +4,15 @@ import {
   playIllegalMoveSound,
   playSoundFromMove,
 } from "@/lib/sounds";
+import { Player } from "@/types/game";
 import { Chess, Move } from "chess.js";
 import { PrimitiveAtom, useAtom } from "jotai";
 import { useCallback } from "react";
 
 export interface resetGameParams {
   fen?: string;
-  whiteName?: string;
-  blackName?: string;
+  white?: Player;
+  black?: Player;
   noHeaders?: boolean;
 }
 

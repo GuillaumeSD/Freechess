@@ -114,6 +114,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
             setValue={setMultiPv}
             min={2}
             max={6}
+            marksFilter={1}
             size={6}
           />
 

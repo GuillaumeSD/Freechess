@@ -21,7 +21,7 @@ export class UciEngine {
   private isReady = false;
   private engineName: EngineName;
   private multiPv = 3;
-  private skillLevel: number | undefined = undefined;
+  private elo: number | undefined = undefined;
 
   private constructor(engineName: EngineName, workers: EngineWorker[]) {
     this.engineName = engineName;
@@ -92,37 +92,28 @@ export class UciEngine {
     this.multiPv = multiPv;
   }
 
-  private async setLimitStrength(on: boolean) {
-    await this.broadcastCommands(
-      [`setoption name UCI_LimitStrength value ${on}`, "isready"],
-      "readyok"
-    );
-  }
-
-  private async setElo(elo: number) {
-    await this.broadcastCommands(
-      [`setoption name UCI_Elo value ${elo}`, "isready"],
-      "readyok"
-    );
-  }
-
-  private async setSkillLevel(skillLevel: number, initCase = false) {
+  private async setElo(elo: number, initCase = false) {
     if (!initCase) {
-      if (skillLevel === this.skillLevel) return;
+      if (elo === this.elo) return;
 
       this.throwErrorIfNotReady();
     }
 
-    if (skillLevel < 0 || skillLevel > 20) {
-      throw new Error(`Invalid SkillLevel value : ${skillLevel}`);
+    if (elo < 1320 || elo > 3190) {
+      throw new Error(`Invalid Elo value : ${elo}`);
     }
 
     await this.broadcastCommands(
-      [`setoption name Skill Level value ${skillLevel}`, "isready"],
+      ["setoption name UCI_LimitStrength value true", "isready"],
       "readyok"
     );
 
-    this.skillLevel = skillLevel;
+    await this.broadcastCommands(
+      [`setoption name UCI_Elo value ${elo}`, "isready"],
+      "readyok"
+    );
+
+    this.elo = elo;
   }
 
   private throwErrorIfNotReady() {
@@ -370,7 +361,6 @@ export class UciEngine {
     depth = 16
   ): Promise<string | undefined> {
     this.throwErrorIfNotReady();
-    await this.setLimitStrength(true);
     await this.setElo(elo);
 
     console.log(`Evaluating position: ${fen}`);

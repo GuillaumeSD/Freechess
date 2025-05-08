@@ -14,7 +14,7 @@ import { useEngine } from "@/hooks/useEngine";
 import { uciMoveParams } from "@/lib/chess";
 import Board from "@/components/board";
 import { useGameData } from "@/hooks/useGameData";
-import { usePlayersData } from "@/hooks/usePlayerNames";
+import { usePlayersData } from "@/hooks/usePlayersData";
 
 export default function BoardContainer() {
   const screenSize = useScreenSize();

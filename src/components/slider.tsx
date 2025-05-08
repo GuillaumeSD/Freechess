@@ -7,6 +7,7 @@ export interface Props {
   max: number;
   label: string;
   size?: number;
+  marksFilter?: number;
   step?: number;
 }
 
@@ -17,6 +18,7 @@ export default function Slider({
   value,
   setValue,
   size,
+  marksFilter,
   step = 1,
 }: Props) {
   return (
@@ -27,14 +29,22 @@ export default function Slider({
       size={size ?? 11}
     >
       <Typography id={`input-${label}`} textAlign="left" width="100%">
-        {`${label}: ${value}`}
+        {step === 1 && marksFilter ? label : `${label}: ${value}`}
       </Typography>
 
       <MuiSlider
         min={min}
         max={max}
+        marks={
+          marksFilter
+            ? Array.from({ length: max - min + 1 }, (_, i) => ({
+                value: i + min,
+                label: `${i + min}`,
+              })).filter((_, i) => i % marksFilter === 0)
+            : undefined
+        }
         step={step}
-        valueLabelDisplay="auto"
+        valueLabelDisplay="off"
         value={value}
         onChange={(_, value) => setValue(value as number)}
         aria-labelledby={`input-${label}`}

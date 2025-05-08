@@ -55,10 +55,16 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
   const handleGameStart = () => {
     onClose();
     resetGame({
-      whiteName:
-        playerColor === Color.White ? "You" : engineLabel[engineName].small,
-      blackName:
-        playerColor === Color.Black ? "You" : engineLabel[engineName].small,
+      white: {
+        name:
+          playerColor === Color.White ? "You" : engineLabel[engineName].small,
+        rating: playerColor === Color.White ? undefined : engineElo,
+      },
+      black: {
+        name:
+          playerColor === Color.Black ? "You" : engineLabel[engineName].small,
+        rating: playerColor === Color.Black ? undefined : engineElo,
+      },
     });
     playGameStartSound();
     setIsGameInProgress(true);
@@ -129,9 +135,10 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
             label="Bot Elo rating"
             value={engineElo}
             setValue={setEngineElo}
-            min={100}
-            max={3200}
-            step={100}
+            min={1320}
+            max={3190}
+            step={10}
+            marksFilter={374}
           />
 
           <FormGroup>

@@ -7,6 +7,5 @@ export const gameAtom = atom(new Chess());
 export const gameDataAtom = atom<CurrentPosition>({});
 export const playerColorAtom = atom<Color>(Color.White);
 export const enginePlayNameAtom = atom<EngineName>(EngineName.Stockfish17Lite);
-export const engineSkillLevelAtom = atom<number>(1);
-export const engineEloAtom = atom<number>(1200);
+export const engineEloAtom = atom(1320);
 export const isGameInProgressAtom = atom(false);

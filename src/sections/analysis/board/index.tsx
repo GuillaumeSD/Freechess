@@ -11,7 +11,7 @@ import { useMemo } from "react";
 import { useScreenSize } from "@/hooks/useScreenSize";
 import { Color } from "@/types/enums";
 import Board from "@/components/board";
-import { usePlayersData } from "@/hooks/usePlayerNames";
+import { usePlayersData } from "@/hooks/usePlayersData";
 
 export default function BoardContainer() {
   const screenSize = useScreenSize();

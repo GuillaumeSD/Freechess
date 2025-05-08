@@ -1,5 +1,5 @@
 import { EvaluateGameParams, LineEval, PositionEval } from "@/types/eval";
-import { Game } from "@/types/game";
+import { Game, Player } from "@/types/game";
 import { Chess, PieceSymbol, Square } from "chess.js";
 import { getPositionWinPercentage } from "./engine/helpers/winPercentage";
 import { Color, MoveClassification } from "@/types/enums";
@@ -54,19 +54,22 @@ export const getGameToSave = (game: Chess, board: Chess): Chess => {
 
 export const setGameHeaders = (
   game: Chess,
-  params: { whiteName?: string; blackName?: string; resigned?: Color } = {}
+  params: { white?: Player; black?: Player; resigned?: Color } = {}
 ): Chess => {
   game.setHeader("Event", "Chesskit Game");
-  game.setHeader("Site", "Chesskit");
+  game.setHeader("Site", "Chesskit.org");
   game.setHeader(
     "Date",
     new Date().toISOString().split("T")[0].replaceAll("-", ".")
   );
 
-  const { whiteName, blackName, resigned } = params;
+  const { white, black, resigned } = params;
 
-  if (whiteName) game.setHeader("White", whiteName);
-  if (blackName) game.setHeader("Black", blackName);
+  if (white?.name) game.setHeader("White", white.name);
+  if (black?.name) game.setHeader("Black", black.name);
+
+  if (white?.rating) game.setHeader("WhiteElo", `${white.rating}`);
+  if (black?.rating) game.setHeader("BlackElo", `${black.rating}`);
 
   const whiteNameToUse = game.getHeaders().White || "White";
   const blackNameToUse = game.getHeaders().Black || "Black";

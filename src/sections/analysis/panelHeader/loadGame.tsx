@@ -43,7 +43,11 @@ export default function LoadGame() {
 
       resetAndSetGamePgn(gameFromUrl.pgn);
       setEval(gameFromUrl.eval);
-      setBoardOrientation(true);
+      setBoardOrientation(
+        gameFromUrl.black.name === "You" && gameFromUrl.site === "Chesskit.org"
+          ? false
+          : true
+      );
     };
 
     loadGame();
