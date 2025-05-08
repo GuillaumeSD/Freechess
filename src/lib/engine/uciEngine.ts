@@ -92,6 +92,20 @@ export class UciEngine {
     this.multiPv = multiPv;
   }
 
+  private async setLimitStrength(on: boolean) {
+    await this.broadcastCommands(
+      [`setoption name UCI_LimitStrength value ${on}`, "isready"],
+      "readyok"
+    );
+  }
+
+  private async setElo(elo: number) {
+    await this.broadcastCommands(
+      [`setoption name UCI_Elo value ${elo}`, "isready"],
+      "readyok"
+    );
+  }
+
   private async setSkillLevel(skillLevel: number, initCase = false) {
     if (!initCase) {
       if (skillLevel === this.skillLevel) return;
@@ -352,11 +366,12 @@ export class UciEngine {
 
   public async getEngineNextMove(
     fen: string,
-    skillLevel: number,
+    elo: number,
     depth = 16
   ): Promise<string | undefined> {
     this.throwErrorIfNotReady();
-    await this.setSkillLevel(skillLevel);
+    await this.setLimitStrength(true);
+    await this.setElo(elo);
 
     console.log(`Evaluating position: ${fen}`);
 

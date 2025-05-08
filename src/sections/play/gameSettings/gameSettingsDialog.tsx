@@ -20,7 +20,7 @@ import {
 import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
 import { useAtom, useSetAtom } from "jotai";
 import {
-  engineSkillLevelAtom,
+  engineEloAtom,
   playerColorAtom,
   isGameInProgressAtom,
   gameAtom,
@@ -40,9 +40,9 @@ interface Props {
 }
 
 export default function GameSettingsDialog({ open, onClose }: Props) {
-  const [skillLevel, setSkillLevel] = useAtomLocalStorage(
-    "engine-skill-level",
-    engineSkillLevelAtom
+  const [engineElo, setEngineElo] = useAtomLocalStorage(
+    "engine-elo",
+    engineEloAtom
   );
   const [engineName, setEngineName] = useAtomLocalStorage(
     "engine-play-name",
@@ -56,20 +56,16 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
     onClose();
     resetGame({
       whiteName:
-        playerColor === Color.White
-          ? "You"
-          : `${engineLabel[engineName].small} level ${skillLevel}`,
+        playerColor === Color.White ? "You" : engineLabel[engineName].small,
       blackName:
-        playerColor === Color.Black
-          ? "You"
-          : `${engineLabel[engineName].small} level ${skillLevel}`,
+        playerColor === Color.Black ? "You" : engineLabel[engineName].small,
     });
     playGameStartSound();
     setIsGameInProgress(true);
 
     logAnalyticsEvent("play_game", {
       engine: engineName,
-      skillLevel,
+      engineElo,
       playerColor,
     });
   };
@@ -130,12 +126,12 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
           </Grid>
 
           <Slider
-            label="Bot skill level"
-            value={skillLevel}
-            setValue={setSkillLevel}
-            min={1}
-            max={21}
-            marksFilter={2}
+            label="Bot Elo rating"
+            value={engineElo}
+            setValue={setEngineElo}
+            min={100}
+            max={3200}
+            step={100}
           />
 
           <FormGroup>
