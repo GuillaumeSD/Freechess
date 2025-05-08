@@ -92,7 +92,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
                     value={engine}
                     disabled={!isEngineSupported(engine)}
                   >
-                    {engineLabel[engine]}
+                    {engineLabel[engine].full}
                   </MenuItem>
                 ))}
               </Select>
@@ -129,12 +129,34 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
   );
 }
 
-const engineLabel: Record<EngineName, string> = {
-  [EngineName.Stockfish17]: "Stockfish 17 (75MB)",
-  [EngineName.Stockfish17Lite]: "Stockfish 17 Lite (6MB)",
-  [EngineName.Stockfish16_1]: "Stockfish 16.1 (64MB)",
-  [EngineName.Stockfish16_1Lite]: "Stockfish 16.1 Lite (6MB)",
-  [EngineName.Stockfish16NNUE]: "Stockfish 16 (40MB)",
-  [EngineName.Stockfish16]: "Stockfish 16 Lite (HCE)",
-  [EngineName.Stockfish11]: "Stockfish 11",
-};
+export const engineLabel: Record<EngineName, { small: string; full: string }> =
+  {
+    [EngineName.Stockfish17]: {
+      full: "Stockfish 17 (75MB)",
+      small: "Stockfish 17",
+    },
+    [EngineName.Stockfish17Lite]: {
+      full: "Stockfish 17 Lite (6MB)",
+      small: "Stockfish 17 Lite",
+    },
+    [EngineName.Stockfish16_1]: {
+      full: "Stockfish 16.1 (64MB)",
+      small: "Stockfish 16.1",
+    },
+    [EngineName.Stockfish16_1Lite]: {
+      full: "Stockfish 16.1 Lite (6MB)",
+      small: "Stockfish 16.1 Lite",
+    },
+    [EngineName.Stockfish16NNUE]: {
+      full: "Stockfish 16 (40MB)",
+      small: "Stockfish 16",
+    },
+    [EngineName.Stockfish16]: {
+      full: "Stockfish 16 Lite (HCE)",
+      small: "Stockfish 16 Lite",
+    },
+    [EngineName.Stockfish11]: {
+      full: "Stockfish 11 (HCE)",
+      small: "Stockfish 11",
+    },
+  };

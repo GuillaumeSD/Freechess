@@ -22,6 +22,8 @@ import GamePgnInput from "./gamePgnInput";
 import ChessComInput from "./chessComInput";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import LichessInput from "./lichessInput";
+import { useSetAtom } from "jotai";
+import { boardOrientationAtom } from "../analysis/states";
 
 interface Props {
   open: boolean;
@@ -36,6 +38,7 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
     GameOrigin.Pgn
   );
   const [parsingError, setParsingError] = useState("");
+  const setBoardOrientation = useSetAtom(boardOrientationAtom);
   const { addGame } = useGameDatabase();
 
   const handleAddGame = (pgn: string) => {
@@ -140,7 +143,10 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
           <Button
             variant="contained"
             sx={{ marginLeft: 2 }}
-            onClick={() => handleAddGame(pgn)}
+            onClick={() => {
+              setBoardOrientation(true);
+              handleAddGame(pgn);
+            }}
           >
             Add
           </Button>

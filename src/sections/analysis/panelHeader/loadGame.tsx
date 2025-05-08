@@ -28,10 +28,9 @@ export default function LoadGame() {
     (pgn: string) => {
       resetBoard({ fen: getStartingFen({ pgn }) });
       setEval(undefined);
-      setBoardOrientation(true);
       setGamePgn(pgn);
     },
-    [resetBoard, setGamePgn, setEval, setBoardOrientation]
+    [resetBoard, setGamePgn, setEval]
   );
 
   useEffect(() => {
@@ -44,10 +43,11 @@ export default function LoadGame() {
 
       resetAndSetGamePgn(gameFromUrl.pgn);
       setEval(gameFromUrl.eval);
+      setBoardOrientation(true);
     };
 
     loadGame();
-  }, [gameFromUrl, game, resetAndSetGamePgn, setEval]);
+  }, [gameFromUrl, game, resetAndSetGamePgn, setEval, setBoardOrientation]);
 
   const isGameLoaded =
     gameFromUrl !== undefined ||

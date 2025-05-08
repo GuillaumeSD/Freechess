@@ -11,6 +11,8 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useSetAtom } from "jotai";
+import { boardOrientationAtom } from "../analysis/states";
 
 interface Props {
   onSelect: (pgn: string) => void;
@@ -22,6 +24,7 @@ export default function LichessInput({ onSelect }: Props) {
     "lichess-username",
     ""
   );
+  const setBoardOrientation = useSetAtom(boardOrientationAtom);
   const [games, setGames] = useState<LichessGame[]>([]);
 
   useEffect(() => {
@@ -67,7 +70,13 @@ export default function LichessInput({ onSelect }: Props) {
         >
           {games.map((game) => (
             <ListItemButton
-              onClick={() => onSelect(game.pgn)}
+              onClick={() => {
+                setBoardOrientation(
+                  lichessUsername.toLowerCase() !==
+                    game.players.black.user?.name.toLowerCase()
+                );
+                onSelect(game.pgn);
+              }}
               style={{ width: 350, maxWidth: 350 }}
               key={game.id}
             >

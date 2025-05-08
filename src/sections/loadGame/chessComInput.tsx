@@ -10,7 +10,9 @@ import {
   ListItemText,
   TextField,
 } from "@mui/material";
+import { useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
+import { boardOrientationAtom } from "../analysis/states";
 
 interface Props {
   onSelect: (pgn: string) => void;
@@ -22,6 +24,7 @@ export default function ChessComInput({ onSelect }: Props) {
     "chesscom-username",
     ""
   );
+  const setBoardOrientation = useSetAtom(boardOrientationAtom);
   const [games, setGames] = useState<ChessComGame[]>([]);
 
   useEffect(() => {
@@ -67,7 +70,13 @@ export default function ChessComInput({ onSelect }: Props) {
         >
           {games.map((game) => (
             <ListItemButton
-              onClick={() => onSelect(game.pgn)}
+              onClick={() => {
+                setBoardOrientation(
+                  chessComUsername.toLowerCase() !==
+                    game.black.username.toLowerCase()
+                );
+                onSelect(game.pgn);
+              }}
               style={{ width: 350, maxWidth: 350 }}
               key={game.uuid}
             >

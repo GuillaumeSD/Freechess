@@ -10,17 +10,18 @@ import {
 import { useChessActions } from "@/hooks/useChessActions";
 import { useEffect, useMemo } from "react";
 import { useScreenSize } from "@/hooks/useScreenSize";
-import { Color } from "@/types/enums";
 import { useEngine } from "@/hooks/useEngine";
 import { uciMoveParams } from "@/lib/chess";
 import Board from "@/components/board";
 import { useGameData } from "@/hooks/useGameData";
+import { usePlayersData } from "@/hooks/usePlayerNames";
 
 export default function BoardContainer() {
   const screenSize = useScreenSize();
   const engineName = useAtomValue(enginePlayNameAtom);
   const engine = useEngine(engineName, 1);
   const game = useAtomValue(gameAtom);
+  const { white, black } = usePlayersData(gameAtom);
   const playerColor = useAtomValue(playerColorAtom);
   const { makeMove: makeGameMove } = useChessActions(gameAtom);
   const engineElo = useAtomValue(engineEloAtom);
@@ -69,8 +70,8 @@ export default function BoardContainer() {
       canPlay={isGameInProgress ? playerColor : false}
       gameAtom={gameAtom}
       boardSize={boardSize}
-      whitePlayer={playerColor === Color.White ? "You 🧠" : `Stockfish Elo ${engineElo} 🤖`}
-      blackPlayer={playerColor === Color.Black ? "You 🧠" : `Stockfish Elo ${engineElo} 🤖`}
+      whitePlayer={white}
+      blackPlayer={black}
       boardOrientation={playerColor}
       currentPositionAtom={gameDataAtom}
     />

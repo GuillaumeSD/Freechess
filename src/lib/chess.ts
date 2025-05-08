@@ -34,11 +34,11 @@ export const formatGameToDatabase = (game: Chess): Omit<Game, "id"> => {
     date: headers.Date,
     round: headers.Round ?? "?",
     white: {
-      name: headers.White,
+      name: headers.White || "White",
       rating: headers.WhiteElo ? Number(headers.WhiteElo) : undefined,
     },
     black: {
-      name: headers.Black,
+      name: headers.Black || "Black",
       rating: headers.BlackElo ? Number(headers.BlackElo) : undefined,
     },
     result: headers.Result,
@@ -337,6 +337,7 @@ export const getLineEvalLabel = (
 
 export const moveClassificationColors: Record<MoveClassification, string> = {
   [MoveClassification.Book]: "#d5a47d",
+  [MoveClassification.Forced]: "#d5a47d",
   [MoveClassification.Brilliant]: "#26c2a3",
   [MoveClassification.Great]: "#4099ed",
   [MoveClassification.Best]: "#3aab18",
