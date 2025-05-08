@@ -104,7 +104,10 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
               displayEmpty
               input={<OutlinedInput label="Game origin" />}
               value={gameOrigin ?? ""}
-              onChange={(e) => setGameOrigin(e.target.value as GameOrigin)}
+              onChange={(e) => {
+                setGameOrigin(e.target.value as GameOrigin);
+                setParsingError("");
+              }}
             >
               {Object.values(GameOrigin).map((origin) => (
                 <MenuItem key={origin} value={origin}>
@@ -128,7 +131,7 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
 
           {parsingError && (
             <FormControl fullWidth>
-              <Typography color="red" textAlign="center" marginTop={1}>
+              <Typography color="salmon" textAlign="center" marginTop={1}>
                 {parsingError}
               </Typography>
             </FormControl>
