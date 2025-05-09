@@ -1,15 +1,16 @@
 import { Grid2 as Grid, Typography } from "@mui/material";
-import { useAtomValue } from "jotai";
-import { gameEvalAtom } from "../../states";
-type props = {
-  params: "accurecy" | "rating";
-};
 
-export default function Accuracies(props: props) {
-  const gameEval = useAtomValue(gameEvalAtom);
+interface Props {
+  title: string;
+  whiteValue: string | number;
+  blackValue: string | number;
+}
 
-  if (!gameEval) return null;
-
+export default function PlayersMetric({
+  title,
+  whiteValue,
+  blackValue,
+}: Props) {
   return (
     <Grid
       container
@@ -27,14 +28,10 @@ export default function Accuracies(props: props) {
         fontWeight="bold"
         border="1px solid #424242"
       >
-        {props.params === "accurecy"
-          ? `${gameEval?.accuracy.white.toFixed(1)} %`
-          : `${Math.round(gameEval?.estimatedElo.white as number)}`}
+        {whiteValue}
       </Typography>
 
-      <Typography align="center">
-        {props.params === "accurecy" ? "Accuracies" : "Estimated Elo"}
-      </Typography>
+      <Typography align="center">{title}</Typography>
       <Typography
         align="center"
         sx={{ backgroundColor: "black", color: "white" }}
@@ -44,9 +41,7 @@ export default function Accuracies(props: props) {
         fontWeight="bold"
         border="1px solid #424242"
       >
-        {props.params === "accurecy"
-          ? `${gameEval?.accuracy.black.toFixed(1)} %`
-          : `${Math.round(gameEval?.estimatedElo.black as number)}`}
+        {blackValue}
       </Typography>
     </Grid>
   );

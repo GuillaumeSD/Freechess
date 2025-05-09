@@ -16,6 +16,7 @@ import { useEngine } from "@/hooks/useEngine";
 import { logAnalyticsEvent } from "@/lib/firebase";
 import { SavedEvals } from "@/types/eval";
 import { useEffect, useCallback } from "react";
+import { usePlayersData } from "@/hooks/usePlayersData";
 
 export default function AnalyzeButton() {
   const engineName = useAtomValue(engineNameAtom);
@@ -29,6 +30,7 @@ export default function AnalyzeButton() {
   const [gameEval, setEval] = useAtom(gameEvalAtom);
   const game = useAtomValue(gameAtom);
   const setSavedEvals = useSetAtom(savedEvalsAtom);
+  const { white, black } = usePlayersData(gameAtom);
 
   const readyToAnalyse =
     engine?.getIsReady() && game.history().length > 0 && !evaluationProgress;
@@ -48,6 +50,10 @@ export default function AnalyzeButton() {
       depth: engineDepth,
       multiPv: engineMultiPv,
       setEvaluationProgress,
+      playersRatings: {
+        white: white?.rating,
+        black: black?.rating,
+      },
     });
 
     setEval(newGameEval);
@@ -84,6 +90,8 @@ export default function AnalyzeButton() {
     gameFromUrl,
     setGameEval,
     setSavedEvals,
+    white.rating,
+    black.rating,
   ]);
 
   // Automatically analyze when a new game is loaded and ready to analyze

@@ -22,9 +22,10 @@ export interface Accuracy {
 }
 
 export interface EstimatedElo {
-  white: number | null;
-  black: number | null;
+  white: number;
+  black: number;
 }
+
 export interface EngineSettings {
   engine: EngineName;
   depth: number;
@@ -35,7 +36,7 @@ export interface EngineSettings {
 export interface GameEval {
   positions: PositionEval[];
   accuracy: Accuracy;
-  estimatedElo: EstimatedElo;
+  estimatedElo?: EstimatedElo;
   settings: EngineSettings;
 }
 
@@ -59,6 +60,7 @@ export interface EvaluateGameParams {
   depth?: number;
   multiPv?: number;
   setEvaluationProgress?: (value: number) => void;
+  playersRatings?: { white?: number; black?: number };
 }
 
 export interface SavedEval {

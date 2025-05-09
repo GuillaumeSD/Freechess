@@ -1,6 +1,5 @@
 import { EngineName } from "@/types/enums";
 import {
-  EstimatedElo,
   EvaluateGameParams,
   EvaluatePositionWithUpdateParams,
   GameEval,
@@ -14,7 +13,7 @@ import { computeAccuracy } from "./helpers/accuracy";
 import { getIsStalemate, getWhoIsCheckmated } from "../chess";
 import { getLichessEval } from "../lichess";
 import { getMovesClassification } from "./helpers/moveClassification";
-import { estimateEloFromEngineOutput } from "./helpers/estimateElo";
+import { computeEstimatedElo } from "./helpers/estimateElo";
 import { EngineWorker, WorkerJob } from "@/types/engine";
 
 export class UciEngine {
@@ -217,6 +216,7 @@ export class UciEngine {
     depth = 16,
     multiPv = this.multiPv,
     setEvaluationProgress,
+    playersRatings,
   }: EvaluateGameParams): Promise<GameEval> {
     this.throwErrorIfNotReady();
     setEvaluationProgress?.(1);
@@ -278,7 +278,11 @@ export class UciEngine {
       fens
     );
     const accuracy = computeAccuracy(positions);
-    const estimatedElo: EstimatedElo = estimateEloFromEngineOutput(positions);
+    const estimatedElo = computeEstimatedElo(
+      positions,
+      playersRatings?.white,
+      playersRatings?.black
+    );
 
     this.isReady = true;
     return {

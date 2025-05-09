@@ -10,11 +10,12 @@ import {
   engineMultiPvAtom,
   engineNameAtom,
   gameAtom,
+  gameEvalAtom,
 } from "../../states";
 import LineEvaluation from "./lineEvaluation";
 import { useCurrentPosition } from "../../hooks/useCurrentPosition";
 import { LineEval } from "@/types/eval";
-import Accuracies from "./accuracies";
+import PlayersMetric from "./playersMetric";
 import MoveInfo from "./moveInfo";
 import Opening from "./opening";
 
@@ -24,6 +25,7 @@ export default function AnalysisTab(props: GridProps) {
   const position = useCurrentPosition(engineName);
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
+  const gameEval = useAtomValue(gameEvalAtom);
 
   const boardHistory = board.history();
   const gameHistory = game.history();
@@ -57,8 +59,21 @@ export default function AnalysisTab(props: GridProps) {
           : { overflow: "hidden", overflowY: "auto", ...props.sx }
       }
     >
-      <Accuracies params={"accurecy"} />
-      <Accuracies params={"rating"} />
+      {gameEval && (
+        <PlayersMetric
+          title="Accuracy"
+          whiteValue={`${gameEval.accuracy.white.toFixed(1)} %`}
+          blackValue={`${gameEval.accuracy.black.toFixed(1)} %`}
+        />
+      )}
+
+      {gameEval?.estimatedElo && (
+        <PlayersMetric
+          title="Game Rating"
+          whiteValue={Math.round(gameEval.estimatedElo.white)}
+          blackValue={Math.round(gameEval.estimatedElo.black)}
+        />
+      )}
 
       <MoveInfo />
 
