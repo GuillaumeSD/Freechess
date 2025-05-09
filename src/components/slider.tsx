@@ -1,6 +1,6 @@
 import { Grid2 as Grid, Slider as MuiSlider, Typography } from "@mui/material";
 
-interface Props {
+export interface Props {
   value: number;
   setValue: (value: number) => void;
   min: number;
@@ -8,6 +8,7 @@ interface Props {
   label: string;
   size?: number;
   marksFilter?: number;
+  step?: number;
 }
 
 export default function Slider({
@@ -17,7 +18,8 @@ export default function Slider({
   value,
   setValue,
   size,
-  marksFilter = 1,
+  marksFilter,
+  step = 1,
 }: Props) {
   return (
     <Grid
@@ -27,17 +29,21 @@ export default function Slider({
       size={size ?? 11}
     >
       <Typography id={`input-${label}`} textAlign="left" width="100%">
-        {label}
+        {step === 1 && marksFilter ? label : `${label}: ${value}`}
       </Typography>
 
       <MuiSlider
         min={min}
         max={max}
-        marks={Array.from({ length: max - min + 1 }, (_, i) => ({
-          value: i + min,
-          label: `${i + min}`,
-        })).filter((_, i) => i % marksFilter === 0)}
-        step={1}
+        marks={
+          marksFilter
+            ? Array.from({ length: max - min + 1 }, (_, i) => ({
+                value: i + min,
+                label: `${i + min}`,
+              })).filter((_, i) => i % marksFilter === 0)
+            : undefined
+        }
+        step={step}
         valueLabelDisplay="off"
         value={value}
         onChange={(_, value) => setValue(value as number)}

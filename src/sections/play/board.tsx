@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
 import {
-  engineSkillLevelAtom,
+  engineEloAtom,
   gameAtom,
   playerColorAtom,
   isGameInProgressAtom,
@@ -10,20 +10,21 @@ import {
 import { useChessActions } from "@/hooks/useChessActions";
 import { useEffect, useMemo } from "react";
 import { useScreenSize } from "@/hooks/useScreenSize";
-import { Color } from "@/types/enums";
 import { useEngine } from "@/hooks/useEngine";
 import { uciMoveParams } from "@/lib/chess";
 import Board from "@/components/board";
 import { useGameData } from "@/hooks/useGameData";
+import { usePlayersData } from "@/hooks/usePlayersData";
 
 export default function BoardContainer() {
   const screenSize = useScreenSize();
   const engineName = useAtomValue(enginePlayNameAtom);
-  const engine = useEngine(engineName);
+  const engine = useEngine(engineName, 1);
   const game = useAtomValue(gameAtom);
+  const { white, black } = usePlayersData(gameAtom);
   const playerColor = useAtomValue(playerColorAtom);
   const { makeMove: makeGameMove } = useChessActions(gameAtom);
-  const engineSkillLevel = useAtomValue(engineSkillLevelAtom);
+  const engineElo = useAtomValue(engineEloAtom);
   const isGameInProgress = useAtomValue(isGameInProgressAtom);
 
   const gameFen = game.fen();
@@ -32,17 +33,14 @@ export default function BoardContainer() {
   useEffect(() => {
     const playEngineMove = async () => {
       if (
-        !engine?.isReady() ||
+        !engine?.getIsReady() ||
         game.turn() === playerColor ||
         isGameFinished ||
         !isGameInProgress
       ) {
         return;
       }
-      const move = await engine.getEngineNextMove(
-        gameFen,
-        engineSkillLevel - 1
-      );
+      const move = await engine.getEngineNextMove(gameFen, engineElo);
       if (move) makeGameMove(uciMoveParams(move));
     };
     playEngineMove();
@@ -72,16 +70,8 @@ export default function BoardContainer() {
       canPlay={isGameInProgress ? playerColor : false}
       gameAtom={gameAtom}
       boardSize={boardSize}
-      whitePlayer={
-        playerColor === Color.White
-          ? "You 🧠"
-          : `Stockfish level ${engineSkillLevel} 🤖`
-      }
-      blackPlayer={
-        playerColor === Color.Black
-          ? "You 🧠"
-          : `Stockfish level ${engineSkillLevel} 🤖`
-      }
+      whitePlayer={white}
+      blackPlayer={black}
       boardOrientation={playerColor}
       currentPositionAtom={gameDataAtom}
     />

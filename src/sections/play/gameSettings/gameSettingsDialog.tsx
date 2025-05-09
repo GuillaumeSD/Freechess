@@ -20,7 +20,7 @@ import {
 import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
 import { useAtom, useSetAtom } from "jotai";
 import {
-  engineSkillLevelAtom,
+  engineEloAtom,
   playerColorAtom,
   isGameInProgressAtom,
   gameAtom,
@@ -32,6 +32,7 @@ import { logAnalyticsEvent } from "@/lib/firebase";
 import { useEffect } from "react";
 import { isEngineSupported } from "@/lib/engine/shared";
 import { Stockfish16_1 } from "@/lib/engine/stockfish16_1";
+import { engineLabel } from "@/sections/engineSettings/engineSettingsDialog";
 
 interface Props {
   open: boolean;
@@ -39,9 +40,9 @@ interface Props {
 }
 
 export default function GameSettingsDialog({ open, onClose }: Props) {
-  const [skillLevel, setSkillLevel] = useAtomLocalStorage(
-    "engine-skill-level",
-    engineSkillLevelAtom
+  const [engineElo, setEngineElo] = useAtomLocalStorage(
+    "engine-elo",
+    engineEloAtom
   );
   const [engineName, setEngineName] = useAtomLocalStorage(
     "engine-play-name",
@@ -54,17 +55,23 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
   const handleGameStart = () => {
     onClose();
     resetGame({
-      whiteName:
-        playerColor === Color.White ? "You" : `Stockfish level ${skillLevel}`,
-      blackName:
-        playerColor === Color.Black ? "You" : `Stockfish level ${skillLevel}`,
+      white: {
+        name:
+          playerColor === Color.White ? "You" : engineLabel[engineName].small,
+        rating: playerColor === Color.White ? undefined : engineElo,
+      },
+      black: {
+        name:
+          playerColor === Color.Black ? "You" : engineLabel[engineName].small,
+        rating: playerColor === Color.Black ? undefined : engineElo,
+      },
     });
     playGameStartSound();
     setIsGameInProgress(true);
 
     logAnalyticsEvent("play_game", {
       engine: engineName,
-      skillLevel,
+      engineElo,
       playerColor,
     });
   };
@@ -117,7 +124,7 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
                     value={engine}
                     disabled={!isEngineSupported(engine)}
                   >
-                    {engineLabel[engine]}
+                    {engineLabel[engine].full}
                   </MenuItem>
                 ))}
               </Select>
@@ -125,12 +132,13 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
           </Grid>
 
           <Slider
-            label="Bot skill level"
-            value={skillLevel}
-            setValue={setSkillLevel}
-            min={1}
-            max={21}
-            marksFilter={2}
+            label="Bot Elo rating"
+            value={engineElo}
+            setValue={setEngineElo}
+            min={1320}
+            max={3190}
+            step={10}
+            marksFilter={374}
           />
 
           <FormGroup>
@@ -166,13 +174,3 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
     </Dialog>
   );
 }
-
-const engineLabel: Record<EngineName, string> = {
-  [EngineName.Stockfish17]: "Stockfish 17 (75MB)",
-  [EngineName.Stockfish17Lite]: "Stockfish 17 Lite (6MB)",
-  [EngineName.Stockfish16_1]: "Stockfish 16.1 (64MB)",
-  [EngineName.Stockfish16_1Lite]: "Stockfish 16.1 Lite (6MB)",
-  [EngineName.Stockfish16NNUE]: "Stockfish 16 (40MB)",
-  [EngineName.Stockfish16]: "Stockfish 16 Lite (HCE)",
-  [EngineName.Stockfish11]: "Stockfish 11",
-};

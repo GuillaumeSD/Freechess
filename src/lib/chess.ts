@@ -1,5 +1,5 @@
 import { EvaluateGameParams, LineEval, PositionEval } from "@/types/eval";
-import { Game } from "@/types/game";
+import { Game, Player } from "@/types/game";
 import { Chess, PieceSymbol, Square } from "chess.js";
 import { getPositionWinPercentage } from "./engine/helpers/winPercentage";
 import { Color, MoveClassification } from "@/types/enums";
@@ -25,7 +25,7 @@ export const getGameFromPgn = (pgn: string): Chess => {
 };
 
 export const formatGameToDatabase = (game: Chess): Omit<Game, "id"> => {
-  const headers: Record<string, string | undefined> = game.header();
+  const headers: Record<string, string | undefined> = game.getHeaders();
 
   return {
     pgn: game.pgn(),
@@ -34,11 +34,11 @@ export const formatGameToDatabase = (game: Chess): Omit<Game, "id"> => {
     date: headers.Date,
     round: headers.Round ?? "?",
     white: {
-      name: headers.White,
+      name: headers.White || "White",
       rating: headers.WhiteElo ? Number(headers.WhiteElo) : undefined,
     },
     black: {
-      name: headers.Black,
+      name: headers.Black || "Black",
       rating: headers.BlackElo ? Number(headers.BlackElo) : undefined,
     },
     result: headers.Result,
@@ -54,26 +54,29 @@ export const getGameToSave = (game: Chess, board: Chess): Chess => {
 
 export const setGameHeaders = (
   game: Chess,
-  params: { whiteName?: string; blackName?: string; resigned?: Color } = {}
+  params: { white?: Player; black?: Player; resigned?: Color } = {}
 ): Chess => {
-  game.header("Event", "Freechess Game");
-  game.header("Site", "Freechess");
-  game.header(
+  game.setHeader("Event", "Chesskit Game");
+  game.setHeader("Site", "Chesskit.org");
+  game.setHeader(
     "Date",
     new Date().toISOString().split("T")[0].replaceAll("-", ".")
   );
 
-  const { whiteName, blackName, resigned } = params;
+  const { white, black, resigned } = params;
 
-  if (whiteName) game.header("White", whiteName);
-  if (blackName) game.header("Black", blackName);
+  if (white?.name) game.setHeader("White", white.name);
+  if (black?.name) game.setHeader("Black", black.name);
 
-  const whiteNameToUse = game.header().White || "White";
-  const blackNameToUse = game.header().Black || "Black";
+  if (white?.rating) game.setHeader("WhiteElo", `${white.rating}`);
+  if (black?.rating) game.setHeader("BlackElo", `${black.rating}`);
+
+  const whiteNameToUse = game.getHeaders().White || "White";
+  const blackNameToUse = game.getHeaders().Black || "Black";
 
   if (resigned) {
-    game.header("Result", resigned === "w" ? "0-1" : "1-0");
-    game.header(
+    game.setHeader("Result", resigned === "w" ? "0-1" : "1-0");
+    game.setHeader(
       "Termination",
       `${resigned === "w" ? blackNameToUse : whiteNameToUse} won by resignation`
     );
@@ -82,8 +85,8 @@ export const setGameHeaders = (
   if (!game.isGameOver()) return game;
 
   if (game.isCheckmate()) {
-    game.header("Result", game.turn() === "w" ? "0-1" : "1-0");
-    game.header(
+    game.setHeader("Result", game.turn() === "w" ? "0-1" : "1-0");
+    game.setHeader(
       "Termination",
       `${
         game.turn() === "w" ? blackNameToUse : whiteNameToUse
@@ -92,18 +95,18 @@ export const setGameHeaders = (
   }
 
   if (game.isInsufficientMaterial()) {
-    game.header("Result", "1/2-1/2");
-    game.header("Termination", "Draw by insufficient material");
+    game.setHeader("Result", "1/2-1/2");
+    game.setHeader("Termination", "Draw by insufficient material");
   }
 
   if (game.isStalemate()) {
-    game.header("Result", "1/2-1/2");
-    game.header("Termination", "Draw by stalemate");
+    game.setHeader("Result", "1/2-1/2");
+    game.setHeader("Termination", "Draw by stalemate");
   }
 
   if (game.isThreefoldRepetition()) {
-    game.header("Result", "1/2-1/2");
-    game.header("Termination", "Draw by threefold repetition");
+    game.setHeader("Result", "1/2-1/2");
+    game.setHeader("Termination", "Draw by threefold repetition");
   }
 
   return game;
@@ -337,6 +340,7 @@ export const getLineEvalLabel = (
 
 export const moveClassificationColors: Record<MoveClassification, string> = {
   [MoveClassification.Book]: "#d5a47d",
+  [MoveClassification.Forced]: "#d5a47d",
   [MoveClassification.Brilliant]: "#26c2a3",
   [MoveClassification.Great]: "#4099ed",
   [MoveClassification.Best]: "#3aab18",

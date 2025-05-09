@@ -14,37 +14,65 @@ import { computeAccuracy } from "./helpers/accuracy";
 import { getIsStalemate, getWhoIsCheckmated } from "../chess";
 import { getLichessEval } from "../lichess";
 import { getMovesClassification } from "./helpers/moveClassification";
-import { EngineWorker } from "@/types/engine";
 import { estimateEloFromEngineOutput } from "./helpers/estimateElo";
+import { EngineWorker, WorkerJob } from "@/types/engine";
 
 export class UciEngine {
-  private worker: EngineWorker;
-  private ready = false;
+  private workers: EngineWorker[];
+  private workerQueue: WorkerJob[] = [];
+  private isReady = false;
   private engineName: EngineName;
   private multiPv = 3;
-  private skillLevel: number | undefined = undefined;
+  private elo: number | undefined = undefined;
 
-  private constructor(engineName: EngineName, worker: EngineWorker) {
+  private constructor(engineName: EngineName, workers: EngineWorker[]) {
     this.engineName = engineName;
-    this.worker = worker;
+    this.workers = workers;
   }
 
   public static async create(
     engineName: EngineName,
-    worker: EngineWorker,
+    workers: EngineWorker[],
     customEngineInit?: (
       sendCommands: UciEngine["sendCommands"]
     ) => Promise<void>
   ): Promise<UciEngine> {
-    const engine = new UciEngine(engineName, worker);
+    const engine = new UciEngine(engineName, workers);
 
-    await engine.sendCommands(["uci"], "uciok");
+    await engine.broadcastCommands(["uci"], "uciok");
     await engine.setMultiPv(engine.multiPv, true);
     await customEngineInit?.(engine.sendCommands.bind(engine));
-    engine.ready = true;
+    for (const worker of workers) {
+      worker.isReady = true;
+    }
+    engine.isReady = true;
 
-    console.log(`${engineName} initialized`);
+    console.log(`${engineName} initialized with ${workers.length} workers`);
     return engine;
+  }
+
+  private acquireWorker(): EngineWorker | undefined {
+    for (const worker of this.workers) {
+      if (!worker.isReady) continue;
+
+      worker.isReady = false;
+      return worker;
+    }
+
+    return undefined;
+  }
+
+  private releaseWorker(worker: EngineWorker) {
+    worker.isReady = true;
+    const nextJob = this.workerQueue.shift();
+
+    if (nextJob) {
+      this.sendCommands(
+        nextJob.commands,
+        nextJob.finalMessage,
+        nextJob.onNewMessage
+      ).then(nextJob.resolve);
+    }
   }
 
   private async setMultiPv(multiPv: number, initCase = false) {
@@ -58,7 +86,7 @@ export class UciEngine {
       throw new Error(`Invalid MultiPV value : ${multiPv}`);
     }
 
-    await this.sendCommands(
+    await this.broadcastCommands(
       [`setoption name MultiPV value ${multiPv}`, "isready"],
       "readyok"
     );
@@ -66,44 +94,60 @@ export class UciEngine {
     this.multiPv = multiPv;
   }
 
-  private async setSkillLevel(skillLevel: number, initCase = false) {
+  private async setElo(elo: number, initCase = false) {
     if (!initCase) {
-      if (skillLevel === this.skillLevel) return;
+      if (elo === this.elo) return;
 
       this.throwErrorIfNotReady();
     }
 
-    if (skillLevel < 0 || skillLevel > 20) {
-      throw new Error(`Invalid SkillLevel value : ${skillLevel}`);
+    if (elo < 1320 || elo > 3190) {
+      throw new Error(`Invalid Elo value : ${elo}`);
     }
 
-    await this.sendCommands(
-      [`setoption name Skill Level value ${skillLevel}`, "isready"],
+    await this.broadcastCommands(
+      ["setoption name UCI_LimitStrength value true", "isready"],
       "readyok"
     );
 
-    this.skillLevel = skillLevel;
+    await this.broadcastCommands(
+      [`setoption name UCI_Elo value ${elo}`, "isready"],
+      "readyok"
+    );
+
+    this.elo = elo;
   }
 
   private throwErrorIfNotReady() {
-    if (!this.ready) {
+    if (!this.isReady) {
       throw new Error(`${this.engineName} is not ready`);
     }
   }
 
   public shutdown(): void {
-    this.ready = false;
-    this.worker.uci("quit");
-    this.worker.terminate?.();
+    this.isReady = false;
+    this.workerQueue = [];
+
+    for (const worker of this.workers) {
+      worker.uci("quit");
+      worker.terminate?.();
+      worker.isReady = false;
+    }
+
     console.log(`${this.engineName} shutdown`);
   }
 
-  public isReady(): boolean {
-    return this.ready;
+  public getIsReady(): boolean {
+    return this.isReady;
   }
 
   public async stopSearch(): Promise<void> {
-    await this.sendCommands(["stop", "isready"], "readyok");
+    this.workerQueue = [];
+    await this.broadcastCommands(["stop", "isready"], "readyok");
+
+    for (const worker of this.workers) {
+      this.releaseWorker(worker);
+    }
   }
 
   private async sendCommands(
@@ -111,22 +155,60 @@ export class UciEngine {
     finalMessage: string,
     onNewMessage?: (messages: string[]) => void
   ): Promise<string[]> {
+    const worker = this.acquireWorker();
+
+    if (!worker) {
+      return new Promise((resolve) => {
+        this.workerQueue.push({
+          commands,
+          finalMessage,
+          onNewMessage,
+          resolve,
+        });
+      });
+    }
+
+    return this.sendCommandsToWorker(
+      worker,
+      commands,
+      finalMessage,
+      onNewMessage
+    );
+  }
+
+  private async sendCommandsToWorker(
+    worker: EngineWorker,
+    commands: string[],
+    finalMessage: string,
+    onNewMessage?: (messages: string[]) => void
+  ): Promise<string[]> {
     return new Promise((resolve) => {
       const messages: string[] = [];
-
-      this.worker.listen = (data) => {
+      worker.listen = (data) => {
         messages.push(data);
         onNewMessage?.(messages);
 
         if (data.startsWith(finalMessage)) {
+          this.releaseWorker(worker);
           resolve(messages);
         }
       };
-
       for (const command of commands) {
-        this.worker.uci(command);
+        worker.uci(command);
       }
     });
+  }
+
+  private async broadcastCommands(
+    commands: string[],
+    finalMessage: string,
+    onNewMessage?: (messages: string[]) => void
+  ): Promise<void> {
+    await Promise.all(
+      this.workers.map((worker) =>
+        this.sendCommandsToWorker(worker, commands, finalMessage, onNewMessage)
+      )
+    );
   }
 
   public async evaluateGame({
@@ -139,49 +221,56 @@ export class UciEngine {
     this.throwErrorIfNotReady();
     setEvaluationProgress?.(1);
     await this.setMultiPv(multiPv);
-    this.ready = false;
+    this.isReady = false;
 
-    await this.sendCommands(["ucinewgame", "isready"], "readyok");
-    this.worker.uci("position startpos");
+    await this.broadcastCommands(["ucinewgame", "isready"], "readyok");
 
-    const positions: PositionEval[] = [];
-    for (const fen of fens) {
-      const whoIsCheckmated = getWhoIsCheckmated(fen);
-      if (whoIsCheckmated) {
-        positions.push({
-          lines: [
-            {
-              pv: [],
-              depth: 0,
-              multiPv: 1,
-              mate: whoIsCheckmated === "w" ? -1 : 1,
-            },
-          ],
-        });
-        continue;
-      }
+    const positions: PositionEval[] = new Array(fens.length);
+    let completed = 0;
 
-      const isStalemate = getIsStalemate(fen);
-      if (isStalemate) {
-        positions.push({
-          lines: [
-            {
-              pv: [],
-              depth: 0,
-              multiPv: 1,
-              cp: 0,
-            },
-          ],
-        });
-        continue;
-      }
+    const updateEval = (index: number, positionEval: PositionEval) => {
+      completed++;
+      positions[index] = positionEval;
+      const progress = completed / fens.length;
+      setEvaluationProgress?.(99 - Math.exp(-4 * progress) * 99);
+    };
 
-      const result = await this.evaluatePosition(fen, depth);
-      positions.push(result);
-      setEvaluationProgress?.(
-        99 - Math.exp(-4 * (fens.indexOf(fen) / fens.length)) * 99
-      );
-    }
+    await Promise.all(
+      fens.map(async (fen, i) => {
+        const whoIsCheckmated = getWhoIsCheckmated(fen);
+        if (whoIsCheckmated) {
+          updateEval(i, {
+            lines: [
+              {
+                pv: [],
+                depth: 0,
+                multiPv: 1,
+                mate: whoIsCheckmated === "w" ? -1 : 1,
+              },
+            ],
+          });
+          return;
+        }
+
+        const isStalemate = getIsStalemate(fen);
+        if (isStalemate) {
+          updateEval(i, {
+            lines: [
+              {
+                pv: [],
+                depth: 0,
+                multiPv: 1,
+                cp: 0,
+              },
+            ],
+          });
+          return;
+        }
+
+        const result = await this.evaluatePosition(fen, depth);
+        updateEval(i, result);
+      })
+    );
 
     const positionsWithClassification = getMovesClassification(
       positions,
@@ -191,7 +280,7 @@ export class UciEngine {
     const accuracy = computeAccuracy(positions);
     const estimatedElo: EstimatedElo = estimateEloFromEngineOutput(positions);
 
-    this.ready = true;
+    this.isReady = true;
     return {
       positions: positionsWithClassification,
       estimatedElo,
@@ -209,14 +298,14 @@ export class UciEngine {
     fen: string,
     depth = 16
   ): Promise<PositionEval> {
-    console.log(`Evaluating position: ${fen}`);
-
-    const lichessEval = await getLichessEval(fen, this.multiPv);
-    if (
-      lichessEval.lines.length >= this.multiPv &&
-      lichessEval.lines[0].depth >= depth
-    ) {
-      return lichessEval;
+    if (this.workers.length < 2) {
+      const lichessEval = await getLichessEval(fen, this.multiPv);
+      if (
+        lichessEval.lines.length >= this.multiPv &&
+        lichessEval.lines[0].depth >= depth
+      ) {
+        return lichessEval;
+      }
     }
 
     const results = await this.sendCommands(
@@ -272,11 +361,11 @@ export class UciEngine {
 
   public async getEngineNextMove(
     fen: string,
-    skillLevel: number,
+    elo: number,
     depth = 16
   ): Promise<string | undefined> {
     this.throwErrorIfNotReady();
-    await this.setSkillLevel(skillLevel);
+    await this.setElo(elo);
 
     console.log(`Evaluating position: ${fen}`);
 

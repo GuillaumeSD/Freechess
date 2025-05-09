@@ -7,7 +7,7 @@ interface Props {
 
 export default function GamePgnInput({ pgn, setPgn }: Props) {
   return (
-    <FormControl sx={{ m: 1, width: 600 }}>
+    <FormControl fullWidth>
       <TextField
         label="Enter PGN here..."
         variant="outlined"

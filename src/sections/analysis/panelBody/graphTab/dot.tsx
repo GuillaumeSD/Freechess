@@ -1,8 +1,5 @@
 import { DotProps } from "recharts";
 import { ChartItemData } from "./types";
-import { useAtomValue } from "jotai";
-import { boardAtom, gameAtom } from "../../states";
-import { useChessActions } from "@/hooks/useChessActions";
 import { moveClassificationColors } from "@/lib/chess";
 
 export default function CustomDot({
@@ -11,14 +8,6 @@ export default function CustomDot({
   r,
   payload,
 }: DotProps & { payload?: ChartItemData }) {
-  const { goToMove } = useChessActions(boardAtom);
-  const game = useAtomValue(gameAtom);
-
-  const handleDotClick = () => {
-    if (!payload) return;
-    goToMove(payload.moveNb, game);
-  };
-
   const moveColor = payload?.moveClassification
     ? moveClassificationColors[payload.moveClassification]
     : "grey";
@@ -32,8 +21,6 @@ export default function CustomDot({
       strokeWidth={5}
       fill={moveColor}
       fillOpacity={1}
-      onClick={handleDotClick}
-      cursor="pointer"
     />
   );
 }

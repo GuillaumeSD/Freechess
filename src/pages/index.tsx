@@ -19,7 +19,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { Chess } from "chess.js";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -35,7 +34,7 @@ export default function GameReview() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { reset: resetBoard } = useChessActions(boardAtom);
-  const { setPgn: setGamePgn } = useChessActions(gameAtom);
+  const { reset: resetGame } = useChessActions(gameAtom);
   const [gameEval, setGameEval] = useAtom(gameEvalAtom);
   const game = useAtomValue(gameAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
@@ -48,9 +47,9 @@ export default function GameReview() {
       resetBoard();
       setGameEval(undefined);
       setBoardOrientation(true);
-      setGamePgn(new Chess().pgn());
+      resetGame({ noHeaders: true });
     }
-  }, [gameId, setGameEval, setBoardOrientation, resetBoard, setGamePgn]);
+  }, [gameId, setGameEval, setBoardOrientation, resetBoard, resetGame]);
 
   const isGameLoaded = game.history().length > 0;
 
@@ -61,7 +60,7 @@ export default function GameReview() {
 
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start">
-      <PageTitle title="Freechess Game Review" />
+      <PageTitle title="Chesskit Game Review" />
 
       <Board />
 
