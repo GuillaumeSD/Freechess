@@ -1,5 +1,6 @@
 import { EngineName } from "@/types/enums";
 import {
+  EstimatedElo,
   EvaluateGameParams,
   EvaluatePositionWithUpdateParams,
   GameEval,
@@ -13,6 +14,7 @@ import { computeAccuracy } from "./helpers/accuracy";
 import { getIsStalemate, getWhoIsCheckmated } from "../chess";
 import { getLichessEval } from "../lichess";
 import { getMovesClassification } from "./helpers/moveClassification";
+import { estimateEloFromEngineOutput } from "./helpers/estimateElo";
 import { EngineWorker, WorkerJob } from "@/types/engine";
 
 export class UciEngine {
@@ -276,10 +278,12 @@ export class UciEngine {
       fens
     );
     const accuracy = computeAccuracy(positions);
+    const estimatedElo: EstimatedElo = estimateEloFromEngineOutput(positions);
 
     this.isReady = true;
     return {
       positions: positionsWithClassification,
+      estimatedElo,
       accuracy,
       settings: {
         engine: this.engineName,
