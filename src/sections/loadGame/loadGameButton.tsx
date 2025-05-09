@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useState } from "react";
 import NewGameDialog from "./loadGameDialog";
 import { Chess } from "chess.js";
@@ -19,7 +19,9 @@ export default function LoadGameButton({ setGame, label, size }: Props) {
         onClick={() => setOpenDialog(true)}
         size={size}
       >
-        {label || "Add game"}
+        <Typography fontSize="0.9em" fontWeight="500" lineHeight="1.4em">
+          {label || "Add game"}
+        </Typography>
       </Button>
 
       <NewGameDialog

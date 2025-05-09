@@ -35,7 +35,7 @@ export default function LineEvaluation({ line }: Props) {
         }}
         borderRadius="5px"
         border="1px solid #424242"
-        fontWeight="bold"
+        fontWeight="500"
       >
         {showSkeleton ? (
           <Skeleton

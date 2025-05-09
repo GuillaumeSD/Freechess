@@ -19,30 +19,39 @@ export default function PlayersMetric({
       columnGap={{ xs: "8vw", md: 10 }}
       size={12}
     >
-      <Typography
-        align="center"
-        sx={{ backgroundColor: "white", color: "black" }}
-        borderRadius="5px"
-        lineHeight={1}
-        padding={1}
-        fontWeight="bold"
-        border="1px solid #424242"
-      >
-        {whiteValue}
+      <ValueBlock value={whiteValue} color="white" />
+
+      <Typography align="center" fontSize="0.8em">
+        {title}
       </Typography>
 
-      <Typography align="center">{title}</Typography>
-      <Typography
-        align="center"
-        sx={{ backgroundColor: "black", color: "white" }}
-        borderRadius="5px"
-        lineHeight={1}
-        padding={1}
-        fontWeight="bold"
-        border="1px solid #424242"
-      >
-        {blackValue}
-      </Typography>
+      <ValueBlock value={blackValue} color="black" />
     </Grid>
   );
 }
+
+const ValueBlock = ({
+  value,
+  color,
+}: {
+  value: string | number;
+  color: "white" | "black";
+}) => {
+  return (
+    <Typography
+      align="center"
+      sx={{
+        backgroundColor: color,
+        color: color === "white" ? "black" : "white",
+      }}
+      borderRadius="5px"
+      lineHeight="1em"
+      fontSize="0.9em"
+      padding={0.8}
+      fontWeight="500"
+      border="1px solid #424242"
+    >
+      {value}
+    </Typography>
+  );
+};

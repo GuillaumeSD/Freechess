@@ -25,7 +25,12 @@ export default function MoveInfo() {
 
   if (!bestMoveSan) {
     return (
-      <Grid size={12} justifyItems="center" alignContent="center">
+      <Grid
+        size={12}
+        justifyItems="center"
+        alignContent="center"
+        marginTop={0.5}
+      >
         <Skeleton
           variant="rounded"
           animation="wave"
@@ -55,7 +60,13 @@ export default function MoveInfo() {
       : `${bestMoveSan} was the best move`;
 
   return (
-    <Grid container columnGap={5} justifyContent="center" size={12}>
+    <Grid
+      container
+      columnGap={5}
+      justifyContent="center"
+      size={12}
+      marginTop={0.5}
+    >
       {moveLabel && (
         <Stack direction="row" alignItems="center" spacing={1}>
           {moveClassification && (

@@ -17,6 +17,7 @@ import { logAnalyticsEvent } from "@/lib/firebase";
 import { SavedEvals } from "@/types/eval";
 import { useEffect, useCallback } from "react";
 import { usePlayersData } from "@/hooks/usePlayersData";
+import { Typography } from "@mui/material";
 
 export default function AnalyzeButton() {
   const engineName = useAtomValue(engineNameAtom);
@@ -107,11 +108,13 @@ export default function AnalyzeButton() {
     <LoadingButton
       variant="contained"
       size="small"
-      startIcon={<Icon icon="streamline:magnifying-glass-solid" />}
+      startIcon={<Icon icon="streamline:magnifying-glass-solid" height={12} />}
       onClick={handleAnalyze}
       disabled={!readyToAnalyse}
     >
-      {gameEval ? "Analyze again" : "Analyze"}
+      <Typography fontSize="0.9em" fontWeight="500" lineHeight="1.4em">
+        {gameEval ? "Analyze again" : "Analyze"}
+      </Typography>
     </LoadingButton>
   );
 }

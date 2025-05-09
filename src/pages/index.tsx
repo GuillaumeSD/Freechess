@@ -31,7 +31,6 @@ export default function GameReview() {
   const theme = useTheme();
   const [tab, setTab] = useState(0);
   const isLgOrGreater = useMediaQuery(theme.breakpoints.up("lg"));
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { reset: resetBoard } = useChessActions(boardAtom);
   const { reset: resetGame } = useChessActions(gameAtom);
@@ -77,14 +76,14 @@ export default function GameReview() {
           borderWidth: 2,
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
-        padding={2.5}
+        padding={2}
         style={{
           maxWidth: "1200px",
         }}
         rowGap={2}
         maxHeight={{ lg: "calc(95vh - 130px)", xs: "900px" }}
         display="grid"
-        gridTemplateRows="repeat(4, auto) fit-content(100%)"
+        gridTemplateRows="repeat(3, auto) fit-content(100%)"
         marginTop={isLgOrGreater && window.innerHeight > 780 ? 4 : 0}
         size={{
           xs: 12,
@@ -114,19 +113,18 @@ export default function GameReview() {
             onChange={(_, newValue) => setTab(newValue)}
             aria-label="basic tabs example"
             variant="fullWidth"
+            sx={{ minHeight: 0 }}
           >
             <Tab
               label="Analysis"
               id="tab0"
-              icon={
-                <Icon
-                  icon="mdi:magnify"
-                  color="#27f019"
-                  height={isMobile ? 15 : 20}
-                />
-              }
+              icon={<Icon icon="mdi:magnify" color="#27f019" height={15} />}
               iconPosition="start"
-              sx={{ textTransform: "none", minHeight: 20, paddingX: 0 }}
+              sx={{
+                textTransform: "none",
+                minHeight: 15,
+                padding: "5px 0em 12px",
+              }}
               disableFocusRipple
             />
 
@@ -137,15 +135,15 @@ export default function GameReview() {
                 <Icon
                   icon="mdi:format-list-bulleted"
                   color="#27f019"
-                  height={isMobile ? 15 : 20}
+                  height={15}
                 />
               }
               iconPosition="start"
               sx={{
                 textTransform: "none",
-                minHeight: 20,
+                minHeight: 15,
                 display: isGameLoaded ? undefined : "none",
-                paddingX: 0,
+                padding: "5px 0em 12px",
               }}
               disableFocusRipple
             />
@@ -153,19 +151,13 @@ export default function GameReview() {
             <Tab
               label="Graph"
               id="tab2"
-              icon={
-                <Icon
-                  icon="mdi:chart-line"
-                  color="#27f019"
-                  height={isMobile ? 15 : 20}
-                />
-              }
+              icon={<Icon icon="mdi:chart-line" color="#27f019" height={15} />}
               iconPosition="start"
               sx={{
                 textTransform: "none",
-                minHeight: 20,
+                minHeight: 15,
                 display: gameEval ? undefined : "none",
-                paddingX: 0,
+                padding: "5px 0em 12px",
               }}
               disableFocusRipple
             />
@@ -182,8 +174,12 @@ export default function GameReview() {
 
         <GraphTab role="tabpanel" hidden={tab !== 2} id="tabContent2" />
 
-        {isLgOrGreater && <Divider sx={{ marginX: "5%" }} />}
-        {isLgOrGreater && <PanelToolBar key="review-panel-toolbar" />}
+        {isLgOrGreater && (
+          <Box>
+            <Divider sx={{ marginX: "5%", marginBottom: 1.5 }} />
+            <PanelToolBar key="review-panel-toolbar" />
+          </Box>
+        )}
 
         {!isLgOrGreater && gameEval && <Divider sx={{ marginX: "5%" }} />}
         {!isLgOrGreater && gameEval && (
