@@ -8,6 +8,7 @@ import {
   Square,
 } from "react-chessboard/dist/chessboard/types";
 import { moveClassificationColors } from "@/lib/chess";
+import { boardHueAtom } from "./states";
 
 export interface Props {
   currentPositionAtom: PrimitiveAtom<CurrentPosition>;
@@ -29,6 +30,7 @@ export function getSquareRenderer({
       const position = useAtomValue(currentPositionAtom);
       const clickedSquares = useAtomValue(clickedSquaresAtom);
       const playableSquares = useAtomValue(playableSquaresAtom);
+      const boardHue = useAtomValue(boardHueAtom);
 
       const fromSquare = position.lastMove?.from;
       const toSquare = position.lastMove?.to;
@@ -45,7 +47,14 @@ export function getSquareRenderer({
         playableSquares.includes(square) ? playableSquareStyles : undefined;
 
       return (
-        <div ref={ref} style={{ ...style, position: "relative" }}>
+        <div
+          ref={ref}
+          style={{
+            ...style,
+            position: "relative",
+            filter: `hue-rotate(-${boardHue}deg)`,
+          }}
+        >
           {children}
           {highlightSquareStyle && <div style={highlightSquareStyle} />}
           {playableSquareStyle && <div style={playableSquareStyle} />}

@@ -28,13 +28,15 @@
     "react": "18.3.1",
     "react-chessboard": "^4.7.3",
     "react-dom": "18.3.1",
-    "recharts": "^2.15.0"
+    "recharts": "^2.15.0",
+    "tinycolor2": "^1.6.0"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.74.7",
     "@types/node": "^22.10.2",
     "@types/react": "18.2.11",
     "@types/react-dom": "^18.3.5",
+    "@types/tinycolor2": "^1.4.6",
     "@typescript-eslint/eslint-plugin": "^8.18.2",
     "@typescript-eslint/parser": "^8.18.2",
     "aws-cdk": "^2.1007.0",

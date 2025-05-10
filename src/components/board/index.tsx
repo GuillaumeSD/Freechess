@@ -20,7 +20,8 @@ import { moveClassificationColors } from "@/lib/chess";
 import { Player } from "@/types/game";
 import PlayerHeader from "./playerHeader";
 import Image from "next/image";
-import { pieceSetAtom } from "./states";
+import { boardHueAtom, pieceSetAtom } from "./states";
+import tinycolor from "tinycolor2";
 
 export interface Props {
   id: string;
@@ -61,6 +62,7 @@ export default function Board({
   const [moveClickFrom, setMoveClickFrom] = useState<Square | null>(null);
   const [moveClickTo, setMoveClickTo] = useState<Square | null>(null);
   const pieceSet = useAtomValue(pieceSetAtom);
+  const boardHue = useAtomValue(boardHueAtom);
 
   const gameFen = game.fen();
 
@@ -196,19 +198,24 @@ export default function Board({
     if (
       bestMove &&
       showBestMoveArrow &&
-      moveClassification !== MoveClassification.Book
+      moveClassification !== MoveClassification.Best &&
+      moveClassification !== MoveClassification.Book &&
+      moveClassification !== MoveClassification.Forced &&
+      moveClassification !== MoveClassification.Great
     ) {
       const bestMoveArrow = [
         bestMove.slice(0, 2),
         bestMove.slice(2, 4),
-        moveClassificationColors[MoveClassification.Best],
+        tinycolor(moveClassificationColors[MoveClassification.Best])
+          .spin(-boardHue)
+          .toHexString(),
       ] as Arrow;
 
       return [bestMoveArrow];
     }
 
     return [];
-  }, [position, showBestMoveArrow]);
+  }, [position, showBestMoveArrow, boardHue]);
 
   const SquareRenderer: CustomSquareRenderer = useMemo(() => {
     return getSquareRenderer({
@@ -292,6 +299,7 @@ export default function Board({
             customBoardStyle={{
               borderRadius: "5px",
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+              filter: `hue-rotate(${boardHue}deg)`,
             }}
             customArrows={customArrows}
             isDraggablePiece={isPiecePlayable}
