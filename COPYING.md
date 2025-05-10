@@ -15,7 +15,6 @@ See the LICENSE file for a copy of the _GNU Affero General Public License_.
 Files | Author(s) | License
 --- | --- | ---
 public/piece/horsey | cham, michael1241 | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-public/piece/mono | Thibault Duplessis and [Colin M.L. Burnett](https://en.wikipedia.org/wiki/User:Cburnett) | [GPLv2+](https://www.gnu.org/licenses/gpl-2.0.txt)
 public/piece/cburnett | [Colin M.L. Burnett](https://en.wikipedia.org/wiki/User:Cburnett) | [GPLv2+](https://www.gnu.org/licenses/gpl-2.0.txt)
 public/piece/chessnut | [Alexis Luengas](https://github.com/LexLuengas) | [Apache 2.0](https://github.com/LexLuengas/chessnut-pieces/blob/master/LICENSE.txt)
 public/piece/letter | [usolando](https://lichess.org/@/usolando) | AGPLv3+
@@ -38,7 +37,6 @@ public/piece/tatiana | sadsnake1 | [CC BY-NC-SA 4.0](https://creativecommons.org
 public/piece/staunty | sadsnake1 | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 public/piece/dubrovny | sadsnake1 | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 public/piece/anarcandy | [caderek](https://github.com/caderek) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-public/piece/disguised | danegraphics | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 public/piece/kiwen-suwi | [neverRare](https://github.com/neverRare) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 public/piece/mpchess | [Maxime Chupin](https://github.com/chupinmaxime) | [GPL3v3+](https://www.gnu.org/licenses/quick-guide-gplv3.en.html)
 public/piece/cooke | [fejfar](https://github.com/fejfar) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)

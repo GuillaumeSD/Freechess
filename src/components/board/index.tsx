@@ -5,7 +5,6 @@ import {
   Arrow,
   CustomPieces,
   CustomSquareRenderer,
-  Piece,
   PromotionPieceOption,
   Square,
 } from "react-chessboard/dist/chessboard/types";
@@ -22,6 +21,7 @@ import PlayerHeader from "./playerHeader";
 import Image from "next/image";
 import { boardHueAtom, pieceSetAtom } from "./states";
 import tinycolor from "tinycolor2";
+import { PIECE_CODES } from "./constants";
 
 export interface Props {
   id: string;
@@ -233,7 +233,7 @@ export default function Board({
 
   const customPieces = useMemo(
     () =>
-      pieceCodes.reduce<CustomPieces>((acc, piece) => {
+      PIECE_CODES.reduce<CustomPieces>((acc, piece) => {
         acc[piece] = ({ squareWidth }) => (
           <Image
             src={`/piece/${pieceSet}/${piece}.svg`}
@@ -325,18 +325,3 @@ export default function Board({
     </Grid>
   );
 }
-
-const pieceCodes = [
-  "wP",
-  "wB",
-  "wN",
-  "wR",
-  "wQ",
-  "wK",
-  "bP",
-  "bB",
-  "bN",
-  "bR",
-  "bQ",
-  "bK",
-] as const satisfies Piece[];

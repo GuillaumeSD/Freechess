@@ -24,6 +24,9 @@ import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
 import { useEffect } from "react";
 import { isEngineSupported } from "@/lib/engine/shared";
 import { Stockfish16_1 } from "@/lib/engine/stockfish16_1";
+import { useAtom } from "jotai";
+import { boardHueAtom, pieceSetAtom } from "@/components/board/states";
+import { PIECE_SETS } from "@/components/board/constants";
 
 interface Props {
   open: boolean;
@@ -43,6 +46,8 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
     "engine-name",
     engineNameAtom
   );
+  const [boardHue, setBoardHue] = useAtom(boardHueAtom);
+  const [pieceSet, setPieceSet] = useAtom(pieceSetAtom);
 
   useEffect(() => {
     if (!isEngineSupported(engineName)) {
@@ -56,25 +61,33 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle marginY={1} variant="h5">
-        Set engine parameters
-      </DialogTitle>
+      <DialogTitle variant="h5">Settings</DialogTitle>
       <DialogContent sx={{ paddingBottom: 0 }}>
-        <Typography>
-          Stockfish 17 Lite is the default engine if your device support its
-          requirements. It offers the best balance between speed and strength.
-          Stockfish 17 is the strongest engine available, note that it requires
-          a one time download of 75MB.
-        </Typography>
         <Grid
-          marginTop={4}
           container
           justifyContent="center"
           alignItems="center"
-          rowGap={3}
+          spacing={3}
           size={12}
         >
-          <Grid container justifyContent="center" size={12}>
+          <Grid
+            container
+            justifyContent="center"
+            size={{ xs: 12, sm: 7, md: 8 }}
+          >
+            <Typography>
+              Stockfish 17 Lite is the default engine if your device support its
+              requirements. It offers the best balance between speed and
+              strength. Stockfish 17 is the strongest engine available, note
+              that it requires a one time download of 75MB.
+            </Typography>
+          </Grid>
+
+          <Grid
+            container
+            justifyContent="center"
+            size={{ xs: 12, sm: 5, md: 4 }}
+          >
             <FormControl variant="outlined">
               <InputLabel id="dialog-select-label">Engine</InputLabel>
               <Select
@@ -119,9 +132,48 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
           />
 
           <ArrowOptions />
+
+          <Grid
+            container
+            justifyContent="center"
+            size={{ xs: 12, sm: 8, md: 9 }}
+          >
+            <Slider
+              label="Board hue"
+              value={boardHue}
+              setValue={setBoardHue}
+              min={0}
+              max={360}
+            />
+          </Grid>
+
+          <Grid
+            container
+            justifyContent="center"
+            size={{ xs: 12, sm: 4, md: 3 }}
+          >
+            <FormControl variant="outlined">
+              <InputLabel id="dialog-select-label">Piece set</InputLabel>
+              <Select
+                labelId="dialog-select-label"
+                id="dialog-select"
+                displayEmpty
+                input={<OutlinedInput label="Piece set" />}
+                value={pieceSet}
+                onChange={(e) => setPieceSet(e.target.value)}
+                sx={{ width: 200, maxWidth: "100%" }}
+              >
+                {PIECE_SETS.map((name) => (
+                  <MenuItem key={name} value={name}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions sx={{ m: 2 }}>
+      <DialogActions sx={{ m: 1 }}>
         <Button variant="contained" onClick={onClose}>
           Done
         </Button>

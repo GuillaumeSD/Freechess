@@ -1,4 +1,9 @@
-import { Grid2 as Grid, Slider as MuiSlider, Typography } from "@mui/material";
+import {
+  Grid2 as Grid,
+  Slider as MuiSlider,
+  styled,
+  Typography,
+} from "@mui/material";
 
 export interface Props {
   value: number;
@@ -28,11 +33,16 @@ export default function Slider({
       alignItems="center"
       size={size ?? 11}
     >
-      <Typography id={`input-${label}`} textAlign="left" width="100%">
+      <Typography
+        id={`input-${label}`}
+        textAlign="left"
+        width="100%"
+        variant="body2"
+      >
         {step === 1 && marksFilter ? label : `${label}: ${value}`}
       </Typography>
 
-      <MuiSlider
+      <CustomSlider
         min={min}
         max={max}
         marks={
@@ -52,3 +62,15 @@ export default function Slider({
     </Grid>
   );
 }
+
+const CustomSlider = styled(MuiSlider)(() => ({
+  ".MuiSlider-markLabel": {
+    fontSize: "0.8rem",
+    lineHeight: "0.8rem",
+  },
+  ".MuiSlider-thumb": {
+    width: "18px",
+    height: "18px",
+  },
+  marginBottom: "1rem",
+}));
