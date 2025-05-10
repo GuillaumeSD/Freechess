@@ -21,9 +21,9 @@ export interface LichessGame {
   id: string;
   speed: string;
   lastMoveAt: number;
-  players: {
-    white: LichessGameUser;
-    black: LichessGameUser;
+  players?: {
+    white?: LichessGameUser;
+    black?: LichessGameUser;
   };
   pgn: string;
 }

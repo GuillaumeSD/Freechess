@@ -160,7 +160,9 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
                 displayEmpty
                 input={<OutlinedInput label="Piece set" />}
                 value={pieceSet}
-                onChange={(e) => setPieceSet(e.target.value)}
+                onChange={(e) =>
+                  setPieceSet(e.target.value as (typeof PIECE_SETS)[number])
+                }
                 sx={{ width: 200, maxWidth: "100%" }}
               >
                 {PIECE_SETS.map((name) => (

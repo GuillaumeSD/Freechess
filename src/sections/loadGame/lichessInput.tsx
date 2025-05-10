@@ -72,7 +72,7 @@ export default function LichessInput({ onSelect }: Props) {
                 onClick={() => {
                   setBoardOrientation(
                     lichessUsername.toLowerCase() !==
-                      game.players.black.user?.name.toLowerCase()
+                      game.players?.black?.user?.name.toLowerCase()
                   );
                   onSelect(game.pgn);
                 }}
@@ -81,10 +81,10 @@ export default function LichessInput({ onSelect }: Props) {
               >
                 <ListItemText
                   primary={`${
-                    capitalize(game.players.white.user?.name || "white") ||
+                    capitalize(game.players?.white?.user?.name || "white") ||
                     "White"
                   } (${game.players?.white?.rating || "?"}) vs ${
-                    capitalize(game.players.black.user?.name || "black") ||
+                    capitalize(game.players?.black?.user?.name || "black") ||
                     "Black"
                   } (${game.players?.black?.rating || "?"})`}
                   secondary={`${capitalize(game.speed)} played at ${new Date(
