@@ -15,6 +15,9 @@ import { LoadingButton } from "@mui/lab";
 import { useEngine } from "@/hooks/useEngine";
 import { logAnalyticsEvent } from "@/lib/firebase";
 import { SavedEvals } from "@/types/eval";
+import { useEffect, useCallback } from "react";
+import { usePlayersData } from "@/hooks/usePlayersData";
+import { Typography } from "@mui/material";
 
 export default function AnalyzeButton() {
   const engineName = useAtomValue(engineNameAtom);
@@ -28,13 +31,18 @@ export default function AnalyzeButton() {
   const [gameEval, setEval] = useAtom(gameEvalAtom);
   const game = useAtomValue(gameAtom);
   const setSavedEvals = useSetAtom(savedEvalsAtom);
+  const { white, black } = usePlayersData(gameAtom);
 
   const readyToAnalyse =
-    engine?.isReady() && game.history().length > 0 && !evaluationProgress;
+    engine?.getIsReady() && game.history().length > 0 && !evaluationProgress;
 
-  const handleAnalyze = async () => {
+  const handleAnalyze = useCallback(async () => {
     const params = getEvaluateGameParams(game);
-    if (!engine?.isReady() || params.fens.length === 0 || evaluationProgress) {
+    if (
+      !engine?.getIsReady() ||
+      params.fens.length === 0 ||
+      evaluationProgress
+    ) {
       return;
     }
 
@@ -43,6 +51,10 @@ export default function AnalyzeButton() {
       depth: engineDepth,
       multiPv: engineMultiPv,
       setEvaluationProgress,
+      playersRatings: {
+        white: white?.rating,
+        black: black?.rating,
+      },
     });
 
     setEval(newGameEval);
@@ -67,7 +79,28 @@ export default function AnalyzeButton() {
       multiPv: engineMultiPv,
       nbPositions: params.fens.length,
     });
-  };
+  }, [
+    engine,
+    engineName,
+    game,
+    engineDepth,
+    engineMultiPv,
+    evaluationProgress,
+    setEvaluationProgress,
+    setEval,
+    gameFromUrl,
+    setGameEval,
+    setSavedEvals,
+    white.rating,
+    black.rating,
+  ]);
+
+  // Automatically analyze when a new game is loaded and ready to analyze
+  useEffect(() => {
+    if (!gameEval && readyToAnalyse) {
+      handleAnalyze();
+    }
+  }, [gameEval, readyToAnalyse, handleAnalyze]);
 
   if (evaluationProgress) return null;
 
@@ -75,11 +108,13 @@ export default function AnalyzeButton() {
     <LoadingButton
       variant="contained"
       size="small"
-      startIcon={<Icon icon="streamline:magnifying-glass-solid" />}
+      startIcon={<Icon icon="streamline:magnifying-glass-solid" height={12} />}
       onClick={handleAnalyze}
       disabled={!readyToAnalyse}
     >
-      {gameEval ? "Analyze again" : "Analyze"}
+      <Typography fontSize="0.9em" fontWeight="500" lineHeight="1.4em">
+        {gameEval ? "Analyze again" : "Analyze"}
+      </Typography>
     </LoadingButton>
   );
 }

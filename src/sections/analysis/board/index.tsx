@@ -10,11 +10,13 @@ import { useMemo } from "react";
 import { useScreenSize } from "@/hooks/useScreenSize";
 import { Color } from "@/types/enums";
 import Board from "@/components/board";
+import { usePlayersData } from "@/hooks/usePlayersData";
 
 export default function BoardContainer() {
   const screenSize = useScreenSize();
   const boardOrientation = useAtomValue(boardOrientationAtom);
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
+  const { white, black } = usePlayersData(gameAtom);
 
   const boardSize = useMemo(() => {
     const width = screenSize.width;
@@ -34,6 +36,8 @@ export default function BoardContainer() {
       boardSize={boardSize}
       canPlay={true}
       gameAtom={boardAtom}
+      whitePlayer={white}
+      blackPlayer={black}
       boardOrientation={boardOrientation ? Color.White : Color.Black}
       currentPositionAtom={currentPositionAtom}
       showBestMoveArrow={showBestMoveArrow}

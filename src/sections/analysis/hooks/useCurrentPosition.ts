@@ -17,7 +17,7 @@ import { getMovesClassification } from "@/lib/engine/helpers/moveClassification"
 
 export const useCurrentPosition = (engineName?: EngineName) => {
   const [currentPosition, setCurrentPosition] = useAtom(currentPositionAtom);
-  const engine = useEngine(engineName);
+  const engine = useEngine(engineName, 1);
   const gameEval = useAtomValue(gameEvalAtom);
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
@@ -52,7 +52,7 @@ export const useCurrentPosition = (engineName?: EngineName) => {
 
     if (
       !position.eval &&
-      engine?.isReady() &&
+      engine?.getIsReady() &&
       engineName &&
       !board.isCheckmate() &&
       !board.isStalemate()
@@ -61,15 +61,19 @@ export const useCurrentPosition = (engineName?: EngineName) => {
         fen: string,
         setPartialEval?: (positionEval: PositionEval) => void
       ) => {
-        if (!engine?.isReady() || !engineName)
+        if (!engine?.getIsReady() || !engineName)
           throw new Error("Engine not ready");
         const savedEval = savedEvals[fen];
         if (
           savedEval &&
           savedEval.engine === engineName &&
-          savedEval.lines[0].depth >= depth
+          (savedEval.lines?.length ?? 0) >= multiPv &&
+          (savedEval.lines[0].depth ?? 0) >= depth
         ) {
-          setPartialEval?.(savedEval);
+          setPartialEval?.({
+            ...savedEval,
+            lines: savedEval.lines.slice(0, multiPv),
+          });
           return savedEval;
         }
 

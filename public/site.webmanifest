@@ -1,6 +1,6 @@
 {
-  "name": "FreeChess",
-  "short_name": "FreeChess",
+  "name": "Chesskit",
+  "short_name": "Chesskit",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

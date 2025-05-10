@@ -4,14 +4,16 @@ import {
   playIllegalMoveSound,
   playSoundFromMove,
 } from "@/lib/sounds";
+import { Player } from "@/types/game";
 import { Chess, Move, DEFAULT_POSITION } from "chess.js";
 import { PrimitiveAtom, useAtom } from "jotai";
 import { useCallback } from "react";
 
 export interface resetGameParams {
   fen?: string;
-  whiteName?: string;
-  blackName?: string;
+  white?: Player;
+  black?: Player;
+  noHeaders?: boolean;
 }
 
 export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
@@ -29,7 +31,7 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
   const reset = useCallback(
     (params?: resetGameParams) => {
       const newGame = new Chess(params?.fen);
-      setGameHeaders(newGame, params);
+      if (!params?.noHeaders) setGameHeaders(newGame, params);
       setGame(newGame);
     },
     [setGame]
@@ -41,7 +43,8 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
     if (game.history().length === 0) {
       const pgnSplitted = game.pgn().split("]");
       if (
-        ["1-0", "0-1", "1/2-1/2"].includes(pgnSplitted.at(-1)?.trim() ?? "")
+        ["1-0", "0-1", "1/2-1/2"].includes(pgnSplitted.at(-1)?.trim() ?? "") ||
+        pgnSplitted.at(-1) === "\n *"
       ) {
         newGame.loadPgn(pgnSplitted.slice(0, -1).join("]") + "]");
         return newGame;
@@ -55,7 +58,7 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
   const resetToStartingPosition = useCallback(
     (pgn?: string) => {
       const newGame = pgn ? getGameFromPgn(pgn) : copyGame();
-      newGame.load(newGame.header().FEN || DEFAULT_POSITION, {
+      newGame.load(newGame.getHeaders().FEN || DEFAULT_POSITION, {
         preserveHeaders: true,
       });
       setGame(newGame);

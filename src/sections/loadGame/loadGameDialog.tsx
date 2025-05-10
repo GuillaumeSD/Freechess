@@ -22,6 +22,8 @@ import GamePgnInput from "./gamePgnInput";
 import ChessComInput from "./chessComInput";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import LichessInput from "./lichessInput";
+import { useSetAtom } from "jotai";
+import { boardOrientationAtom } from "../analysis/states";
 
 interface Props {
   open: boolean;
@@ -36,9 +38,10 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
     GameOrigin.Pgn
   );
   const [parsingError, setParsingError] = useState("");
+  const setBoardOrientation = useSetAtom(boardOrientationAtom);
   const { addGame } = useGameDatabase();
 
-  const handleAddGame = () => {
+  const handleAddGame = (pgn: string) => {
     if (!pgn) return;
     setParsingError("");
 
@@ -70,7 +73,18 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        sx: {
+          position: "fixed",
+          top: 0,
+        },
+      }}
+    >
       <DialogTitle marginY={1} variant="h5">
         {setGame ? "Load a game" : "Add a game to your database"}
       </DialogTitle>
@@ -90,7 +104,10 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
               displayEmpty
               input={<OutlinedInput label="Game origin" />}
               value={gameOrigin ?? ""}
-              onChange={(e) => setGameOrigin(e.target.value as GameOrigin)}
+              onChange={(e) => {
+                setGameOrigin(e.target.value as GameOrigin);
+                setParsingError("");
+              }}
             >
               {Object.values(GameOrigin).map((origin) => (
                 <MenuItem key={origin} value={origin}>
@@ -105,16 +122,16 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
           )}
 
           {gameOrigin === GameOrigin.ChessCom && (
-            <ChessComInput pgn={pgn} setPgn={setPgn} />
+            <ChessComInput onSelect={handleAddGame} />
           )}
 
           {gameOrigin === GameOrigin.Lichess && (
-            <LichessInput pgn={pgn} setPgn={setPgn} />
+            <LichessInput onSelect={handleAddGame} />
           )}
 
           {parsingError && (
             <FormControl fullWidth>
-              <Typography color="red" textAlign="center" marginTop={1}>
+              <Typography color="salmon" textAlign="center" marginTop={1}>
                 {parsingError}
               </Typography>
             </FormControl>
@@ -122,16 +139,21 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
         </Grid>
       </DialogContent>
       <DialogActions sx={{ m: 2 }}>
-        <Button
-          variant="outlined"
-          sx={{ marginRight: 2 }}
-          onClick={handleClose}
-        >
+        <Button variant="outlined" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="contained" onClick={handleAddGame}>
-          Add
-        </Button>
+        {gameOrigin === GameOrigin.Pgn && (
+          <Button
+            variant="contained"
+            sx={{ marginLeft: 2 }}
+            onClick={() => {
+              setBoardOrientation(true);
+              handleAddGame(pgn);
+            }}
+          >
+            Add
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

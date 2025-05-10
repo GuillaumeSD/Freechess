@@ -13,7 +13,7 @@ export const getMovesClassification = (
   fens: string[]
 ): PositionEval[] => {
   const positionsWinPercentage = rawPositions.map(getPositionWinPercentage);
-  let currentOpening: string | undefined = undefined;
+  let currentOpening: string = "Unknown opening";
 
   const positions = rawPositions.map((rawPosition, index) => {
     if (index === 0) return rawPosition;
@@ -29,12 +29,20 @@ export const getMovesClassification = (
       };
     }
 
-    const playedMove = uciMoves[index - 1];
-    const bestMove = rawPositions[index - 1].bestMove;
+    const prevPosition = rawPositions[index - 1];
 
-    const lastPositionAlternativeLine: LineEval | undefined = rawPositions[
-      index - 1
-    ].lines.filter((line) => line.pv[0] !== playedMove)?.[0];
+    if (prevPosition.lines.length === 1) {
+      return {
+        ...rawPosition,
+        opening: currentOpening,
+        moveClassification: MoveClassification.Forced,
+      };
+    }
+
+    const playedMove = uciMoves[index - 1];
+
+    const lastPositionAlternativeLine: LineEval | undefined =
+      prevPosition.lines.filter((line) => line.pv[0] !== playedMove)?.[0];
     const lastPositionAlternativeLineWinPercentage = lastPositionAlternativeLine
       ? getLineWinPercentage(lastPositionAlternativeLine)
       : undefined;
@@ -84,7 +92,7 @@ export const getMovesClassification = (
       };
     }
 
-    if (playedMove === bestMove) {
+    if (playedMove === prevPosition.bestMove) {
       return {
         ...rawPosition,
         opening: currentOpening,

@@ -1,7 +1,7 @@
 import { Grid2 as Grid, IconButton, Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useAtomValue } from "jotai";
-import { boardAtom } from "../states";
+import { boardAtom, gameAtom } from "../states";
 import { useChessActions } from "@/hooks/useChessActions";
 import FlipBoardButton from "./flipBoardButton";
 import NextMoveButton from "./nextMoveButton";
@@ -15,6 +15,7 @@ export default function PanelToolBar() {
     useChessActions(boardAtom);
 
   const boardHistory = board.history();
+  const game = useAtomValue(gameAtom);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -64,6 +65,20 @@ export default function PanelToolBar() {
       <NextMoveButton />
 
       <GoToLastPositionButton />
+
+      <Tooltip title="Copy pgn">
+        <Grid>
+          <IconButton
+            disabled={game.history().length === 0}
+            onClick={() => {
+              navigator.clipboard.writeText(game.pgn());
+            }}
+            sx={{ paddingX: 1.2, paddingY: 0.5 }}
+          >
+            <Icon icon="ri:clipboard-line" />
+          </IconButton>
+        </Grid>
+      </Tooltip>
 
       <SaveButton />
     </Grid>

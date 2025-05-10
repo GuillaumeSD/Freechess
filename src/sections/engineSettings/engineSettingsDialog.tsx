@@ -22,7 +22,11 @@ import {
 import ArrowOptions from "./arrowOptions";
 import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
 import { useEffect } from "react";
-import { isWasmSupported } from "@/lib/engine/shared";
+import { isEngineSupported } from "@/lib/engine/shared";
+import { Stockfish16_1 } from "@/lib/engine/stockfish16_1";
+import { useAtom } from "jotai";
+import { boardHueAtom, pieceSetAtom } from "@/components/board/states";
+import { PIECE_SETS } from "@/components/board/constants";
 
 interface Props {
   open: boolean;
@@ -42,33 +46,48 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
     "engine-name",
     engineNameAtom
   );
+  const [boardHue, setBoardHue] = useAtom(boardHueAtom);
+  const [pieceSet, setPieceSet] = useAtom(pieceSetAtom);
 
   useEffect(() => {
-    if (!isWasmSupported()) {
-      setEngineName(EngineName.Stockfish11);
+    if (!isEngineSupported(engineName)) {
+      if (Stockfish16_1.isSupported()) {
+        setEngineName(EngineName.Stockfish16_1Lite);
+      } else {
+        setEngineName(EngineName.Stockfish11);
+      }
     }
-  }, [setEngineName]);
+  }, [setEngineName, engineName]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle marginY={1} variant="h5">
-        Set engine parameters
-      </DialogTitle>
+      <DialogTitle variant="h5">Settings</DialogTitle>
       <DialogContent sx={{ paddingBottom: 0 }}>
-        <Typography>
-          Stockfish 16.1 Lite is the default engine. It offers the best balance
-          between speed and strength. Stockfish 16.1 is the strongest engine
-          available, note that it requires a one time download of 64MB.
-        </Typography>
         <Grid
-          marginTop={4}
           container
           justifyContent="center"
           alignItems="center"
-          rowGap={3}
+          spacing={3}
           size={12}
         >
-          <Grid container justifyContent="center" size={12}>
+          <Grid
+            container
+            justifyContent="center"
+            size={{ xs: 12, sm: 7, md: 8 }}
+          >
+            <Typography>
+              Stockfish 17 Lite is the default engine if your device support its
+              requirements. It offers the best balance between speed and
+              strength. Stockfish 17 is the strongest engine available, note
+              that it requires a one time download of 75MB.
+            </Typography>
+          </Grid>
+
+          <Grid
+            container
+            justifyContent="center"
+            size={{ xs: 12, sm: 5, md: 4 }}
+          >
             <FormControl variant="outlined">
               <InputLabel id="dialog-select-label">Engine</InputLabel>
               <Select
@@ -84,11 +103,9 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
                   <MenuItem
                     key={engine}
                     value={engine}
-                    disabled={
-                      engine !== EngineName.Stockfish11 && !isWasmSupported()
-                    }
+                    disabled={!isEngineSupported(engine)}
                   >
-                    {engineLabel[engine]}
+                    {engineLabel[engine].full}
                   </MenuItem>
                 ))}
               </Select>
@@ -110,13 +127,55 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
             setValue={setMultiPv}
             min={2}
             max={6}
+            marksFilter={1}
             size={6}
           />
 
           <ArrowOptions />
+
+          <Grid
+            container
+            justifyContent="center"
+            size={{ xs: 12, sm: 8, md: 9 }}
+          >
+            <Slider
+              label="Board hue"
+              value={boardHue}
+              setValue={setBoardHue}
+              min={0}
+              max={360}
+            />
+          </Grid>
+
+          <Grid
+            container
+            justifyContent="center"
+            size={{ xs: 12, sm: 4, md: 3 }}
+          >
+            <FormControl variant="outlined">
+              <InputLabel id="dialog-select-label">Piece set</InputLabel>
+              <Select
+                labelId="dialog-select-label"
+                id="dialog-select"
+                displayEmpty
+                input={<OutlinedInput label="Piece set" />}
+                value={pieceSet}
+                onChange={(e) =>
+                  setPieceSet(e.target.value as (typeof PIECE_SETS)[number])
+                }
+                sx={{ width: 200, maxWidth: "100%" }}
+              >
+                {PIECE_SETS.map((name) => (
+                  <MenuItem key={name} value={name}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions sx={{ m: 2 }}>
+      <DialogActions sx={{ m: 1 }}>
         <Button variant="contained" onClick={onClose}>
           Done
         </Button>
@@ -125,10 +184,34 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
   );
 }
 
-const engineLabel: Record<EngineName, string> = {
-  [EngineName.Stockfish16_1]: "Stockfish 16.1 (64MB)",
-  [EngineName.Stockfish16_1Lite]: "Stockfish 16.1 Lite (6MB)",
-  [EngineName.Stockfish16NNUE]: "Stockfish 16 (40MB)",
-  [EngineName.Stockfish16]: "Stockfish 16 Lite (HCE)",
-  [EngineName.Stockfish11]: "Stockfish 11",
-};
+export const engineLabel: Record<EngineName, { small: string; full: string }> =
+  {
+    [EngineName.Stockfish17]: {
+      full: "Stockfish 17 (75MB)",
+      small: "Stockfish 17",
+    },
+    [EngineName.Stockfish17Lite]: {
+      full: "Stockfish 17 Lite (6MB)",
+      small: "Stockfish 17 Lite",
+    },
+    [EngineName.Stockfish16_1]: {
+      full: "Stockfish 16.1 (64MB)",
+      small: "Stockfish 16.1",
+    },
+    [EngineName.Stockfish16_1Lite]: {
+      full: "Stockfish 16.1 Lite (6MB)",
+      small: "Stockfish 16.1 Lite",
+    },
+    [EngineName.Stockfish16NNUE]: {
+      full: "Stockfish 16 (40MB)",
+      small: "Stockfish 16",
+    },
+    [EngineName.Stockfish16]: {
+      full: "Stockfish 16 Lite (HCE)",
+      small: "Stockfish 16 Lite",
+    },
+    [EngineName.Stockfish11]: {
+      full: "Stockfish 11 (HCE)",
+      small: "Stockfish 11",
+    },
+  };

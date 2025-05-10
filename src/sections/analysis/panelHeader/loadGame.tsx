@@ -27,10 +27,9 @@ export default function LoadGame() {
     (pgn: string) => {
       resetBoard(pgn);
       setEval(undefined);
-      setBoardOrientation(true);
       setGamePgn(pgn);
     },
-    [resetBoard, setGamePgn, setEval, setBoardOrientation]
+    [resetBoard, setGamePgn, setEval]
   );
 
   useEffect(() => {
@@ -43,12 +42,20 @@ export default function LoadGame() {
 
       resetAndSetGamePgn(gameFromUrl.pgn);
       setEval(gameFromUrl.eval);
+      setBoardOrientation(
+        gameFromUrl.black.name === "You" && gameFromUrl.site === "Chesskit.org"
+          ? false
+          : true
+      );
     };
 
     loadGame();
-  }, [gameFromUrl, game, resetAndSetGamePgn, setEval]);
+  }, [gameFromUrl, game, resetAndSetGamePgn, setEval, setBoardOrientation]);
 
-  const isGameLoaded = gameFromUrl !== undefined || !!game.header().White;
+  const isGameLoaded =
+    gameFromUrl !== undefined ||
+    (!!game.getHeaders().White && game.getHeaders().White !== "?") ||
+    game.history().length > 0;
 
   if (evaluationProgress) return null;
 

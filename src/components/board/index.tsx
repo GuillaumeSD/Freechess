@@ -3,6 +3,7 @@ import { Chessboard } from "react-chessboard";
 import { PrimitiveAtom, atom, useAtomValue, useSetAtom } from "jotai";
 import {
   Arrow,
+  CustomPieces,
   CustomSquareRenderer,
   PromotionPieceOption,
   Square,
@@ -15,13 +16,20 @@ import { getSquareRenderer } from "./squareRenderer";
 import { CurrentPosition } from "@/types/eval";
 import EvaluationBar from "./evaluationBar";
 import { moveClassificationColors } from "@/lib/chess";
-import { Player } from "./player";
+import { Player } from "@/types/game";
+import PlayerHeader from "./playerHeader";
+import Image from "next/image";
+import { boardHueAtom, pieceSetAtom } from "./states";
+import tinycolor from "tinycolor2";
+import { PIECE_CODES } from "./constants";
 
 export interface Props {
   id: string;
   canPlay?: Color | boolean;
   gameAtom: PrimitiveAtom<Chess>;
   boardSize?: number;
+  whitePlayer: Player;
+  blackPlayer: Player;
   boardOrientation?: Color;
   currentPositionAtom?: PrimitiveAtom<CurrentPosition>;
   showBestMoveArrow?: boolean;
@@ -51,6 +59,8 @@ export default function Board({
   const [showPromotionDialog, setShowPromotionDialog] = useState(false);
   const [moveClickFrom, setMoveClickFrom] = useState<Square | null>(null);
   const [moveClickTo, setMoveClickTo] = useState<Square | null>(null);
+  const pieceSet = useAtomValue(pieceSetAtom);
+  const boardHue = useAtomValue(boardHueAtom);
 
   const gameFen = game.fen();
 
@@ -186,19 +196,24 @@ export default function Board({
     if (
       bestMove &&
       showBestMoveArrow &&
-      moveClassification !== MoveClassification.Book
+      moveClassification !== MoveClassification.Best &&
+      moveClassification !== MoveClassification.Book &&
+      moveClassification !== MoveClassification.Forced &&
+      moveClassification !== MoveClassification.Great
     ) {
       const bestMoveArrow = [
         bestMove.slice(0, 2),
         bestMove.slice(2, 4),
-        moveClassificationColors[MoveClassification.Best],
+        tinycolor(moveClassificationColors[MoveClassification.Best])
+          .spin(-boardHue)
+          .toHexString(),
       ] as Arrow;
 
       return [bestMoveArrow];
     }
 
     return [];
-  }, [position, showBestMoveArrow]);
+  }, [position, showBestMoveArrow, boardHue]);
 
   const SquareRenderer: CustomSquareRenderer = useMemo(() => {
     return getSquareRenderer({
@@ -213,6 +228,27 @@ export default function Board({
     playableSquaresAtom,
     showPlayerMoveIconAtom,
   ]);
+
+  const customPieces = useMemo(
+    () =>
+      PIECE_CODES.reduce<CustomPieces>((acc, piece) => {
+        acc[piece] = ({ squareWidth }) => (
+          <Image
+            src={`/piece/${pieceSet}/${piece}.svg`}
+            alt={piece}
+            width={squareWidth}
+            height={squareWidth}
+            style={{
+              objectFit: "contain",
+              cursor: "grab",
+            }}
+          />
+        );
+
+        return acc;
+      }, {}),
+    [pieceSet]
+  );
 
   return (
     <Grid
@@ -238,9 +274,10 @@ export default function Board({
         paddingLeft={showEvaluationBar ? 2 : 0}
         size="grow"
       >
-        <Player
-          gameAtom={gameAtom}
+        <PlayerHeader
           color={boardOrientation === Color.White ? Color.Black : Color.White}
+          fen={gameFen}
+          player={boardOrientation === Color.White ? blackPlayer : whitePlayer}
         />
 
         <Grid
@@ -260,6 +297,7 @@ export default function Board({
             customBoardStyle={{
               borderRadius: "5px",
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+              filter: `hue-rotate(${boardHue}deg)`,
             }}
             customArrows={customArrows}
             isDraggablePiece={isPiecePlayable}
@@ -272,10 +310,15 @@ export default function Board({
             showPromotionDialog={showPromotionDialog}
             promotionToSquare={moveClickTo}
             animationDuration={200}
+            customPieces={customPieces}
           />
         </Grid>
 
-        <Player gameAtom={gameAtom} color={boardOrientation} />
+        <PlayerHeader
+          color={boardOrientation}
+          fen={gameFen}
+          player={boardOrientation === Color.White ? whitePlayer : blackPlayer}
+        />
       </Grid>
     </Grid>
   );

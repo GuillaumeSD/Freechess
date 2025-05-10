@@ -1,20 +1,22 @@
 <div align="center">
-  <a href="https://github.com/GuillaumeSD/Freechess">
-    <img width="120" height="120" src="https://github.com/GuillaumeSD/Freechess/blob/main/public/android-chrome-192x192.png" alt="Logo">
+  <a href="https://github.com/GuillaumeSD/Chesskit">
+    <img width="120" height="120" src="https://github.com/GuillaumeSD/Chesskit/blob/main/public/android-chrome-192x192.png" alt="Logo">
   </a>
 
-<h3 align="center">Freechess</h3>
+<h3 align="center">Chesskit</h3>
   <p align="center">
     The Ultimate Chess Web App
     <br />
-    <a href="https://freechess.web.app/"><strong>freechess.web.app</strong></a>
+    <a href="https://chesskit.org/" target="_blank" rel="noopener noreferrer"><strong>chesskit.org</strong></a>
     <br />
-    <a href="https://discord.com/invite/Yr99abAcUr">Discord Server</a>
+    <a href="https://discord.com/invite/Yr99abAcUr" target="_blank" rel="noopener noreferrer">Discord Server</a>
+    ·
+    <a href="https://chesskit.notion.site/4cf7823836724432b71aa8932ba7d5bb" target="_blank" rel="noopener noreferrer">Features Backlog</a>
   </p>
 </div>
 <br />
 
-Freechess is an open-source chess web app to play, view and analyze your chess games for free on any device with Stockfish !
+Chesskit is an open-source chess web app to play, view and analyze your chess games for free on any device with Stockfish !
 
 ## Mission
 
@@ -22,20 +24,20 @@ It aims to offer all the features it can from the best chess apps, while being f
 
 ## Features
 
-- Load and analyze games from [lichess.org](https://lichess.org) and [chess.com](https://chess.com)
+- Load and analyze games from [chess.com](https://chess.com) and [lichess.org](https://lichess.org)
 - Analysis board with live engine evaluation, custom arrows, evaluation graph, ...
 - Moves classification (Brilliant, Great, Good, Mistake, Blunder, ...)
-- Chess960 support
+- Chess960 and Puzzles support
 - Play against Stockfish at any elo
 - Store your games in your browser database
 
-<img src="https://github.com/GuillaumeSD/Freechess/blob/main/assets/showcase.png" />
+<img src="https://github.com/GuillaumeSD/Chesskit/blob/main/assets/showcase.png" />
 
 ## Stack
 
 Built with [Next.js](https://nextjs.org/docs), [React](https://react.dev/learn/describing-the-ui), [Material UI](https://mui.com/material-ui/getting-started/overview/), and [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html).
 
-Deployed on [Firebase](https://firebase.google.com/docs/hosting), see it live [here](https://freechess.web.app).
+Deployed on AWS with [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.html), see it live [here](https://chesskit.org).
 
 ## Running the app in dev mode
 
@@ -67,7 +69,7 @@ npm run lint
 
 ## Deploy
 
-To deploy the app, install the [Firebase CLI](https://firebase.google.com/docs/cli) and authenticate, then run :
+To deploy the app, install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [authenticate](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html), then run :
 
 ```bash
 npm run deploy
@@ -75,6 +77,5 @@ npm run deploy
 
 ## License
 
-GNU General Public License v3.0.
-
-See [COPYING](COPYING) to see the full text.
+Chesskit is licensed under the GNU Affero General Public License 3. See [copying](COPYING.md) for
+details.

@@ -9,11 +9,11 @@ export function useAtomLocalStorage<T>(
   const [storedValue, setStoredValue] = useAtom(atom);
 
   useEffect(() => {
-    const item = window.localStorage.getItem(key);
-    if (item) {
-      setStoredValue(parseJSON<T>(item));
-    }
     setKeyTemp(key);
+    const item = window.localStorage.getItem(key);
+    if (!item) return;
+    const value = parseJSON<T>(item);
+    if (value) setStoredValue(value);
   }, [key, setStoredValue]);
 
   useEffect(() => {
@@ -24,6 +24,6 @@ export function useAtomLocalStorage<T>(
   return [storedValue, setStoredValue];
 }
 
-function parseJSON<T>(value: string): T {
+function parseJSON<T>(value: string): T | undefined {
   return value === "undefined" ? undefined : JSON.parse(value);
 }

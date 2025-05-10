@@ -18,5 +18,20 @@ if (
     replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: 1.0,
     debug: false,
+    initialScope: {
+      extra: {
+        hardwareConcurrency: navigator.hardwareConcurrency,
+        deviceMemory:
+          "deviceMemory" in navigator &&
+          typeof navigator.deviceMemory === "number"
+            ? navigator.deviceMemory
+            : "unknown",
+      },
+    },
+    ignoreErrors: [
+      "AbortError: The user aborted a request.",
+      "Failed to fetch",
+      "Fetch is aborted",
+    ],
   });
 }

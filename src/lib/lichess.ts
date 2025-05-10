@@ -13,15 +13,7 @@ export const getLichessEval = async (
   multiPv = 1
 ): Promise<PositionEval> => {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort("timeout"), 200);
-    const res = await fetch(
-      `https://lichess.org/api/cloud-eval?fen=${fen}&multiPv=${multiPv}`,
-      { method: "GET", signal: controller.signal }
-    );
-    clearTimeout(timeoutId);
-
-    const data: LichessResponse<LichessEvalBody> = await res.json();
+    const data = await fetchLichessEval(fen, multiPv);
 
     if ("error" in data) {
       if (data.error === LichessError.NotFound) {
@@ -53,9 +45,7 @@ export const getLichessEval = async (
       lines: linesToKeep,
     };
   } catch (error) {
-    if (!isAbortError(error)) {
-      logErrorToSentry(error, { fen, multiPv });
-    }
+    logErrorToSentry(error, { fen, multiPv });
 
     return {
       bestMove: "",
@@ -63,11 +53,6 @@ export const getLichessEval = async (
     };
   }
 };
-
-const isAbortError = (error: unknown): boolean =>
-  error === "timeout" ||
-  ((error instanceof Error || error instanceof DOMException) &&
-    (error.name === "AbortError" || error.message === "timeout"));
 
 export const getLichessUserRecentGames = async (
   username: string
@@ -86,4 +71,22 @@ export const getLichessUserRecentGames = async (
     .map((game) => JSON.parse(game));
 
   return games;
+};
+
+const fetchLichessEval = async (
+  fen: string,
+  multiPv: number
+): Promise<LichessResponse<LichessEvalBody>> => {
+  try {
+    const res = await fetch(
+      `https://lichess.org/api/cloud-eval?fen=${fen}&multiPv=${multiPv}`,
+      { method: "GET", signal: AbortSignal.timeout(200) }
+    );
+
+    return res.json();
+  } catch (error) {
+    console.error(error);
+
+    return { error: LichessError.NotFound };
+  }
 };

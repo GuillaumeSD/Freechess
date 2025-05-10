@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type SetValue<T> = Dispatch<SetStateAction<T>>;
 
-export function useLocalStorage<T = string | number | boolean | undefined>(
+export function useLocalStorage<T = string | number | boolean>(
   key: string,
   initialValue: T
 ): [T | null, SetValue<T>] {
@@ -11,10 +11,13 @@ export function useLocalStorage<T = string | number | boolean | undefined>(
   useEffect(() => {
     const item = window.localStorage.getItem(key);
     if (item) {
-      setStoredValue(parseJSON<T>(item));
-    } else {
-      setStoredValue(initialValue);
+      const value = parseJSON<T>(item);
+      if (value) {
+        setStoredValue(value);
+        return;
+      }
     }
+    setStoredValue(initialValue);
   }, [key, initialValue]);
 
   const setValue: SetValue<T> = (value) => {
@@ -28,6 +31,6 @@ export function useLocalStorage<T = string | number | boolean | undefined>(
   return [storedValue, setValue];
 }
 
-function parseJSON<T>(value: string): T {
+function parseJSON<T>(value: string): T | undefined {
   return value === "undefined" ? undefined : JSON.parse(value);
 }
