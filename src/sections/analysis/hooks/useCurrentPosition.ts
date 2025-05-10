@@ -42,9 +42,20 @@ export const useCurrentPosition = (engineName?: EngineName) => {
       if (gameEval) {
         const evalIndex = boardHistory.length;
 
-        position.eval = gameEval.positions[evalIndex];
+        position.eval = {
+          ...gameEval.positions[evalIndex],
+          lines: gameEval.positions[evalIndex].lines.slice(0, multiPv),
+        };
         position.lastEval =
-          evalIndex > 0 ? gameEval.positions[evalIndex - 1] : undefined;
+          evalIndex > 0
+            ? {
+                ...gameEval.positions[evalIndex - 1],
+                lines: gameEval.positions[evalIndex - 1].lines.slice(
+                  0,
+                  multiPv
+                ),
+              }
+            : undefined;
       }
     }
 
@@ -70,11 +81,12 @@ export const useCurrentPosition = (engineName?: EngineName) => {
           (savedEval.lines?.length ?? 0) >= multiPv &&
           (savedEval.lines[0].depth ?? 0) >= depth
         ) {
-          setPartialEval?.({
+          const positionEval: PositionEval = {
             ...savedEval,
             lines: savedEval.lines.slice(0, multiPv),
-          });
-          return savedEval;
+          };
+          setPartialEval?.(positionEval);
+          return positionEval;
         }
 
         const rawPositionEval = await engine.evaluatePositionWithUpdate({

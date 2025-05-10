@@ -280,17 +280,6 @@ const getPieceValue = (piece: PieceSymbol): number => {
   }
 };
 
-export const getStartingFen = (
-  params: { pgn: string } | { game: Chess }
-): string => {
-  const game = "game" in params ? params.game : getGameFromPgn(params.pgn);
-
-  const history = game.history({ verbose: true });
-  if (!history.length) return game.fen();
-
-  return history[0].before;
-};
-
 export const isCheck = (fen: string): boolean => {
   const game = new Chess(fen);
   return game.inCheck();

@@ -35,7 +35,7 @@ export default function Layout({ children }: PropsWithChildren) {
         darkMode={useDarkMode}
         switchDarkMode={() => setDarkMode((val) => !val)}
       />
-      <main style={{ margin: "2em 2vw" }}>{children}</main>
+      <main style={{ margin: "3vh 2vw" }}>{children}</main>
     </ThemeProvider>
   );
 }

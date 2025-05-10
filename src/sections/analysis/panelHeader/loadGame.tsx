@@ -12,13 +12,12 @@ import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { useAtomValue, useSetAtom } from "jotai";
 import { Chess } from "chess.js";
 import { useRouter } from "next/router";
-import { getStartingFen } from "@/lib/chess";
 
 export default function LoadGame() {
   const router = useRouter();
   const game = useAtomValue(gameAtom);
   const { setPgn: setGamePgn } = useChessActions(gameAtom);
-  const { reset: resetBoard } = useChessActions(boardAtom);
+  const { resetToStartingPosition: resetBoard } = useChessActions(boardAtom);
   const { gameFromUrl } = useGameDatabase();
   const setEval = useSetAtom(gameEvalAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
@@ -26,7 +25,7 @@ export default function LoadGame() {
 
   const resetAndSetGamePgn = useCallback(
     (pgn: string) => {
-      resetBoard({ fen: getStartingFen({ pgn }) });
+      resetBoard(pgn);
       setEval(undefined);
       setGamePgn(pgn);
     },

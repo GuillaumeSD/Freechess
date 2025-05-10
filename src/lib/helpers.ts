@@ -1,4 +1,4 @@
-export const getPaddedMonth = (month: number) => {
+export const getPaddedNumber = (month: number) => {
   return month < 10 ? `0${month}` : month;
 };
 

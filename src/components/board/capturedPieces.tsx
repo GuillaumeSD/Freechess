@@ -8,7 +8,7 @@ export interface Props {
   color: Color;
 }
 
-const PIECE_SCALE = 0.6;
+const PIECE_SCALE = 0.55;
 
 export default function CapturedPieces({ fen, color }: Props) {
   const cssProps = useMemo(() => {
@@ -22,7 +22,7 @@ export default function CapturedPieces({ fen, color }: Props) {
   }, [fen, color]);
 
   return (
-    <Grid container alignItems="end" columnGap={0.6} size="auto">
+    <Grid container alignItems="end" columnGap={0.5} size="auto">
       {cssProps.map((cssProp, i) => (
         <span
           key={i}

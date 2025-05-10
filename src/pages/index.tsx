@@ -81,7 +81,7 @@ export default function GameReview() {
           maxWidth: "1200px",
         }}
         rowGap={2}
-        maxHeight={{ lg: "calc(95vh - 130px)", xs: "900px" }}
+        maxHeight={{ lg: "calc(95vh - 80px)", xs: "900px" }}
         display="grid"
         gridTemplateRows="repeat(3, auto) fit-content(100%)"
         marginTop={isLgOrGreater && window.innerHeight > 780 ? 4 : 0}

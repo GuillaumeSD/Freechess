@@ -22,12 +22,16 @@ export default function NextMoveButton() {
 
     const nextMoveIndex = boardHistory.length;
     const nextMove = game.history({ verbose: true })[nextMoveIndex];
+    const comment = game
+      .getComments()
+      .find((c) => c.fen === nextMove.after)?.comment;
 
     if (nextMove) {
       makeBoardMove({
         from: nextMove.from,
         to: nextMove.to,
         promotion: nextMove.promotion,
+        comment,
       });
     }
   }, [isButtonEnabled, boardHistory, game, makeBoardMove]);

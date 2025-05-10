@@ -270,7 +270,7 @@ export default function Board({
 
       <Grid
         container
-        rowGap={1}
+        rowGap={1.5}
         justifyContent="center"
         alignItems="center"
         paddingLeft={showEvaluationBar ? 2 : 0}
@@ -278,7 +278,7 @@ export default function Board({
       >
         <PlayerHeader
           color={boardOrientation === Color.White ? Color.Black : Color.White}
-          fen={gameFen}
+          gameAtom={gameAtom}
           player={boardOrientation === Color.White ? blackPlayer : whitePlayer}
         />
 
@@ -318,7 +318,7 @@ export default function Board({
 
         <PlayerHeader
           color={boardOrientation}
-          fen={gameFen}
+          gameAtom={gameAtom}
           player={boardOrientation === Color.White ? whitePlayer : blackPlayer}
         />
       </Grid>

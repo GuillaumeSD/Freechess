@@ -28,7 +28,7 @@ export default function BoardContainer() {
       return Math.min(width, height - 150);
     }
 
-    return Math.min(width - 700, height * 0.95);
+    return Math.min(width - 700, height * 0.92);
   }, [screenSize]);
 
   return (

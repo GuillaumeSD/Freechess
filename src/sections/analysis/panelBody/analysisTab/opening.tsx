@@ -12,7 +12,10 @@ export default function Opening() {
   }
   if (!lastMove) return null;
 
-  const opening = position?.eval?.opening || lastOpening;
+  const opening =
+    position?.eval?.opening && !position?.eval?.opening.includes("Unknown")
+      ? position.eval.opening
+      : lastOpening;
   if (opening && opening !== lastOpening) {
     setLastOpening(opening);
   }

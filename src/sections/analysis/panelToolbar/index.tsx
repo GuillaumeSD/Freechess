@@ -8,11 +8,10 @@ import NextMoveButton from "./nextMoveButton";
 import GoToLastPositionButton from "./goToLastPositionButton";
 import SaveButton from "./saveButton";
 import { useEffect } from "react";
-import { getStartingFen } from "@/lib/chess";
 
 export default function PanelToolBar() {
   const board = useAtomValue(boardAtom);
-  const { reset: resetBoard, undoMove: undoBoardMove } =
+  const { resetToStartingPosition: resetBoard, undoMove: undoBoardMove } =
     useChessActions(boardAtom);
 
   const boardHistory = board.history();
@@ -24,7 +23,7 @@ export default function PanelToolBar() {
       if (e.key === "ArrowLeft") {
         undoBoardMove();
       } else if (e.key === "ArrowDown") {
-        resetBoard({ fen: getStartingFen({ game: board }) });
+        resetBoard();
       }
     };
 
@@ -42,7 +41,7 @@ export default function PanelToolBar() {
       <Tooltip title="Reset board">
         <Grid>
           <IconButton
-            onClick={() => resetBoard({ fen: getStartingFen({ game: board }) })}
+            onClick={() => resetBoard()}
             disabled={boardHistory.length === 0}
             sx={{ paddingX: 1.2, paddingY: 0.5 }}
           >

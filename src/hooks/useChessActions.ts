@@ -1,11 +1,11 @@
-import { setGameHeaders } from "@/lib/chess";
+import { getGameFromPgn, setGameHeaders } from "@/lib/chess";
 import {
   playGameEndSound,
   playIllegalMoveSound,
   playSoundFromMove,
 } from "@/lib/sounds";
 import { Player } from "@/types/game";
-import { Chess, Move } from "chess.js";
+import { Chess, Move, DEFAULT_POSITION } from "chess.js";
 import { PrimitiveAtom, useAtom } from "jotai";
 import { useCallback } from "react";
 
@@ -43,8 +43,9 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
     if (game.history().length === 0) {
       const pgnSplitted = game.pgn().split("]");
       if (
-        pgnSplitted.at(-1)?.includes("1-0") ||
-        pgnSplitted.at(-1) === "\n *"
+        ["1-0", "0-1", "1/2-1/2", "*"].includes(
+          pgnSplitted.at(-1)?.trim() ?? ""
+        )
       ) {
         newGame.loadPgn(pgnSplitted.slice(0, -1).join("]") + "]");
         return newGame;
@@ -55,11 +56,31 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
     return newGame;
   }, [game]);
 
+  const resetToStartingPosition = useCallback(
+    (pgn?: string) => {
+      const newGame = pgn ? getGameFromPgn(pgn) : copyGame();
+      newGame.load(newGame.getHeaders().FEN || DEFAULT_POSITION, {
+        preserveHeaders: true,
+      });
+      setGame(newGame);
+    },
+    [copyGame, setGame]
+  );
+
   const makeMove = useCallback(
-    (move: { from: string; to: string; promotion?: string }): Move | null => {
+    (params: {
+      from: string;
+      to: string;
+      promotion?: string;
+      comment?: string;
+    }): Move | null => {
       const newGame = copyGame();
+
       try {
+        const { comment, ...move } = params;
         const result = newGame.move(move);
+        if (comment) newGame.setComment(comment);
+
         setGame(newGame);
         playSoundFromMove(result);
         return result;
@@ -103,5 +124,12 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
     [setGame]
   );
 
-  return { setPgn, reset, makeMove, undoMove, goToMove };
+  return {
+    setPgn,
+    reset,
+    makeMove,
+    undoMove,
+    goToMove,
+    resetToStartingPosition,
+  };
 };

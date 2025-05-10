@@ -59,7 +59,7 @@ export default function BoardContainer() {
       return Math.min(width, height - 150);
     }
 
-    return Math.min(width - 300, height * 0.85);
+    return Math.min(width - 300, height * 0.83);
   }, [screenSize]);
 
   useGameData(gameAtom, gameDataAtom);
