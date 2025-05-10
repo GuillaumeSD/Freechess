@@ -77,6 +77,5 @@ npm run deploy
 
 ## License
 
-GNU General Public License v3.0.
-
-See [COPYING](COPYING) to see the full text.
+Chesskit is licensed under the GNU Affero General Public License 3. See [copying](COPYING.md) for
+details.

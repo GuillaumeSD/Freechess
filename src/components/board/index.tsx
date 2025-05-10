@@ -3,7 +3,9 @@ import { Chessboard } from "react-chessboard";
 import { PrimitiveAtom, atom, useAtomValue, useSetAtom } from "jotai";
 import {
   Arrow,
+  CustomPieces,
   CustomSquareRenderer,
+  Piece,
   PromotionPieceOption,
   Square,
 } from "react-chessboard/dist/chessboard/types";
@@ -17,6 +19,8 @@ import EvaluationBar from "./evaluationBar";
 import { moveClassificationColors } from "@/lib/chess";
 import { Player } from "@/types/game";
 import PlayerHeader from "./playerHeader";
+import Image from "next/image";
+import { pieceSetAtom } from "./states";
 
 export interface Props {
   id: string;
@@ -31,8 +35,6 @@ export interface Props {
   showPlayerMoveIconAtom?: PrimitiveAtom<boolean>;
   showEvaluationBar?: boolean;
 }
-
-const pieceCodes: string[] = ["wP" , "wB" , "wN" , "wR" , "wQ" , "wK" , "bP" , "bB" , "bN" , "bR" , "bQ" , "bK"];
 
 export default function Board({
   id: boardId,
@@ -58,6 +60,7 @@ export default function Board({
   const [showPromotionDialog, setShowPromotionDialog] = useState(false);
   const [moveClickFrom, setMoveClickFrom] = useState<Square | null>(null);
   const [moveClickTo, setMoveClickTo] = useState<Square | null>(null);
+  const pieceSet = useAtomValue(pieceSetAtom);
 
   const gameFen = game.fen();
 
@@ -220,23 +223,28 @@ export default function Board({
     playableSquaresAtom,
     showPlayerMoveIconAtom,
   ]);
-  const pieceSet = "horsey";
 
-  const customPieces = pieceCodes.reduce((acc: {[pieceCode: string]: any}, code) => {
-    acc[code] = ({ squareWidth }: { squareWidth: number}) => (
-      <img
-    src={`/piece/${pieceSet}/${code}.svg`} // Adjust path if needed
-    alt=""
-    width={squareWidth}
-    height={squareWidth}
-    style={{
-      objectFit: 'contain',
-      cursor: 'grab',
-    }}
-  />
-    );
-    return acc;
-  }, {});;
+  const customPieces = useMemo(
+    () =>
+      pieceCodes.reduce<CustomPieces>((acc, piece) => {
+        acc[piece] = ({ squareWidth }) => (
+          <Image
+            src={`/piece/${pieceSet}/${piece}.svg`}
+            alt={piece}
+            width={squareWidth}
+            height={squareWidth}
+            style={{
+              objectFit: "contain",
+              cursor: "grab",
+            }}
+          />
+        );
+
+        return acc;
+      }, {}),
+    [pieceSet]
+  );
+
   return (
     <Grid
       container
@@ -309,3 +317,18 @@ export default function Board({
     </Grid>
   );
 }
+
+const pieceCodes = [
+  "wP",
+  "wB",
+  "wN",
+  "wR",
+  "wQ",
+  "wK",
+  "bP",
+  "bB",
+  "bN",
+  "bR",
+  "bQ",
+  "bK",
+] as const satisfies Piece[];
