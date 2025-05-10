@@ -42,6 +42,8 @@ export default function Board({
   canPlay,
   gameAtom,
   boardSize,
+  whitePlayer,
+  blackPlayer,
   boardOrientation = Color.White,
   currentPositionAtom = atom({}),
   showBestMoveArrow = false,
@@ -276,7 +278,7 @@ export default function Board({
       >
         <PlayerHeader
           color={boardOrientation === Color.White ? Color.Black : Color.White}
-          fen={gameFen}
+          gameAtom={gameAtom}
           player={boardOrientation === Color.White ? blackPlayer : whitePlayer}
         />
 
@@ -316,7 +318,7 @@ export default function Board({
 
         <PlayerHeader
           color={boardOrientation}
-          fen={gameFen}
+          gameAtom={gameAtom}
           player={boardOrientation === Color.White ? whitePlayer : blackPlayer}
         />
       </Grid>

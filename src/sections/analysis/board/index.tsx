@@ -3,6 +3,7 @@ import {
   boardAtom,
   boardOrientationAtom,
   currentPositionAtom,
+  gameAtom,
   showBestMoveArrowAtom,
   showPlayerMoveIconAtom,
 } from "../states";
