@@ -1,4 +1,4 @@
-import { Grid2 as Grid } from "@mui/material";
+import { Box, Grid2 as Grid } from "@mui/material";
 import { Chessboard } from "react-chessboard";
 import { PrimitiveAtom, atom, useAtomValue, useSetAtom } from "jotai";
 import {
@@ -19,7 +19,6 @@ import EvaluationBar from "./evaluationBar";
 import { CLASSIFICATION_COLORS } from "@/constants";
 import { Player } from "@/types/game";
 import PlayerHeader from "./playerHeader";
-import Image from "next/image";
 import { boardHueAtom, pieceSetAtom } from "./states";
 import tinycolor from "tinycolor2";
 
@@ -235,15 +234,12 @@ export default function Board({
     () =>
       PIECE_CODES.reduce<CustomPieces>((acc, piece) => {
         acc[piece] = ({ squareWidth }) => (
-          <Image
-            src={`/piece/${pieceSet}/${piece}.svg`}
-            alt={piece}
-            loading="eager"
+          <Box
             width={squareWidth}
             height={squareWidth}
-            style={{
-              objectFit: "contain",
-              cursor: "grab",
+            sx={{
+              backgroundImage: `url(/piece/${pieceSet}/${piece}.svg)`,
+              backgroundSize: "contain",
             }}
           />
         );
