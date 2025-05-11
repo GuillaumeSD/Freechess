@@ -238,6 +238,7 @@ export default function Board({
           <Image
             src={`/piece/${pieceSet}/${piece}.svg`}
             alt={piece}
+            loading="eager"
             width={squareWidth}
             height={squareWidth}
             style={{
