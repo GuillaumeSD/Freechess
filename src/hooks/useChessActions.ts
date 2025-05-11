@@ -96,10 +96,12 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
     (moves: string[]) => {
       const newGame = copyGame();
 
+      let lastMove: Move | null = null;
       for (const move of moves) {
-        newGame.move(move);
+        lastMove = newGame.move(move);
       }
       setGame(newGame);
+      if (lastMove) playSoundFromMove(lastMove);
     },
     [copyGame, setGame]
   );

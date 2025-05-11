@@ -6,11 +6,12 @@ let audio: HTMLAudioElement | null = null;
 const playSound = async (url: string) => {
   if (!audio) audio = new Audio();
 
-  const isPlaying = !audio.paused && !audio.ended;
-  if (isPlaying) return;
-
   audio.src = url;
-  await audio.play();
+  try {
+    await audio.play();
+  } catch {
+    console.warn("Audio play failed");
+  }
 };
 
 export const playCaptureSound = () => playSound("/sounds/capture.webm");
