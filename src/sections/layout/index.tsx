@@ -5,13 +5,13 @@ import { red } from "@mui/material/colors";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 export default function Layout({ children }: PropsWithChildren) {
-  const [useDarkMode, setDarkMode] = useLocalStorage("useDarkMode", true);
+  const [isDarkMode, setDarkMode] = useLocalStorage("useDarkMode", true);
 
   const theme = useMemo(
     () =>
       createTheme({
         palette: {
-          mode: useDarkMode ? "dark" : "light",
+          mode: isDarkMode ? "dark" : "light",
           error: {
             main: red[400],
           },
@@ -19,20 +19,20 @@ export default function Layout({ children }: PropsWithChildren) {
             main: "#5d9948",
           },
           secondary: {
-            main: useDarkMode ? "#424242" : "#ffffff",
+            main: isDarkMode ? "#424242" : "#ffffff",
           },
         },
       }),
-    [useDarkMode]
+    [isDarkMode]
   );
 
-  if (useDarkMode === null) return null;
+  if (isDarkMode === null) return null;
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <NavBar
-        darkMode={useDarkMode}
+        darkMode={isDarkMode}
         switchDarkMode={() => setDarkMode((val) => !val)}
       />
       <main style={{ margin: "3vh 2vw" }}>{children}</main>

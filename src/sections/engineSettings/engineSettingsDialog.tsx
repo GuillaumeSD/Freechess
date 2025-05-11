@@ -183,7 +183,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
       </DialogContent>
       <DialogActions sx={{ m: 1 }}>
         <Button variant="contained" onClick={onClose}>
-          Done
+          Close
         </Button>
       </DialogActions>
     </Dialog>
