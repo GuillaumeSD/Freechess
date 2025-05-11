@@ -1,24 +1,14 @@
-import { useState } from "react";
-import { useCurrentPosition } from "../../hooks/useCurrentPosition";
+import { useAtomValue } from "jotai";
 import { Grid2 as Grid, Skeleton, Typography } from "@mui/material";
+import { currentPositionAtom } from "../../states";
 
 export default function Opening() {
-  const position = useCurrentPosition();
-  const [lastOpening, setLastOpening] = useState("");
+  const position = useAtomValue(currentPositionAtom);
 
   const lastMove = position?.lastMove;
-  if (!lastMove && lastOpening) {
-    setLastOpening("");
-  }
   if (!lastMove) return null;
 
-  const opening =
-    position?.eval?.opening && !position?.eval?.opening.includes("Unknown")
-      ? position.eval.opening
-      : lastOpening;
-  if (opening && opening !== lastOpening) {
-    setLastOpening(opening);
-  }
+  const opening = position?.eval?.opening || position.opening;
 
   if (!opening) {
     return (

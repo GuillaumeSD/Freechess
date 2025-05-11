@@ -13,7 +13,7 @@ export const getMovesClassification = (
   fens: string[]
 ): PositionEval[] => {
   const positionsWinPercentage = rawPositions.map(getPositionWinPercentage);
-  let currentOpening: string = "Unknown opening";
+  let currentOpening: string | undefined = undefined;
 
   const positions = rawPositions.map((rawPosition, index) => {
     if (index === 0) return rawPosition;

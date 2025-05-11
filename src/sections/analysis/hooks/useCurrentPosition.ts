@@ -14,6 +14,7 @@ import { useEngine } from "../../../hooks/useEngine";
 import { EngineName } from "@/types/enums";
 import { getEvaluateGameParams } from "@/lib/chess";
 import { getMovesClassification } from "@/lib/engine/helpers/moveClassification";
+import { openings } from "@/data/openings";
 
 export const useCurrentPosition = (engineName?: EngineName) => {
   const [currentPosition, setCurrentPosition] = useAtom(currentPositionAtom);
@@ -26,16 +27,17 @@ export const useCurrentPosition = (engineName?: EngineName) => {
   const [savedEvals, setSavedEvals] = useAtom(savedEvalsAtom);
 
   useEffect(() => {
+    const boardHistory = board.history({ verbose: true });
     const position: CurrentPosition = {
-      lastMove: board.history({ verbose: true }).at(-1),
+      lastMove: boardHistory.at(-1),
     };
 
-    const boardHistory = board.history();
     const gameHistory = game.history();
 
     if (
       boardHistory.length <= gameHistory.length &&
-      gameHistory.slice(0, boardHistory.length).join() === boardHistory.join()
+      gameHistory.slice(0, boardHistory.length).join() ===
+        boardHistory.map((m) => m.san).join()
     ) {
       position.currentMoveIdx = boardHistory.length;
 
@@ -56,6 +58,17 @@ export const useCurrentPosition = (engineName?: EngineName) => {
                 ),
               }
             : undefined;
+      }
+    }
+
+    if (!position.eval?.opening) {
+      for (const move of boardHistory.toReversed()) {
+        const moveFen = move.after.split(" ")[0];
+        const opening = openings.find((opening) => opening.fen === moveFen);
+        if (opening) {
+          position.opening = opening.name;
+          break;
+        }
       }
     }
 
