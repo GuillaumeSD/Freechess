@@ -317,9 +317,7 @@ export class UciEngine {
       "bestmove"
     );
 
-    const whiteToPlay = fen.split(" ")[1] === "w";
-
-    return parseEvaluationResults(results, whiteToPlay);
+    return parseEvaluationResults(results, fen);
   }
 
   public async evaluatePositionWithUpdate({
@@ -335,11 +333,9 @@ export class UciEngine {
     await this.stopSearch();
     await this.setMultiPv(multiPv);
 
-    const whiteToPlay = fen.split(" ")[1] === "w";
-
     const onNewMessage = (messages: string[]) => {
       if (!setPartialEval) return;
-      const parsedResults = parseEvaluationResults(messages, whiteToPlay);
+      const parsedResults = parseEvaluationResults(messages, fen);
       setPartialEval(parsedResults);
     };
 
@@ -360,7 +356,7 @@ export class UciEngine {
       onNewMessage
     );
 
-    return parseEvaluationResults(results, whiteToPlay);
+    return parseEvaluationResults(results, fen);
   }
 
   public async getEngineNextMove(

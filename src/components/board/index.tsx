@@ -5,6 +5,7 @@ import {
   Arrow,
   CustomPieces,
   CustomSquareRenderer,
+  Piece,
   PromotionPieceOption,
   Square,
 } from "react-chessboard/dist/chessboard/types";
@@ -15,13 +16,12 @@ import { Chess } from "chess.js";
 import { getSquareRenderer } from "./squareRenderer";
 import { CurrentPosition } from "@/types/eval";
 import EvaluationBar from "./evaluationBar";
-import { moveClassificationColors } from "@/lib/chess";
+import { CLASSIFICATION_COLORS } from "@/constants";
 import { Player } from "@/types/game";
 import PlayerHeader from "./playerHeader";
 import Image from "next/image";
 import { boardHueAtom, pieceSetAtom } from "./states";
 import tinycolor from "tinycolor2";
-import { PIECE_CODES } from "./constants";
 
 export interface Props {
   id: string;
@@ -52,7 +52,7 @@ export default function Board({
 }: Props) {
   const boardRef = useRef<HTMLDivElement>(null);
   const game = useAtomValue(gameAtom);
-  const { makeMove: makeGameMove } = useChessActions(gameAtom);
+  const { playMove } = useChessActions(gameAtom);
   const clickedSquaresAtom = useMemo(() => atom<Square[]>([]), []);
   const setClickedSquares = useSetAtom(clickedSquaresAtom);
   const playableSquaresAtom = useMemo(() => atom<Square[]>([]), []);
@@ -86,7 +86,7 @@ export default function Board({
   ): boolean => {
     if (!isPiecePlayable({ piece })) return false;
 
-    const result = makeGameMove({
+    const result = playMove({
       from: source,
       to: target,
       promotion: piece[1]?.toLowerCase() ?? "q",
@@ -135,7 +135,7 @@ export default function Board({
       return;
     }
 
-    const result = makeGameMove({
+    const result = playMove({
       from: moveClickFrom,
       to: square,
     });
@@ -168,7 +168,7 @@ export default function Board({
     const promotionPiece = piece[1]?.toLowerCase() ?? "q";
 
     if (moveClickFrom && moveClickTo) {
-      const result = makeGameMove({
+      const result = playMove({
         from: moveClickFrom,
         to: moveClickTo,
         promotion: promotionPiece,
@@ -178,7 +178,7 @@ export default function Board({
     }
 
     if (from && to) {
-      const result = makeGameMove({
+      const result = playMove({
         from,
         to,
         promotion: promotionPiece,
@@ -206,7 +206,7 @@ export default function Board({
       const bestMoveArrow = [
         bestMove.slice(0, 2),
         bestMove.slice(2, 4),
-        tinycolor(moveClassificationColors[MoveClassification.Best])
+        tinycolor(CLASSIFICATION_COLORS[MoveClassification.Best])
           .spin(-boardHue)
           .toHexString(),
       ] as Arrow;
@@ -325,3 +325,18 @@ export default function Board({
     </Grid>
   );
 }
+
+export const PIECE_CODES = [
+  "wP",
+  "wB",
+  "wN",
+  "wR",
+  "wQ",
+  "wK",
+  "bP",
+  "bB",
+  "bN",
+  "bR",
+  "bQ",
+  "bK",
+] as const satisfies Piece[];

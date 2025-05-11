@@ -6,7 +6,7 @@ import { boardAtom, currentPositionAtom, gameAtom } from "../../../states";
 import { useChessActions } from "@/hooks/useChessActions";
 import { useEffect } from "react";
 import { isInViewport } from "@/lib/helpers";
-import { moveClassificationColors } from "@/lib/chess";
+import { CLASSIFICATION_COLORS } from "@/constants";
 
 interface Props {
   san: string;
@@ -89,7 +89,7 @@ const getMoveColor = (moveClassification?: MoveClassification) => {
     return undefined;
   }
 
-  return moveClassificationColors[moveClassification];
+  return CLASSIFICATION_COLORS[moveClassification];
 };
 
 const moveClassificationsToIgnore: MoveClassification[] = [

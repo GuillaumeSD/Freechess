@@ -1,8 +1,9 @@
+import { formatUciPv } from "@/lib/chess";
 import { LineEval, PositionEval } from "@/types/eval";
 
 export const parseEvaluationResults = (
   results: string[],
-  whiteToPlay: boolean
+  fen: string
 ): PositionEval => {
   const parsedResults: PositionEval = {
     lines: [],
@@ -18,7 +19,7 @@ export const parseEvaluationResults = (
     }
 
     if (result.startsWith("info")) {
-      const pv = getResultPv(result);
+      const pv = getResultPv(result, fen);
       const multiPv = getResultProperty(result, "multipv");
       const depth = getResultProperty(result, "depth");
       if (!pv || !multiPv || !depth) continue;
@@ -45,6 +46,7 @@ export const parseEvaluationResults = (
 
   parsedResults.lines = Object.values(tempResults).sort(sortLines);
 
+  const whiteToPlay = fen.split(" ")[1] === "w";
   if (!whiteToPlay) {
     parsedResults.lines = parsedResults.lines.map((line) => ({
       ...line,
@@ -86,7 +88,7 @@ export const getResultProperty = (
   return splitResult[propertyIndex + 1];
 };
 
-const getResultPv = (result: string): string[] | undefined => {
+const getResultPv = (result: string, fen: string): string[] | undefined => {
   const splitResult = result.split(" ");
   const pvIndex = splitResult.indexOf("pv");
 
@@ -94,5 +96,6 @@ const getResultPv = (result: string): string[] | undefined => {
     return undefined;
   }
 
-  return splitResult.slice(pvIndex + 1);
+  const rawPv = splitResult.slice(pvIndex + 1);
+  return formatUciPv(fen, rawPv);
 };

@@ -1,5 +1,5 @@
+import { PIECE_SETS } from "@/constants";
 import { atomWithStorage } from "jotai/utils";
-import { PIECE_SETS } from "./constants";
 
 export const pieceSetAtom = atomWithStorage<(typeof PIECE_SETS)[number]>(
   "pieceSet",

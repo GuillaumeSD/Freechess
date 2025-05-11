@@ -32,7 +32,7 @@ import { logAnalyticsEvent } from "@/lib/firebase";
 import { useEffect } from "react";
 import { isEngineSupported } from "@/lib/engine/shared";
 import { Stockfish16_1 } from "@/lib/engine/stockfish16_1";
-import { engineLabel } from "@/sections/engineSettings/engineSettingsDialog";
+import { DEFAULT_ENGINE, ENGINE_LABELS, STRONGEST_ENGINE } from "@/constants";
 
 interface Props {
   open: boolean;
@@ -57,12 +57,12 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
     resetGame({
       white: {
         name:
-          playerColor === Color.White ? "You" : engineLabel[engineName].small,
+          playerColor === Color.White ? "You" : ENGINE_LABELS[engineName].small,
         rating: playerColor === Color.White ? undefined : engineElo,
       },
       black: {
         name:
-          playerColor === Color.Black ? "You" : engineLabel[engineName].small,
+          playerColor === Color.Black ? "You" : ENGINE_LABELS[engineName].small,
         rating: playerColor === Color.Black ? undefined : engineElo,
       },
     });
@@ -93,10 +93,11 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
       </DialogTitle>
       <DialogContent sx={{ paddingBottom: 0 }}>
         <Typography>
-          Stockfish 17 Lite is the default engine if your device support its
-          requirements. It offers the best balance between speed and strength.
-          Stockfish 17 is the strongest engine available, note that it requires
-          a one time download of 75MB.
+          {ENGINE_LABELS[DEFAULT_ENGINE].small} is the default engine if your
+          device support its requirements. It offers the best balance between
+          speed and strength. {ENGINE_LABELS[STRONGEST_ENGINE].small} is the
+          strongest engine available, note that it requires a one time download
+          of 75MB.
         </Typography>
         <Grid
           marginTop={4}
@@ -124,7 +125,7 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
                     value={engine}
                     disabled={!isEngineSupported(engine)}
                   >
-                    {engineLabel[engine].full}
+                    {ENGINE_LABELS[engine].full}
                   </MenuItem>
                 ))}
               </Select>

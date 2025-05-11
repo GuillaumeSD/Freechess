@@ -7,6 +7,7 @@ import {
   LichessResponse,
 } from "@/types/lichess";
 import { logErrorToSentry } from "./sentry";
+import { formatUciPv } from "./chess";
 
 export const getLichessEval = async (
   fen: string,
@@ -26,7 +27,7 @@ export const getLichessEval = async (
     }
 
     const lines: LineEval[] = data.pvs.map((pv, index) => ({
-      pv: pv.moves.split(" "),
+      pv: formatUciPv(fen, pv.moves.split(" ")),
       cp: pv.cp,
       mate: pv.mate,
       depth: data.depth,

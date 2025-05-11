@@ -2,7 +2,7 @@ import { EvaluateGameParams, LineEval, PositionEval } from "@/types/eval";
 import { Game, Player } from "@/types/game";
 import { Chess, PieceSymbol, Square } from "chess.js";
 import { getPositionWinPercentage } from "./engine/helpers/winPercentage";
-import { Color, MoveClassification } from "@/types/enums";
+import { Color } from "@/types/enums";
 
 export const getEvaluateGameParams = (game: Chess): EvaluateGameParams => {
   const history = game.history({ verbose: true });
@@ -327,15 +327,33 @@ export const getLineEvalLabel = (
   return "?";
 };
 
-export const moveClassificationColors: Record<MoveClassification, string> = {
-  [MoveClassification.Book]: "#d5a47d",
-  [MoveClassification.Forced]: "#d5a47d",
-  [MoveClassification.Brilliant]: "#26c2a3",
-  [MoveClassification.Great]: "#4099ed",
-  [MoveClassification.Best]: "#3aab18",
-  [MoveClassification.Excellent]: "#3aab18",
-  [MoveClassification.Good]: "#81b64c",
-  [MoveClassification.Inaccuracy]: "#f7c631",
-  [MoveClassification.Mistake]: "#ffa459",
-  [MoveClassification.Blunder]: "#fa412d",
+export const formatUciPv = (fen: string, uciMoves: string[]): string[] => {
+  const castlingRights = fen.split(" ")[2];
+
+  let canWhiteCastleKingSide = castlingRights.includes("K");
+  let canWhiteCastleQueenSide = castlingRights.includes("Q");
+  let canBlackCastleKingSide = castlingRights.includes("k");
+  let canBlackCastleQueenSide = castlingRights.includes("q");
+
+  return uciMoves.map((uci) => {
+    if (uci === "e1h1" && canWhiteCastleKingSide) {
+      canWhiteCastleKingSide = false;
+      return "e1g1";
+    }
+    if (uci === "e1a1" && canWhiteCastleQueenSide) {
+      canWhiteCastleQueenSide = false;
+      return "e1c1";
+    }
+
+    if (uci === "e8h8" && canBlackCastleKingSide) {
+      canBlackCastleKingSide = false;
+      return "e8g8";
+    }
+    if (uci === "e8a8" && canBlackCastleQueenSide) {
+      canBlackCastleQueenSide = false;
+      return "e8c8";
+    }
+
+    return uci;
+  });
 };

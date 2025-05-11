@@ -1,6 +1,6 @@
 import { DotProps } from "recharts";
 import { ChartItemData } from "./types";
-import { moveClassificationColors } from "@/lib/chess";
+import { CLASSIFICATION_COLORS } from "@/constants";
 
 export default function CustomDot({
   cx,
@@ -9,7 +9,7 @@ export default function CustomDot({
   payload,
 }: DotProps & { payload?: ChartItemData }) {
   const moveColor = payload?.moveClassification
-    ? moveClassificationColors[payload.moveClassification]
+    ? CLASSIFICATION_COLORS[payload.moveClassification]
     : "grey";
 
   return (

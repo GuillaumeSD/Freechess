@@ -21,7 +21,7 @@ import type { ReactElement } from "react";
 import CustomTooltip from "./tooltip";
 import { ChartItemData } from "./types";
 import { PositionEval } from "@/types/eval";
-import { moveClassificationColors } from "@/lib/chess";
+import { CLASSIFICATION_COLORS } from "@/constants";
 import CustomDot from "./dot";
 import { MoveClassification } from "@/types/enums";
 import { useChessActions } from "@/hooks/useChessActions";
@@ -51,7 +51,7 @@ export default function GraphTab(props: GridProps) {
   }, [chartData]);
 
   const boardMoveColor = currentPosition.eval?.moveClassification
-    ? moveClassificationColors[currentPosition.eval.moveClassification]
+    ? CLASSIFICATION_COLORS[currentPosition.eval.moveClassification]
     : "grey";
 
   // Render a dot only on selected classifications (always returns an element)

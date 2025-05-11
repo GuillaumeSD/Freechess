@@ -23,7 +23,7 @@ export default function BoardContainer() {
   const game = useAtomValue(gameAtom);
   const { white, black } = usePlayersData(gameAtom);
   const playerColor = useAtomValue(playerColorAtom);
-  const { makeMove: makeGameMove } = useChessActions(gameAtom);
+  const { playMove } = useChessActions(gameAtom);
   const engineElo = useAtomValue(engineEloAtom);
   const isGameInProgress = useAtomValue(isGameInProgressAtom);
 
@@ -41,7 +41,7 @@ export default function BoardContainer() {
         return;
       }
       const move = await engine.getEngineNextMove(gameFen, engineElo);
-      if (move) makeGameMove(uciMoveParams(move));
+      if (move) playMove(uciMoveParams(move));
     };
     playEngineMove();
 

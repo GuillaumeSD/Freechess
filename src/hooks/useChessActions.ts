@@ -67,7 +67,7 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
     [copyGame, setGame]
   );
 
-  const makeMove = useCallback(
+  const playMove = useCallback(
     (params: {
       from: string;
       to: string;
@@ -88,6 +88,18 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
         playIllegalMoveSound();
         return null;
       }
+    },
+    [copyGame, setGame]
+  );
+
+  const addMoves = useCallback(
+    (moves: string[]) => {
+      const newGame = copyGame();
+
+      for (const move of moves) {
+        newGame.move(move);
+      }
+      setGame(newGame);
     },
     [copyGame, setGame]
   );
@@ -127,9 +139,10 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
   return {
     setPgn,
     reset,
-    makeMove,
+    playMove,
     undoMove,
     goToMove,
     resetToStartingPosition,
+    addMoves,
   };
 };

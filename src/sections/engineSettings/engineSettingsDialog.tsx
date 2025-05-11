@@ -26,7 +26,12 @@ import { isEngineSupported } from "@/lib/engine/shared";
 import { Stockfish16_1 } from "@/lib/engine/stockfish16_1";
 import { useAtom } from "jotai";
 import { boardHueAtom, pieceSetAtom } from "@/components/board/states";
-import { PIECE_SETS } from "@/components/board/constants";
+import {
+  DEFAULT_ENGINE,
+  ENGINE_LABELS,
+  PIECE_SETS,
+  STRONGEST_ENGINE,
+} from "@/constants";
 
 interface Props {
   open: boolean;
@@ -76,10 +81,11 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
             size={{ xs: 12, sm: 7, md: 8 }}
           >
             <Typography>
-              Stockfish 17 Lite is the default engine if your device support its
-              requirements. It offers the best balance between speed and
-              strength. Stockfish 17 is the strongest engine available, note
-              that it requires a one time download of 75MB.
+              {ENGINE_LABELS[DEFAULT_ENGINE].small} is the default engine if
+              your device support its requirements. It offers the best balance
+              between speed and strength.{" "}
+              {ENGINE_LABELS[STRONGEST_ENGINE].small} is the strongest engine
+              available, note that it requires a one time download of 75MB.
             </Typography>
           </Grid>
 
@@ -105,7 +111,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
                     value={engine}
                     disabled={!isEngineSupported(engine)}
                   >
-                    {engineLabel[engine].full}
+                    {ENGINE_LABELS[engine].full}
                   </MenuItem>
                 ))}
               </Select>
@@ -183,35 +189,3 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
     </Dialog>
   );
 }
-
-export const engineLabel: Record<EngineName, { small: string; full: string }> =
-  {
-    [EngineName.Stockfish17]: {
-      full: "Stockfish 17 (75MB)",
-      small: "Stockfish 17",
-    },
-    [EngineName.Stockfish17Lite]: {
-      full: "Stockfish 17 Lite (6MB)",
-      small: "Stockfish 17 Lite",
-    },
-    [EngineName.Stockfish16_1]: {
-      full: "Stockfish 16.1 (64MB)",
-      small: "Stockfish 16.1",
-    },
-    [EngineName.Stockfish16_1Lite]: {
-      full: "Stockfish 16.1 Lite (6MB)",
-      small: "Stockfish 16.1 Lite",
-    },
-    [EngineName.Stockfish16NNUE]: {
-      full: "Stockfish 16 (40MB)",
-      small: "Stockfish 16",
-    },
-    [EngineName.Stockfish16]: {
-      full: "Stockfish 16 Lite (HCE)",
-      small: "Stockfish 16 Lite",
-    },
-    [EngineName.Stockfish11]: {
-      full: "Stockfish 11 (HCE)",
-      small: "Stockfish 11",
-    },
-  };

@@ -7,7 +7,7 @@ import {
   CustomSquareProps,
   Square,
 } from "react-chessboard/dist/chessboard/types";
-import { moveClassificationColors } from "@/lib/chess";
+import { CLASSIFICATION_COLORS } from "@/constants";
 import { boardHueAtom } from "./states";
 
 export interface Props {
@@ -110,7 +110,7 @@ const previousMoveSquareStyle = (
   width: "100%",
   height: "100%",
   backgroundColor: moveClassification
-    ? moveClassificationColors[moveClassification]
+    ? CLASSIFICATION_COLORS[moveClassification]
     : "#fad541",
   opacity: 0.5,
 });

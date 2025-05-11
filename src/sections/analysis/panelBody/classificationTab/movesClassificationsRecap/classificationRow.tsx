@@ -6,7 +6,7 @@ import { useMemo } from "react";
 import Image from "next/image";
 import { capitalize } from "@/lib/helpers";
 import { useChessActions } from "@/hooks/useChessActions";
-import { moveClassificationColors } from "@/lib/chess";
+import { CLASSIFICATION_COLORS } from "@/constants";
 
 interface Props {
   classification: MoveClassification;
@@ -74,7 +74,7 @@ export default function ClassificationRow({ classification }: Props) {
       justifyContent="space-evenly"
       alignItems="center"
       wrap="nowrap"
-      color={moveClassificationColors[classification]}
+      color={CLASSIFICATION_COLORS[classification]}
       size={12}
     >
       <Grid

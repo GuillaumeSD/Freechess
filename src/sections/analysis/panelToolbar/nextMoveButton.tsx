@@ -6,7 +6,7 @@ import { useChessActions } from "@/hooks/useChessActions";
 import { useCallback, useEffect } from "react";
 
 export default function NextMoveButton() {
-  const { makeMove: makeBoardMove } = useChessActions(boardAtom);
+  const { playMove: playBoardMove } = useChessActions(boardAtom);
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
 
@@ -27,14 +27,14 @@ export default function NextMoveButton() {
       .find((c) => c.fen === nextMove.after)?.comment;
 
     if (nextMove) {
-      makeBoardMove({
+      playBoardMove({
         from: nextMove.from,
         to: nextMove.to,
         promotion: nextMove.promotion,
         comment,
       });
     }
-  }, [isButtonEnabled, boardHistory, game, makeBoardMove]);
+  }, [isButtonEnabled, boardHistory, game, playBoardMove]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
