@@ -65,20 +65,22 @@ export const setGameHeaders = (
 
   const { white, black, resigned } = params;
 
-  if (white?.name) game.setHeader("White", white.name);
-  if (black?.name) game.setHeader("Black", black.name);
+  const whiteHeader = game.getHeaders().White;
+  const blackHeader = game.getHeaders().Black;
+  const whiteName = white?.name || whiteHeader !== "?" ? whiteHeader : "White";
+  const blackName = black?.name || blackHeader !== "?" ? blackHeader : "Black";
+
+  game.setHeader("White", whiteName);
+  game.setHeader("Black", blackName);
 
   if (white?.rating) game.setHeader("WhiteElo", `${white.rating}`);
   if (black?.rating) game.setHeader("BlackElo", `${black.rating}`);
-
-  const whiteNameToUse = game.getHeaders().White || "White";
-  const blackNameToUse = game.getHeaders().Black || "Black";
 
   if (resigned) {
     game.setHeader("Result", resigned === "w" ? "0-1" : "1-0");
     game.setHeader(
       "Termination",
-      `${resigned === "w" ? blackNameToUse : whiteNameToUse} won by resignation`
+      `${resigned === "w" ? blackName : whiteName} won by resignation`
     );
   }
 
@@ -88,9 +90,7 @@ export const setGameHeaders = (
     game.setHeader("Result", game.turn() === "w" ? "0-1" : "1-0");
     game.setHeader(
       "Termination",
-      `${
-        game.turn() === "w" ? blackNameToUse : whiteNameToUse
-      } won by checkmate`
+      `${game.turn() === "w" ? blackName : whiteName} won by checkmate`
     );
   }
 
