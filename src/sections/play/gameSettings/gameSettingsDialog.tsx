@@ -16,6 +16,7 @@ import {
   FormGroup,
   FormControlLabel,
   Switch,
+  TextField,
 } from "@mui/material";
 import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
 import { useAtom, useSetAtom } from "jotai";
@@ -29,10 +30,11 @@ import {
 import { useChessActions } from "@/hooks/useChessActions";
 import { playGameStartSound } from "@/lib/sounds";
 import { logAnalyticsEvent } from "@/lib/firebase";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { isEngineSupported } from "@/lib/engine/shared";
 import { Stockfish16_1 } from "@/lib/engine/stockfish16_1";
 import { DEFAULT_ENGINE, ENGINE_LABELS, STRONGEST_ENGINE } from "@/constants";
+import { getGameFromPgn } from "@/lib/chess";
 
 interface Props {
   open: boolean;
@@ -51,23 +53,47 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
   const [playerColor, setPlayerColor] = useAtom(playerColorAtom);
   const setIsGameInProgress = useSetAtom(isGameInProgressAtom);
   const { reset: resetGame } = useChessActions(gameAtom);
+  const [startingPositionInput, setStartingPositionInput] = useState("");
+  const [parsingError, setParsingError] = useState("");
 
   const handleGameStart = () => {
-    onClose();
-    resetGame({
-      white: {
-        name:
-          playerColor === Color.White ? "You" : ENGINE_LABELS[engineName].small,
-        rating: playerColor === Color.White ? undefined : engineElo,
-      },
-      black: {
-        name:
-          playerColor === Color.Black ? "You" : ENGINE_LABELS[engineName].small,
-        rating: playerColor === Color.Black ? undefined : engineElo,
-      },
-    });
-    playGameStartSound();
+    setParsingError("");
+
+    try {
+      const startingFen = startingPositionInput.startsWith("[")
+        ? getGameFromPgn(startingPositionInput).fen()
+        : startingPositionInput;
+
+      resetGame({
+        white: {
+          name:
+            playerColor === Color.White
+              ? "You"
+              : ENGINE_LABELS[engineName].small,
+          rating: playerColor === Color.White ? undefined : engineElo,
+        },
+        black: {
+          name:
+            playerColor === Color.Black
+              ? "You"
+              : ENGINE_LABELS[engineName].small,
+          rating: playerColor === Color.Black ? undefined : engineElo,
+        },
+        fen: startingFen,
+      });
+    } catch (error) {
+      console.error(error);
+      setParsingError(
+        error instanceof Error
+          ? `${error.message} !`
+          : "Unknown error while parsing input !"
+      );
+      return;
+    }
+
     setIsGameInProgress(true);
+    handleClose();
+    playGameStartSound();
 
     logAnalyticsEvent("play_game", {
       engine: engineName,
@@ -86,8 +112,14 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
     }
   }, [setEngineName, engineName]);
 
+  const handleClose = () => {
+    onClose();
+    setStartingPositionInput("");
+    setParsingError("");
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle marginY={1} variant="h5">
         Set game parameters
       </DialogTitle>
@@ -162,10 +194,32 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
               }
             />
           </FormGroup>
+
+          <FormControl fullWidth>
+            <TextField
+              label="Enter starting position here (FEN or PGN)"
+              variant="outlined"
+              multiline
+              value={startingPositionInput}
+              onChange={(e) => setStartingPositionInput(e.target.value)}
+            />
+          </FormControl>
+
+          {parsingError && (
+            <FormControl fullWidth>
+              <Typography color="salmon" textAlign="center" marginTop={1}>
+                {parsingError}
+              </Typography>
+            </FormControl>
+          )}
         </Grid>
       </DialogContent>
       <DialogActions sx={{ m: 2 }}>
-        <Button variant="outlined" sx={{ marginRight: 2 }} onClick={onClose}>
+        <Button
+          variant="outlined"
+          sx={{ marginRight: 2 }}
+          onClick={handleClose}
+        >
           Cancel
         </Button>
         <Button variant="contained" onClick={handleGameStart}>
