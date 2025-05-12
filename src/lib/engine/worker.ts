@@ -25,7 +25,7 @@ export const getEngineWorkers = (
   console.log(`Starting ${workersNb} workers from ${enginePath}`);
 
   for (let i = 0; i < workersNb; i++) {
-    const worker = new Worker(enginePath);
+    const worker = new window.Worker(enginePath);
 
     const engineWorker: EngineWorker = {
       isReady: false,
