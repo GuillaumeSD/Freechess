@@ -22,6 +22,7 @@ export const getEngineWorkers = (
       ? navigator.deviceMemory
       : 4;
   const workersNb = workersInputNb ?? Math.min(maxWorkersNb, deviceMemory, 10);
+  console.log(`Starting ${workersNb} workers from ${enginePath}`);
 
   for (let i = 0; i < workersNb; i++) {
     const worker = new Worker(enginePath);
