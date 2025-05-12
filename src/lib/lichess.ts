@@ -56,14 +56,17 @@ export const getLichessEval = async (
 };
 
 export const getLichessUserRecentGames = async (
-  username: string
+  username: string,
+  signal?: AbortSignal
 ): Promise<LichessGame[]> => {
   const res = await fetch(
     `https://lichess.org/api/games/user/${username}?until=${Date.now()}&max=50&pgnInJson=true&sort=dateDesc&clocks=true`,
-    { method: "GET", headers: { accept: "application/x-ndjson" } }
+    { method: "GET", headers: { accept: "application/x-ndjson" }, signal }
   );
 
-  if (res.status === 404) return [];
+  if (res.status >= 400) {
+    throw new Error("Error fetching games from Lichess");
+  }
 
   const rawData = await res.text();
   const games: LichessGame[] = rawData

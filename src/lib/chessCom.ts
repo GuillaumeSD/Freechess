@@ -2,7 +2,8 @@ import { ChessComGame } from "@/types/chessCom";
 import { getPaddedNumber } from "./helpers";
 
 export const getChessComUserRecentGames = async (
-  username: string
+  username: string,
+  signal?: AbortSignal
 ): Promise<ChessComGame[]> => {
   const date = new Date();
   const year = date.getUTCFullYear();
@@ -10,10 +11,13 @@ export const getChessComUserRecentGames = async (
   const paddedMonth = getPaddedNumber(month);
 
   const res = await fetch(
-    `https://api.chess.com/pub/player/${username}/games/${year}/${paddedMonth}`
+    `https://api.chess.com/pub/player/${username}/games/${year}/${paddedMonth}`,
+    { method: "GET", signal }
   );
 
-  if (res.status === 404) return [];
+  if (res.status >= 400) {
+    throw new Error("Error fetching games from Chess.com");
+  }
 
   const data = await res.json();
 

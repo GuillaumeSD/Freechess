@@ -23,7 +23,7 @@ export default function ChessComInput({ onSelect }: Props) {
     "chesscom-username",
     ""
   );
-  const debouncedUsername = useDebounce(chessComUsername, 200);
+  const debouncedUsername = useDebounce(chessComUsername, 300);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
 
   const {
@@ -33,7 +33,9 @@ export default function ChessComInput({ onSelect }: Props) {
   } = useQuery({
     queryKey: ["CCUserGames", debouncedUsername],
     enabled: !!debouncedUsername,
-    queryFn: () => getChessComUserRecentGames(debouncedUsername ?? ""),
+    queryFn: ({ signal }) =>
+      getChessComUserRecentGames(debouncedUsername ?? "", signal),
+    retry: 1,
   });
 
   return (
@@ -72,7 +74,7 @@ export default function ChessComInput({ onSelect }: Props) {
                 onClick={() => {
                   setBoardOrientation(
                     chessComUsername.toLowerCase() !==
-                      game.black.username.toLowerCase()
+                      game.black?.username?.toLowerCase()
                   );
                   onSelect(game.pgn);
                 }}
@@ -80,16 +82,20 @@ export default function ChessComInput({ onSelect }: Props) {
                 key={game.uuid}
               >
                 <ListItemText
-                  primary={`${capitalize(game.white.username) || "White"} (${
-                    game.white.rating || "?"
-                  }) vs ${capitalize(game.black.username) || "Black"} (${
-                    game.black.rating || "?"
+                  primary={`${capitalize(game.white?.username || "white")} (${
+                    game.white?.rating || "?"
+                  }) vs ${capitalize(game.black?.username || "black")} (${
+                    game.black?.rating || "?"
                   })`}
-                  secondary={`${capitalize(game.time_class)} played at ${new Date(
-                    game.end_time * 1000
-                  )
-                    .toLocaleString()
-                    .slice(0, -3)}`}
+                  secondary={
+                    game.end_time
+                      ? `${capitalize(game.time_class || "game")} played at ${new Date(
+                          game.end_time * 1000
+                        )
+                          .toLocaleString()
+                          .slice(0, -3)}`
+                      : undefined
+                  }
                   slotProps={{
                     primary: { noWrap: true },
                     secondary: { noWrap: true },

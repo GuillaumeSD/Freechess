@@ -23,7 +23,7 @@ export default function LichessInput({ onSelect }: Props) {
     "lichess-username",
     ""
   );
-  const debouncedUsername = useDebounce(lichessUsername, 200);
+  const debouncedUsername = useDebounce(lichessUsername, 500);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
 
   const {
@@ -33,7 +33,9 @@ export default function LichessInput({ onSelect }: Props) {
   } = useQuery({
     queryKey: ["LichessUserGames", debouncedUsername],
     enabled: !!debouncedUsername,
-    queryFn: () => getLichessUserRecentGames(debouncedUsername ?? ""),
+    queryFn: ({ signal }) =>
+      getLichessUserRecentGames(debouncedUsername ?? "", signal),
+    retry: 1,
   });
 
   return (
@@ -72,7 +74,7 @@ export default function LichessInput({ onSelect }: Props) {
                 onClick={() => {
                   setBoardOrientation(
                     lichessUsername.toLowerCase() !==
-                      game.players?.black?.user?.name.toLowerCase()
+                      game.players?.black?.user?.name?.toLowerCase()
                   );
                   onSelect(game.pgn);
                 }}
@@ -87,11 +89,15 @@ export default function LichessInput({ onSelect }: Props) {
                     capitalize(game.players?.black?.user?.name || "black") ||
                     "Black"
                   } (${game.players?.black?.rating || "?"})`}
-                  secondary={`${capitalize(game.speed)} played at ${new Date(
+                  secondary={
                     game.lastMoveAt
-                  )
-                    .toLocaleString()
-                    .slice(0, -3)}`}
+                      ? `${capitalize(game.speed || "game")} played at ${new Date(
+                          game.lastMoveAt
+                        )
+                          .toLocaleString()
+                          .slice(0, -3)}`
+                      : undefined
+                  }
                   slotProps={{
                     primary: { noWrap: true },
                     secondary: { noWrap: true },
