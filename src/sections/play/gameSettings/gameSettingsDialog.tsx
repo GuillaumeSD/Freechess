@@ -62,7 +62,7 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
     try {
       const startingFen = startingPositionInput.startsWith("[")
         ? getGameFromPgn(startingPositionInput).fen()
-        : startingPositionInput;
+        : startingPositionInput || undefined;
 
       resetGame({
         white: {
@@ -197,7 +197,7 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
 
           <FormControl fullWidth>
             <TextField
-              label="Enter starting position here (FEN or PGN)"
+              label="Optional starting position (FEN or PGN)"
               variant="outlined"
               multiline
               value={startingPositionInput}
