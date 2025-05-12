@@ -13,6 +13,8 @@ import {
   DialogActions,
   Typography,
   Grid2 as Grid,
+  Box,
+  useTheme,
 } from "@mui/material";
 import {
   engineNameAtom,
@@ -26,6 +28,7 @@ import { isEngineSupported } from "@/lib/engine/shared";
 import { Stockfish16_1 } from "@/lib/engine/stockfish16_1";
 import { useAtom } from "jotai";
 import { boardHueAtom, pieceSetAtom } from "@/components/board/states";
+import Image from "next/image";
 import {
   DEFAULT_ENGINE,
   ENGINE_LABELS,
@@ -53,6 +56,9 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
   );
   const [boardHue, setBoardHue] = useAtom(boardHueAtom);
   const [pieceSet, setPieceSet] = useAtom(pieceSetAtom);
+
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
 
   useEffect(() => {
     if (!isEngineSupported(engineName)) {
@@ -173,7 +179,16 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
               >
                 {PIECE_SETS.map((name) => (
                   <MenuItem key={name} value={name}>
-                    {name}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Image
+                        loading="lazy"
+                        src={`/piece/${name}/${isDarkMode ? "w" : "b"}N.svg`}
+                        alt={`${name} knight`}
+                        width={24}
+                        height={24}
+                      />
+                      {name}
+                    </Box>
                   </MenuItem>
                 ))}
               </Select>
