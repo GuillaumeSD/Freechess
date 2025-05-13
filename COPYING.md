@@ -42,7 +42,10 @@ public/piece/mpchess | [Maxime Chupin](https://github.com/chupinmaxime) | [GPL3v
 public/piece/cooke | [fejfar](https://github.com/fejfar) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 public/piece/monarchy | [slither77](https://github.com/slither77) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 public/piece/xkcd | [Randall Munroe](https://xkcd.com/about) | [CC BY-NC-SA 2.5](https://xkcd.com/license.html)
-public/piece/Firi | [James Faure](https://github.com/jfaure/Firi-pieceset) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+public/piece/firi | [James Faure](https://github.com/jfaure/Firi-pieceset) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+public/piece/chicago | [Benjamin Friedrich](https://github.com/benjfriedrich/chess-foundry-pack) | [CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0/)
+public/piece/iowa | [Benjamin Friedrich](https://github.com/benjfriedrich/chess-foundry-pack) | [CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0/)
+public/piece/oslo | [Benjamin Friedrich](https://github.com/benjfriedrich/chess-foundry-pack) | [CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0/)
 
 ## Exceptions (non-free)
 
@@ -54,4 +57,5 @@ public/piece/chess7 | [Style-7](http://www.styleseven.com/) | "freeware"
 public/piece/companion | David L. Brown | ["freeware"](http://www.enpassant.dk/chess/fonteng.htm#GC)
 public/piece/leipzig | Armando Hernandez Marroquin | ["freeware"](http://www.enpassant.dk/chess/fonteng.htm#LEIPZIG)
 public/piece/reillycraig | [Reilly Craig](https://instagram.com/fader_) |
+public/piece/symmetric | [Arcticpenguins](https://github.com/lichess-org/lichobile/issues/215) |
 public/piece/riohacha | |
