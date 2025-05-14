@@ -15,38 +15,41 @@ import { getLichessEval } from "../lichess";
 import { getMovesClassification } from "./helpers/moveClassification";
 import { computeEstimatedElo } from "./helpers/estimateElo";
 import { EngineWorker, WorkerJob } from "@/types/engine";
+import { getEngineWorker, sendCommandsToWorker } from "./worker";
 
 export class UciEngine {
-  private workers: EngineWorker[];
+  public readonly name: EngineName;
+  private workers: EngineWorker[] = [];
   private workerQueue: WorkerJob[] = [];
   private isReady = false;
-  private engineName: EngineName;
+  private enginePath: string;
+  private customEngineInit?:
+    | ((worker: EngineWorker) => Promise<void>)
+    | undefined = undefined;
   private multiPv = 3;
   private elo: number | undefined = undefined;
 
-  private constructor(engineName: EngineName, workers: EngineWorker[]) {
-    this.engineName = engineName;
-    this.workers = workers;
+  private constructor(
+    engineName: EngineName,
+    enginePath: string,
+    customEngineInit: UciEngine["customEngineInit"]
+  ) {
+    this.name = engineName;
+    this.enginePath = enginePath;
+    this.customEngineInit = customEngineInit;
   }
 
   public static async create(
     engineName: EngineName,
-    workers: EngineWorker[],
-    customEngineInit?: (
-      sendCommands: UciEngine["sendCommands"]
-    ) => Promise<void>
+    enginePath: string,
+    customEngineInit?: UciEngine["customEngineInit"]
   ): Promise<UciEngine> {
-    const engine = new UciEngine(engineName, workers);
+    const engine = new UciEngine(engineName, enginePath, customEngineInit);
 
-    await engine.broadcastCommands(["uci"], "uciok");
-    await engine.setMultiPv(engine.multiPv, true);
-    await customEngineInit?.(engine.sendCommands.bind(engine));
-    for (const worker of workers) {
-      worker.isReady = true;
-    }
+    await engine.addNewWorker();
     engine.isReady = true;
 
-    console.log(`${engineName} initialized with ${workers.length} workers`);
+    console.log(`${engineName} initialized`);
     return engine;
   }
 
@@ -61,31 +64,34 @@ export class UciEngine {
     return undefined;
   }
 
-  private releaseWorker(worker: EngineWorker) {
-    worker.isReady = true;
+  private async releaseWorker(worker: EngineWorker) {
     const nextJob = this.workerQueue.shift();
-
-    if (nextJob) {
-      this.sendCommands(
-        nextJob.commands,
-        nextJob.finalMessage,
-        nextJob.onNewMessage
-      ).then(nextJob.resolve);
+    if (!nextJob) {
+      worker.isReady = true;
+      return;
     }
+
+    const res = await sendCommandsToWorker(
+      worker,
+      nextJob.commands,
+      nextJob.finalMessage,
+      nextJob.onNewMessage
+    );
+
+    this.releaseWorker(worker);
+    nextJob.resolve(res);
   }
 
-  private async setMultiPv(multiPv: number, initCase = false) {
-    if (!initCase) {
-      if (multiPv === this.multiPv) return;
+  private async setMultiPv(multiPv: number) {
+    if (multiPv === this.multiPv) return;
 
-      this.throwErrorIfNotReady();
-    }
+    this.throwErrorIfNotReady();
 
     if (multiPv < 2 || multiPv > 6) {
       throw new Error(`Invalid MultiPV value : ${multiPv}`);
     }
 
-    await this.broadcastCommands(
+    await this.sendCommandsToEachWorker(
       [`setoption name MultiPV value ${multiPv}`, "isready"],
       "readyok"
     );
@@ -93,23 +99,21 @@ export class UciEngine {
     this.multiPv = multiPv;
   }
 
-  private async setElo(elo: number, initCase = false) {
-    if (!initCase) {
-      if (elo === this.elo) return;
+  private async setElo(elo: number) {
+    if (elo === this.elo) return;
 
-      this.throwErrorIfNotReady();
-    }
+    this.throwErrorIfNotReady();
 
     if (elo < 1320 || elo > 3190) {
       throw new Error(`Invalid Elo value : ${elo}`);
     }
 
-    await this.broadcastCommands(
+    await this.sendCommandsToEachWorker(
       ["setoption name UCI_LimitStrength value true", "isready"],
       "readyok"
     );
 
-    await this.broadcastCommands(
+    await this.sendCommandsToEachWorker(
       [`setoption name UCI_Elo value ${elo}`, "isready"],
       "readyok"
     );
@@ -117,9 +121,13 @@ export class UciEngine {
     this.elo = elo;
   }
 
+  public getIsReady(): boolean {
+    return this.isReady;
+  }
+
   private throwErrorIfNotReady() {
     if (!this.isReady) {
-      throw new Error(`${this.engineName} is not ready`);
+      throw new Error(`${this.name} is not ready`);
     }
   }
 
@@ -128,21 +136,21 @@ export class UciEngine {
     this.workerQueue = [];
 
     for (const worker of this.workers) {
-      worker.uci("quit");
-      worker.terminate?.();
-      worker.isReady = false;
+      this.terminateWorker(worker);
     }
 
-    console.log(`${this.engineName} shutdown`);
+    console.log(`${this.name} shutdown`);
   }
 
-  public getIsReady(): boolean {
-    return this.isReady;
+  private terminateWorker(worker: EngineWorker) {
+    worker.uci("quit");
+    worker.terminate?.();
+    worker.isReady = false;
   }
 
   public async stopSearch(): Promise<void> {
     this.workerQueue = [];
-    await this.broadcastCommands(["stop", "isready"], "readyok");
+    await this.sendCommandsToEachWorker(["stop", "isready"], "readyok");
 
     for (const worker of this.workers) {
       this.releaseWorker(worker);
@@ -167,46 +175,74 @@ export class UciEngine {
       });
     }
 
-    return this.sendCommandsToWorker(
+    const res = await sendCommandsToWorker(
       worker,
       commands,
       finalMessage,
       onNewMessage
     );
+
+    this.releaseWorker(worker);
+    return res;
   }
 
-  private async sendCommandsToWorker(
-    worker: EngineWorker,
-    commands: string[],
-    finalMessage: string,
-    onNewMessage?: (messages: string[]) => void
-  ): Promise<string[]> {
-    return new Promise((resolve) => {
-      const messages: string[] = [];
-      worker.listen = (data) => {
-        messages.push(data);
-        onNewMessage?.(messages);
-
-        if (data.startsWith(finalMessage)) {
-          this.releaseWorker(worker);
-          resolve(messages);
-        }
-      };
-      for (const command of commands) {
-        worker.uci(command);
-      }
-    });
-  }
-
-  private async broadcastCommands(
+  private async sendCommandsToEachWorker(
     commands: string[],
     finalMessage: string,
     onNewMessage?: (messages: string[]) => void
   ): Promise<void> {
     await Promise.all(
-      this.workers.map((worker) =>
-        this.sendCommandsToWorker(worker, commands, finalMessage, onNewMessage)
-      )
+      this.workers.map(async (worker) => {
+        await sendCommandsToWorker(
+          worker,
+          commands,
+          finalMessage,
+          onNewMessage
+        );
+        this.releaseWorker(worker);
+      })
+    );
+  }
+
+  private async addNewWorker() {
+    const worker = getEngineWorker(this.enginePath);
+
+    await sendCommandsToWorker(worker, ["uci"], "uciok");
+    await sendCommandsToWorker(
+      worker,
+      [`setoption name MultiPV value ${this.multiPv}`, "isready"],
+      "readyok"
+    );
+    await this.customEngineInit?.(worker);
+    await sendCommandsToWorker(worker, ["ucinewgame", "isready"], "readyok");
+
+    this.workers.push(worker);
+    this.releaseWorker(worker);
+  }
+
+  private async setWorkersNb(workersNb: number) {
+    if (workersNb === this.workers.length) return;
+
+    if (workersNb < 1) {
+      throw new Error(
+        `Number of workers must be greater than 0, got ${workersNb} instead`
+      );
+    }
+
+    if (workersNb < this.workers.length) {
+      const workersToRemove = this.workers.slice(workersNb);
+      this.workers = this.workers.slice(0, workersNb);
+
+      for (const worker of workersToRemove) {
+        this.terminateWorker(worker);
+      }
+      return;
+    }
+
+    const workersNbToCreate = workersNb - this.workers.length;
+
+    await Promise.all(
+      new Array(workersNbToCreate).fill(0).map(() => this.addNewWorker())
     );
   }
 
@@ -217,13 +253,15 @@ export class UciEngine {
     multiPv = this.multiPv,
     setEvaluationProgress,
     playersRatings,
+    workersNb = 1,
   }: EvaluateGameParams): Promise<GameEval> {
     this.throwErrorIfNotReady();
     setEvaluationProgress?.(1);
     await this.setMultiPv(multiPv);
     this.isReady = false;
 
-    await this.broadcastCommands(["ucinewgame", "isready"], "readyok");
+    await this.sendCommandsToEachWorker(["ucinewgame", "isready"], "readyok");
+    this.setWorkersNb(workersNb);
 
     const positions: PositionEval[] = new Array(fens.length);
     let completed = 0;
@@ -267,10 +305,11 @@ export class UciEngine {
           return;
         }
 
-        const result = await this.evaluatePosition(fen, depth);
+        const result = await this.evaluatePosition(fen, depth, workersNb);
         updateEval(i, result);
       })
     );
+    await this.setWorkersNb(1);
 
     const positionsWithClassification = getMovesClassification(
       positions,
@@ -290,7 +329,7 @@ export class UciEngine {
       estimatedElo,
       accuracy,
       settings: {
-        engine: this.engineName,
+        engine: this.name,
         date: new Date().toISOString(),
         depth,
         multiPv,
@@ -300,9 +339,10 @@ export class UciEngine {
 
   private async evaluatePosition(
     fen: string,
-    depth = 16
+    depth = 16,
+    workersNb: number
   ): Promise<PositionEval> {
-    if (this.workers.length < 2) {
+    if (workersNb < 2) {
       const lichessEval = await getLichessEval(fen, this.multiPv);
       if (
         lichessEval.lines.length >= this.multiPv &&

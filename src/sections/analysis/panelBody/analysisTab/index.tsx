@@ -7,13 +7,12 @@ import {
 import { useAtomValue } from "jotai";
 import {
   boardAtom,
+  currentPositionAtom,
   engineMultiPvAtom,
-  engineNameAtom,
   gameAtom,
   gameEvalAtom,
 } from "../../states";
 import LineEvaluation from "./lineEvaluation";
-import { useCurrentPosition } from "../../hooks/useCurrentPosition";
 import { LineEval } from "@/types/eval";
 import PlayersMetric from "./playersMetric";
 import MoveInfo from "./moveInfo";
@@ -21,8 +20,7 @@ import Opening from "./opening";
 
 export default function AnalysisTab(props: GridProps) {
   const linesNumber = useAtomValue(engineMultiPvAtom);
-  const engineName = useAtomValue(engineNameAtom);
-  const position = useCurrentPosition(engineName);
+  const position = useAtomValue(currentPositionAtom);
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
   const gameEval = useAtomValue(gameEvalAtom);

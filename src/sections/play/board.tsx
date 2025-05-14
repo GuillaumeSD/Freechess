@@ -19,7 +19,7 @@ import { usePlayersData } from "@/hooks/usePlayersData";
 export default function BoardContainer() {
   const screenSize = useScreenSize();
   const engineName = useAtomValue(enginePlayNameAtom);
-  const engine = useEngine(engineName, 1);
+  const engine = useEngine(engineName);
   const game = useAtomValue(gameAtom);
   const { white, black } = usePlayersData(gameAtom);
   const playerColor = useAtomValue(playerColorAtom);

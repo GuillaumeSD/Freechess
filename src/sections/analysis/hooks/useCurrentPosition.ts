@@ -10,15 +10,13 @@ import {
 import { CurrentPosition, PositionEval } from "@/types/eval";
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect } from "react";
-import { useEngine } from "../../../hooks/useEngine";
-import { EngineName } from "@/types/enums";
 import { getEvaluateGameParams } from "@/lib/chess";
 import { getMovesClassification } from "@/lib/engine/helpers/moveClassification";
 import { openings } from "@/data/openings";
+import { UciEngine } from "@/lib/engine/uciEngine";
 
-export const useCurrentPosition = (engineName?: EngineName) => {
+export const useCurrentPosition = (engine: UciEngine | null) => {
   const [currentPosition, setCurrentPosition] = useAtom(currentPositionAtom);
-  const engine = useEngine(engineName, 1);
   const gameEval = useAtomValue(gameEvalAtom);
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
@@ -77,7 +75,7 @@ export const useCurrentPosition = (engineName?: EngineName) => {
     if (
       !position.eval &&
       engine?.getIsReady() &&
-      engineName &&
+      engine.name &&
       !board.isCheckmate() &&
       !board.isStalemate()
     ) {
@@ -85,12 +83,13 @@ export const useCurrentPosition = (engineName?: EngineName) => {
         fen: string,
         setPartialEval?: (positionEval: PositionEval) => void
       ) => {
-        if (!engine?.getIsReady() || !engineName)
+        if (!engine.getIsReady()) {
           throw new Error("Engine not ready");
+        }
         const savedEval = savedEvals[fen];
         if (
           savedEval &&
-          savedEval.engine === engineName &&
+          savedEval.engine === engine.name &&
           (savedEval.lines?.length ?? 0) >= multiPv &&
           (savedEval.lines[0].depth ?? 0) >= depth
         ) {
@@ -111,7 +110,7 @@ export const useCurrentPosition = (engineName?: EngineName) => {
 
         setSavedEvals((prev) => ({
           ...prev,
-          [fen]: { ...rawPositionEval, engine: engineName },
+          [fen]: { ...rawPositionEval, engine: engine.name },
         }));
 
         return rawPositionEval;
@@ -165,7 +164,9 @@ export const useCurrentPosition = (engineName?: EngineName) => {
     }
 
     return () => {
-      engine?.stopSearch();
+      if (engine?.getIsReady()) {
+        engine?.stopSearch();
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameEval, board, game, engine, depth, multiPv]);

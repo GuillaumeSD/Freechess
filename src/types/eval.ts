@@ -62,6 +62,7 @@ export interface EvaluateGameParams {
   multiPv?: number;
   setEvaluationProgress?: (value: number) => void;
   playersRatings?: { white?: number; black?: number };
+  workersNb?: number;
 }
 
 export interface SavedEval {

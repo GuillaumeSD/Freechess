@@ -18,10 +18,13 @@ import { SavedEvals } from "@/types/eval";
 import { useEffect, useCallback } from "react";
 import { usePlayersData } from "@/hooks/usePlayersData";
 import { Typography } from "@mui/material";
+import { useCurrentPosition } from "../hooks/useCurrentPosition";
+import { getRecommendedWorkersNb } from "@/lib/engine/worker";
 
 export default function AnalyzeButton() {
   const engineName = useAtomValue(engineNameAtom);
   const engine = useEngine(engineName);
+  useCurrentPosition(engine);
   const [evaluationProgress, setEvaluationProgress] = useAtom(
     evaluationProgressAtom
   );
@@ -55,6 +58,7 @@ export default function AnalyzeButton() {
         white: white?.rating,
         black: black?.rating,
       },
+      workersNb: getRecommendedWorkersNb(),
     });
 
     setEval(newGameEval);

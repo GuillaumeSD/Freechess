@@ -7,10 +7,7 @@ import { UciEngine } from "@/lib/engine/uciEngine";
 import { EngineName } from "@/types/enums";
 import { useEffect, useState } from "react";
 
-export const useEngine = (
-  engineName: EngineName | undefined,
-  workersNb?: number
-) => {
+export const useEngine = (engineName: EngineName | undefined) => {
   const [engine, setEngine] = useState<UciEngine | null>(null);
 
   useEffect(() => {
@@ -20,35 +17,32 @@ export const useEngine = (
       return;
     }
 
-    pickEngine(engineName, workersNb).then((newEngine) => {
+    pickEngine(engineName).then((newEngine) => {
       setEngine((prev) => {
         prev?.shutdown();
         return newEngine;
       });
     });
-  }, [engineName, workersNb]);
+  }, [engineName]);
 
   return engine;
 };
 
-const pickEngine = (
-  engine: EngineName,
-  workersNb?: number
-): Promise<UciEngine> => {
+const pickEngine = (engine: EngineName): Promise<UciEngine> => {
   switch (engine) {
     case EngineName.Stockfish17:
-      return Stockfish17.create(false, workersNb);
+      return Stockfish17.create(false);
     case EngineName.Stockfish17Lite:
-      return Stockfish17.create(true, workersNb);
+      return Stockfish17.create(true);
     case EngineName.Stockfish16_1:
-      return Stockfish16_1.create(false, workersNb);
+      return Stockfish16_1.create(false);
     case EngineName.Stockfish16_1Lite:
-      return Stockfish16_1.create(true, workersNb);
+      return Stockfish16_1.create(true);
     case EngineName.Stockfish16:
-      return Stockfish16.create(false, workersNb);
+      return Stockfish16.create(false);
     case EngineName.Stockfish16NNUE:
-      return Stockfish16.create(true, workersNb);
+      return Stockfish16.create(true);
     case EngineName.Stockfish11:
-      return Stockfish11.create(workersNb);
+      return Stockfish11.create();
   }
 };

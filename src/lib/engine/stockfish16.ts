@@ -1,13 +1,11 @@
 import { EngineName } from "@/types/enums";
 import { UciEngine } from "./uciEngine";
 import { isMultiThreadSupported, isWasmSupported } from "./shared";
-import { getEngineWorkers } from "./worker";
+import { sendCommandsToWorker } from "./worker";
+import { EngineWorker } from "@/types/engine";
 
 export class Stockfish16 {
-  public static async create(
-    nnue?: boolean,
-    workersNb?: number
-  ): Promise<UciEngine> {
+  public static async create(nnue?: boolean): Promise<UciEngine> {
     if (!Stockfish16.isSupported()) {
       throw new Error("Stockfish 16 is not supported");
     }
@@ -19,10 +17,9 @@ export class Stockfish16 {
       ? "engines/stockfish-16/stockfish-nnue-16.js"
       : "engines/stockfish-16/stockfish-nnue-16-single.js";
 
-    const customEngineInit = async (
-      sendCommands: UciEngine["sendCommands"]
-    ) => {
-      await sendCommands(
+    const customEngineInit = async (worker: EngineWorker) => {
+      await sendCommandsToWorker(
+        worker,
         [`setoption name Use NNUE value ${!!nnue}`, "isready"],
         "readyok"
       );
@@ -32,9 +29,7 @@ export class Stockfish16 {
       ? EngineName.Stockfish16NNUE
       : EngineName.Stockfish16;
 
-    const workers = getEngineWorkers(enginePath, workersNb);
-
-    return UciEngine.create(engineName, workers, customEngineInit);
+    return UciEngine.create(engineName, enginePath, customEngineInit);
   }
 
   public static isSupported() {

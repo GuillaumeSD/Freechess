@@ -1,12 +1,11 @@
 import { EngineName } from "@/types/enums";
 import { UciEngine } from "./uciEngine";
-import { getEngineWorkers } from "./worker";
 
 export class Stockfish11 {
-  public static async create(workersNb?: number): Promise<UciEngine> {
-    const workers = getEngineWorkers("engines/stockfish-11.js", workersNb);
+  public static async create(): Promise<UciEngine> {
+    const enginePath = "engines/stockfish-11.js";
 
-    return UciEngine.create(EngineName.Stockfish11, workers);
+    return UciEngine.create(EngineName.Stockfish11, enginePath);
   }
 
   public static isSupported() {

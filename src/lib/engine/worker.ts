@@ -1,45 +1,59 @@
 import { EngineWorker } from "@/types/engine";
 
-export const getEngineWorkers = (
-  enginePath: string,
-  workersInputNb?: number
-): EngineWorker[] => {
-  if (workersInputNb !== undefined && workersInputNb < 1) {
-    throw new Error(
-      `Number of workers must be greater than 0, got ${workersInputNb} instead`
-    );
-  }
+export const getEngineWorker = (enginePath: string): EngineWorker => {
+  console.log(`Creating worker from ${enginePath}`);
 
-  const engineWorkers: EngineWorker[] = [];
+  const worker = new window.Worker(enginePath);
 
-  const maxWorkersNb = Math.max(
+  const engineWorker: EngineWorker = {
+    isReady: false,
+    uci: (command: string) => worker.postMessage(command),
+    listen: () => null,
+    terminate: () => worker.terminate(),
+  };
+
+  worker.onmessage = (event) => {
+    engineWorker.listen(event.data);
+  };
+
+  return engineWorker;
+};
+
+export const sendCommandsToWorker = (
+  worker: EngineWorker,
+  commands: string[],
+  finalMessage: string,
+  onNewMessage?: (messages: string[]) => void
+): Promise<string[]> => {
+  return new Promise((resolve) => {
+    const messages: string[] = [];
+
+    worker.listen = (data) => {
+      messages.push(data);
+      onNewMessage?.(messages);
+
+      if (data.startsWith(finalMessage)) {
+        resolve(messages);
+      }
+    };
+
+    for (const command of commands) {
+      worker.uci(command);
+    }
+  });
+};
+
+export const getRecommendedWorkersNb = (): number => {
+  const maxWorkersNbFromThreads = Math.max(
     1,
     navigator.hardwareConcurrency - 4,
     Math.ceil((navigator.hardwareConcurrency * 2) / 3)
   );
-  const deviceMemory =
+
+  const maxWorkersNbFromMemory =
     "deviceMemory" in navigator && typeof navigator.deviceMemory === "number"
       ? navigator.deviceMemory
       : 4;
-  const workersNb = workersInputNb ?? Math.min(maxWorkersNb, deviceMemory, 10);
-  console.log(`Starting ${workersNb} workers from ${enginePath}`);
 
-  for (let i = 0; i < workersNb; i++) {
-    const worker = new window.Worker(enginePath);
-
-    const engineWorker: EngineWorker = {
-      isReady: false,
-      uci: (command: string) => worker.postMessage(command),
-      listen: () => null,
-      terminate: () => worker.terminate(),
-    };
-
-    worker.onmessage = (event) => {
-      engineWorker.listen(event.data);
-    };
-
-    engineWorkers.push(engineWorker);
-  }
-
-  return engineWorkers;
+  return Math.min(maxWorkersNbFromThreads, maxWorkersNbFromMemory, 10);
 };
