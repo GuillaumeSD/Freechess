@@ -49,7 +49,6 @@ export class UciEngine {
     await engine.addNewWorker();
     engine.isReady = true;
 
-    console.log(`${engineName} initialized`);
     return engine;
   }
 
@@ -138,11 +137,11 @@ export class UciEngine {
     for (const worker of this.workers) {
       this.terminateWorker(worker);
     }
-
-    console.log(`${this.name} shutdown`);
+    this.workers = [];
   }
 
   private terminateWorker(worker: EngineWorker) {
+    console.log(`Terminating worker from ${this.enginePath}`);
     worker.uci("quit");
     worker.terminate?.();
     worker.isReady = false;

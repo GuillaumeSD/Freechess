@@ -12,11 +12,16 @@ export const isWasmSupported = () =>
 
 export const isMultiThreadSupported = () => {
   try {
-    return SharedArrayBuffer !== undefined;
+    return SharedArrayBuffer !== undefined && !isIosDevice();
   } catch {
     return false;
   }
 };
+
+export const isIosDevice = () => /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+export const isMobileDevice = () =>
+  isIosDevice() || /Android|Opera Mini/i.test(navigator.userAgent);
 
 export const isEngineSupported = (name: EngineName): boolean => {
   switch (name) {

@@ -1,4 +1,5 @@
 import { EngineWorker } from "@/types/engine";
+import { isIosDevice, isMobileDevice } from "./shared";
 
 export const getEngineWorker = (enginePath: string): EngineWorker => {
   console.log(`Creating worker from ${enginePath}`);
@@ -47,7 +48,7 @@ export const getRecommendedWorkersNb = (): number => {
   const maxWorkersNbFromThreads = Math.max(
     1,
     navigator.hardwareConcurrency - 4,
-    Math.ceil((navigator.hardwareConcurrency * 2) / 3)
+    Math.floor((navigator.hardwareConcurrency * 2) / 3)
   );
 
   const maxWorkersNbFromMemory =
@@ -55,5 +56,11 @@ export const getRecommendedWorkersNb = (): number => {
       ? navigator.deviceMemory
       : 4;
 
-  return Math.min(maxWorkersNbFromThreads, maxWorkersNbFromMemory, 10);
+  const maxWorkersNbFromDevice = isIosDevice() ? 2 : isMobileDevice() ? 4 : 10;
+
+  return Math.min(
+    maxWorkersNbFromThreads,
+    maxWorkersNbFromMemory,
+    maxWorkersNbFromDevice
+  );
 };

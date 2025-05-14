@@ -2,8 +2,7 @@ export interface EngineWorker {
   isReady: boolean;
   uci(command: string): void;
   listen: (data: string) => void;
-  terminate?: () => void;
-  setNnueBuffer?: (data: Uint8Array, index?: number) => void;
+  terminate: () => void;
 }
 
 export interface WorkerJob {

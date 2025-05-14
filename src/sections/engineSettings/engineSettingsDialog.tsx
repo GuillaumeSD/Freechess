@@ -20,6 +20,7 @@ import {
   engineNameAtom,
   engineDepthAtom,
   engineMultiPvAtom,
+  engineWorkersNbAtom,
 } from "../analysis/states";
 import ArrowOptions from "./arrowOptions";
 import { useAtomLocalStorage } from "@/hooks/useAtomLocalStorage";
@@ -35,6 +36,7 @@ import {
   PIECE_SETS,
   STRONGEST_ENGINE,
 } from "@/constants";
+import { getRecommendedWorkersNb } from "@/lib/engine/worker";
 
 interface Props {
   open: boolean;
@@ -56,6 +58,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
   );
   const [boardHue, setBoardHue] = useAtom(boardHueAtom);
   const [pieceSet, setPieceSet] = useAtom(pieceSetAtom);
+  const [engineWorkersNb, setEngineWorkersNb] = useAtom(engineWorkersNbAtom);
 
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
@@ -72,12 +75,15 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle variant="h5">Settings</DialogTitle>
+      <DialogTitle variant="h5" sx={{ paddingBottom: 1 }}>
+        Settings
+      </DialogTitle>
       <DialogContent sx={{ paddingBottom: 0 }}>
         <Grid
           container
           justifyContent="center"
           alignItems="center"
+          paddingTop={1}
           spacing={3}
           size={12}
         >
@@ -86,12 +92,14 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
             justifyContent="center"
             size={{ xs: 12, sm: 7, md: 8 }}
           >
-            <Typography>
+            <Typography variant="body2">
               {ENGINE_LABELS[DEFAULT_ENGINE].small} is the default engine if
               your device support its requirements. It offers the best balance
               between speed and strength.{" "}
               {ENGINE_LABELS[STRONGEST_ENGINE].small} is the strongest engine
-              available, note that it requires a one time download of 75MB.
+              available, note that it requires a one time download of{" "}
+              {ENGINE_LABELS[STRONGEST_ENGINE].sizeMb}MB and is much more
+              compute intensive.
             </Typography>
           </Grid>
 
@@ -162,6 +170,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
           <Grid
             container
             justifyContent="center"
+            alignItems="center"
             size={{ xs: 12, sm: 4, md: 3 }}
           >
             <FormControl variant="outlined">
@@ -193,6 +202,26 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
                 ))}
               </Select>
             </FormControl>
+          </Grid>
+
+          <Grid container justifyContent="center" size={{ xs: 12, sm: 7 }}>
+            <Slider
+              label="Number of threads"
+              value={engineWorkersNb}
+              setValue={setEngineWorkersNb}
+              min={1}
+              max={10}
+              marksFilter={1}
+            />
+          </Grid>
+
+          <Grid container justifyContent="center" size={{ xs: 12, sm: 5 }}>
+            <Typography variant="body2">
+              More threads means quicker analysis but only if your device can
+              handle them, otherwise it may have the opposite effect. The
+              estimated best value for your device is{" "}
+              {getRecommendedWorkersNb()}.
+            </Typography>
           </Grid>
         </Grid>
       </DialogContent>

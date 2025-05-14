@@ -3,6 +3,7 @@ import {
   engineDepthAtom,
   engineMultiPvAtom,
   engineNameAtom,
+  engineWorkersNbAtom,
   evaluationProgressAtom,
   gameAtom,
   gameEvalAtom,
@@ -19,12 +20,12 @@ import { useEffect, useCallback } from "react";
 import { usePlayersData } from "@/hooks/usePlayersData";
 import { Typography } from "@mui/material";
 import { useCurrentPosition } from "../hooks/useCurrentPosition";
-import { getRecommendedWorkersNb } from "@/lib/engine/worker";
 
 export default function AnalyzeButton() {
   const engineName = useAtomValue(engineNameAtom);
   const engine = useEngine(engineName);
   useCurrentPosition(engine);
+  const engineWorkersNb = useAtomValue(engineWorkersNbAtom);
   const [evaluationProgress, setEvaluationProgress] = useAtom(
     evaluationProgressAtom
   );
@@ -58,7 +59,7 @@ export default function AnalyzeButton() {
         white: white?.rating,
         black: black?.rating,
       },
-      workersNb: getRecommendedWorkersNb(),
+      workersNb: engineWorkersNb,
     });
 
     setEval(newGameEval);
@@ -86,6 +87,7 @@ export default function AnalyzeButton() {
   }, [
     engine,
     engineName,
+    engineWorkersNb,
     game,
     engineDepth,
     engineMultiPv,
