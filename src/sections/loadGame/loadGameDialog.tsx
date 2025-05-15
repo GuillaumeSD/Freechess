@@ -35,7 +35,7 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
   const [pgn, setPgn] = useState("");
   const [gameOrigin, setGameOrigin] = useLocalStorage(
     "preferred-game-origin",
-    GameOrigin.Pgn
+    GameOrigin.ChessCom
   );
   const [parsingError, setParsingError] = useState("");
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
@@ -109,9 +109,9 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
                 setParsingError("");
               }}
             >
-              {Object.values(GameOrigin).map((origin) => (
+              {Object.entries(gameOriginLabel).map(([origin, label]) => (
                 <MenuItem key={origin} value={origin}>
-                  {gameOriginLabel[origin]}
+                  {label}
                 </MenuItem>
               ))}
             </Select>
@@ -160,7 +160,7 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
 }
 
 const gameOriginLabel: Record<GameOrigin, string> = {
-  [GameOrigin.Pgn]: "PGN",
   [GameOrigin.ChessCom]: "Chess.com",
   [GameOrigin.Lichess]: "Lichess.org",
+  [GameOrigin.Pgn]: "PGN",
 };
