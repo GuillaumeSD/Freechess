@@ -1,5 +1,5 @@
 import { Color, MoveClassification } from "@/types/enums";
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom, gameEvalAtom } from "../../../states";
 import { useMemo } from "react";

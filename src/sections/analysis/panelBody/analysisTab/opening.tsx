@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { Grid2 as Grid, Skeleton, Typography } from "@mui/material";
+import { Grid, Skeleton, Typography } from "@mui/material";
 import { currentPositionAtom } from "../../states";
 
 export default function Opening() {

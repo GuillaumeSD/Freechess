@@ -1,5 +1,5 @@
 import { MoveClassification } from "@/types/enums";
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import Image from "next/image";
 import { useAtomValue } from "jotai";
 import { boardAtom, currentPositionAtom, gameAtom } from "../../../states";

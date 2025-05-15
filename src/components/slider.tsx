@@ -1,9 +1,4 @@
-import {
-  Grid2 as Grid,
-  Slider as MuiSlider,
-  styled,
-  Typography,
-} from "@mui/material";
+import { Grid, Slider as MuiSlider, styled, Typography } from "@mui/material";
 
 export interface Props {
   value: number;

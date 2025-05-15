@@ -4,7 +4,7 @@ import { capitalize } from "@/lib/helpers";
 import {
   CircularProgress,
   FormControl,
-  Grid2 as Grid,
+  Grid,
   ListItemButton,
   ListItemText,
   TextField,

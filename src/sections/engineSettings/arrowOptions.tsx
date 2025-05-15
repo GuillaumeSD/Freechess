@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, Grid2 as Grid } from "@mui/material";
+import { Checkbox, FormControlLabel, Grid } from "@mui/material";
 import {
   showBestMoveArrowAtom,
   showPlayerMoveIconAtom,

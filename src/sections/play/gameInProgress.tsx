@@ -1,9 +1,4 @@
-import {
-  Button,
-  CircularProgress,
-  Grid2 as Grid,
-  Typography,
-} from "@mui/material";
+import { Button, CircularProgress, Grid, Typography } from "@mui/material";
 import { useAtom, useAtomValue } from "jotai";
 import { gameAtom, isGameInProgressAtom } from "./states";
 import { useEffect } from "react";

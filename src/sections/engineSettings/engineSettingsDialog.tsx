@@ -12,9 +12,9 @@ import {
   OutlinedInput,
   DialogActions,
   Typography,
-  Grid2 as Grid,
+  Grid,
   Box,
-  useTheme,
+  useColorScheme,
 } from "@mui/material";
 import {
   engineNameAtom,
@@ -60,8 +60,8 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
   const [pieceSet, setPieceSet] = useAtom(pieceSetAtom);
   const [engineWorkersNb, setEngineWorkersNb] = useAtom(engineWorkersNbAtom);
 
-  const theme = useTheme();
-  const isDarkMode = theme.palette.mode === "dark";
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme.mode === "dark";
 
   useEffect(() => {
     if (!isEngineSupported(engineName)) {

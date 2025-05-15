@@ -1,5 +1,5 @@
 import { usePlayersData } from "@/hooks/usePlayersData";
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { gameAtom, gameEvalAtom } from "../../../states";
 import { MoveClassification } from "@/types/enums";
 import ClassificationRow from "./classificationRow";

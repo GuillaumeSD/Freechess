@@ -1,6 +1,6 @@
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { Icon } from "@iconify/react";
-import { Grid2 as Grid, IconButton, Tooltip } from "@mui/material";
+import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { useRouter } from "next/router";
 import { boardAtom, gameAtom, gameEvalAtom } from "../states";

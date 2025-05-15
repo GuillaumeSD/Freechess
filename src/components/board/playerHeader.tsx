@@ -1,6 +1,6 @@
 import { Color } from "@/types/enums";
 import { Player } from "@/types/game";
-import { Avatar, Grid2 as Grid, Stack, Typography } from "@mui/material";
+import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import CapturedPieces from "./capturedPieces";
 import { PrimitiveAtom, useAtomValue } from "jotai";
 import { Chess } from "chess.js";

@@ -1,4 +1,4 @@
-import { Grid2 as Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import MovesLine from "./movesLine";
 import { useMemo } from "react";
 import { useAtomValue } from "jotai";

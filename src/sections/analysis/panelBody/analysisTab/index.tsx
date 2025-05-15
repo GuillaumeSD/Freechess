@@ -1,9 +1,4 @@
-import {
-  Grid2 as Grid,
-  Grid2Props as GridProps,
-  List,
-  Typography,
-} from "@mui/material";
+import { Grid, GridProps, List, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import {
   boardAtom,

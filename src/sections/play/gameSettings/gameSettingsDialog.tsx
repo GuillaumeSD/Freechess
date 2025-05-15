@@ -12,7 +12,7 @@ import {
   OutlinedInput,
   DialogActions,
   Typography,
-  Grid2 as Grid,
+  Grid,
   FormGroup,
   FormControlLabel,
   Switch,

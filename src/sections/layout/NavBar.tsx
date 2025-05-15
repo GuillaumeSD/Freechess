@@ -9,13 +9,10 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import NavLink from "@/components/NavLink";
 import Image from "next/image";
+import { useColorScheme } from "@mui/material";
 
-interface Props {
-  darkMode: boolean;
-  switchDarkMode: () => void;
-}
-
-export default function NavBar({ darkMode, switchDarkMode }: Props) {
+export default function NavBar() {
+  const { mode, setMode } = useColorScheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouter();
 
@@ -23,16 +20,17 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
     setDrawerOpen(false);
   }, [router.pathname]);
 
+  const darkMode = mode === "dark";
+
   return (
     <Box sx={{ flexGrow: 1, display: "flex" }}>
       <AppBar
         position="static"
-        sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1,
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        style={{
           backgroundColor: darkMode ? "#19191c" : "white",
           color: darkMode ? "white" : "black",
         }}
-        enableColorOnDark
       >
         <Toolbar>
           <IconButton
@@ -81,7 +79,7 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
           </IconButton>
           <IconButton
             sx={{ ml: "min(0.6rem, 0.8vw)" }}
-            onClick={switchDarkMode}
+            onClick={() => setMode(darkMode ? "light" : "dark")}
             color="inherit"
             edge="end"
           >

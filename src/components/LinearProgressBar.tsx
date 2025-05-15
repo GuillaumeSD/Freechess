@@ -1,5 +1,5 @@
 import {
-  Grid2 as Grid,
+  Grid,
   LinearProgress,
   LinearProgressProps,
   Typography,

@@ -1,4 +1,4 @@
-import { Grid2 as Grid, IconButton, Tooltip } from "@mui/material";
+import { Grid, IconButton, Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom } from "../states";

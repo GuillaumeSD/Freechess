@@ -15,9 +15,12 @@ import { uciMoveParams } from "@/lib/chess";
 import Board from "@/components/board";
 import { useGameData } from "@/hooks/useGameData";
 import { usePlayersData } from "@/hooks/usePlayersData";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 export default function BoardContainer() {
   const screenSize = useScreenSize();
+  const theme = useTheme();
+  const isBelowMd = useMediaQuery(theme.breakpoints.down("md"));
   const engineName = useAtomValue(enginePlayNameAtom);
   const engine = useEngine(engineName);
   const game = useAtomValue(gameAtom);
@@ -54,13 +57,12 @@ export default function BoardContainer() {
     const width = screenSize.width;
     const height = screenSize.height;
 
-    // 900 is the md layout breakpoint
-    if (window?.innerWidth < 900) {
+    if (isBelowMd) {
       return Math.min(width, height - 150);
     }
 
     return Math.min(width - 300, height * 0.83);
-  }, [screenSize]);
+  }, [screenSize, isBelowMd]);
 
   useGameData(gameAtom, gameDataAtom);
 

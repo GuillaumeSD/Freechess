@@ -1,4 +1,4 @@
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { useAtomValue } from "jotai";
 import { gameAtom } from "../states";

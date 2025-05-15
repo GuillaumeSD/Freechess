@@ -4,7 +4,7 @@ import GameInProgress from "@/sections/play/gameInProgress";
 import GameRecap from "@/sections/play/gameRecap";
 import GameSettingsButton from "@/sections/play/gameSettings/gameSettingsButton";
 import { isGameInProgressAtom } from "@/sections/play/states";
-import { Grid2 as Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useAtomValue } from "jotai";
 
 export default function Play() {

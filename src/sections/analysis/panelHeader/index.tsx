@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import GamePanel from "./gamePanel";
 import LoadGame from "./loadGame";
 import AnalyzeButton from "./analyzeButton";

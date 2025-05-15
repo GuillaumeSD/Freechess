@@ -12,9 +12,12 @@ import { useScreenSize } from "@/hooks/useScreenSize";
 import { Color } from "@/types/enums";
 import Board from "@/components/board";
 import { usePlayersData } from "@/hooks/usePlayersData";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 export default function BoardContainer() {
   const screenSize = useScreenSize();
+  const theme = useTheme();
+  const isBelowLg = useMediaQuery(theme.breakpoints.down("lg"));
   const boardOrientation = useAtomValue(boardOrientationAtom);
   const showBestMoveArrow = useAtomValue(showBestMoveArrowAtom);
   const { white, black } = usePlayersData(gameAtom);
@@ -23,13 +26,12 @@ export default function BoardContainer() {
     const width = screenSize.width;
     const height = screenSize.height;
 
-    // 1200 is the lg layout breakpoint
-    if (window?.innerWidth < 1200) {
+    if (isBelowLg) {
       return Math.min(width, height - 150);
     }
 
     return Math.min(width - 700, height * 0.92);
-  }, [screenSize]);
+  }, [screenSize, isBelowLg]);
 
   return (
     <Board

@@ -1,40 +1,44 @@
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren } from "react";
 import NavBar from "./NavBar";
 import { red } from "@mui/material/colors";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+
+const theme = createTheme({
+  colorSchemes: {
+    light: {
+      palette: {
+        error: {
+          main: red[400],
+        },
+        primary: {
+          main: "#5d9948",
+        },
+        secondary: {
+          main: "#ffffff",
+        },
+      },
+    },
+    dark: {
+      palette: {
+        error: {
+          main: red[400],
+        },
+        primary: {
+          main: "#5d9948",
+        },
+        secondary: {
+          main: "#424242",
+        },
+      },
+    },
+  },
+});
 
 export default function Layout({ children }: PropsWithChildren) {
-  const [isDarkMode, setDarkMode] = useLocalStorage("useDarkMode", true);
-
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: isDarkMode ? "dark" : "light",
-          error: {
-            main: red[400],
-          },
-          primary: {
-            main: "#5d9948",
-          },
-          secondary: {
-            main: isDarkMode ? "#424242" : "#ffffff",
-          },
-        },
-      }),
-    [isDarkMode]
-  );
-
-  if (isDarkMode === null) return null;
-
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} defaultMode="dark" noSsr>
       <CssBaseline />
-      <NavBar
-        darkMode={isDarkMode}
-        switchDarkMode={() => setDarkMode((val) => !val)}
-      />
+      <NavBar />
       <main style={{ margin: "3vh 2vw" }}>{children}</main>
     </ThemeProvider>
   );

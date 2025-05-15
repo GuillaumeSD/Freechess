@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
 import { gameAtom, isGameInProgressAtom, playerColorAtom } from "./states";
-import { Button, Grid2 as Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import { Color } from "@/types/enums";
 import { setGameHeaders } from "@/lib/chess";
 import { useGameDatabase } from "@/hooks/useGameDatabase";

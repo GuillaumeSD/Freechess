@@ -1,4 +1,4 @@
-import { Box, Grid2 as Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { Chessboard } from "react-chessboard";
 import { PrimitiveAtom, atom, useAtomValue, useSetAtom } from "jotai";
 import {

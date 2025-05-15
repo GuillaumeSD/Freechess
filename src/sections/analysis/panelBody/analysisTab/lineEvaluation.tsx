@@ -1,5 +1,11 @@
 import { LineEval } from "@/types/eval";
-import { Box, ListItem, Skeleton, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  ListItem,
+  Skeleton,
+  Typography,
+  useColorScheme,
+} from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom } from "../../states";
 import { getLineEvalLabel, moveLineUciToSan } from "@/lib/chess";
@@ -15,7 +21,7 @@ interface Props {
 }
 
 export default function LineEvaluation({ line }: Props) {
-  const theme = useTheme();
+  const colorScheme = useColorScheme();
   const board = useAtomValue(boardAtom);
   const { addMoves } = useChessActions(boardAtom);
   const lineLabel = getLineEvalLabel(line);
@@ -28,7 +34,7 @@ export default function LineEvaluation({ line }: Props) {
 
   const uciToSan = moveLineUciToSan(board.fen());
   const initialTurn = board.turn();
-  const isDarkMode = theme.palette.mode === "dark";
+  const isDarkMode = colorScheme.mode === "dark";
 
   const formatSan = (
     san: string,

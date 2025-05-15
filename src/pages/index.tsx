@@ -13,7 +13,7 @@ import {
 import {
   Box,
   Divider,
-  Grid2 as Grid,
+  Grid,
   Tab,
   Tabs,
   useMediaQuery,

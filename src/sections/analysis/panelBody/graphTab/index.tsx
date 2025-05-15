@@ -1,4 +1,4 @@
-import { Box, Grid2 as Grid, Grid2Props as GridProps } from "@mui/material";
+import { Box, Grid, GridProps } from "@mui/material";
 import { useAtomValue } from "jotai";
 import {
   Area,

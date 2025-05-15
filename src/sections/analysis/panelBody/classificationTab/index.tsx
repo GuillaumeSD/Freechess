@@ -1,4 +1,4 @@
-import { Grid2 as Grid, Grid2Props as GridProps } from "@mui/material";
+import { Grid, GridProps } from "@mui/material";
 import MovesPanel from "./movesPanel";
 import MovesClassificationsRecap from "./movesClassificationsRecap";
 

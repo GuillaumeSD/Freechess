@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 
 export const useScreenSize = () => {
-  const [screenSize, setScreenSize] = useState({
-    width: document?.querySelector(".MuiGrid2-root")?.clientWidth ?? 500,
-    height: window ? window.innerHeight - 120 : 500,
-  });
+  const [screenSize, setScreenSize] = useState(() => ({
+    width: 500,
+    height: 500,
+  }));
 
   useEffect(() => {
-    const mainDiv = document?.querySelector(".MuiGrid2-root");
+    const mainDiv = document?.querySelector(".MuiGrid-root");
     if (!mainDiv) return;
 
+    setScreenSize((prev) => ({
+      ...prev,
+      width: mainDiv.clientWidth,
+    }));
     const observer = new ResizeObserver(() =>
       setScreenSize((prev) => ({ ...prev, width: mainDiv.clientWidth }))
     );
@@ -27,6 +31,7 @@ export const useScreenSize = () => {
         height: window.innerHeight - 120,
       }));
     };
+    handleResize();
 
     window.addEventListener("resize", handleResize);
 

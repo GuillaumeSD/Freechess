@@ -13,7 +13,7 @@ import {
   OutlinedInput,
   DialogActions,
   Typography,
-  Grid2 as Grid,
+  Grid,
 } from "@mui/material";
 import { setContext as setSentryContext } from "@sentry/react";
 import { Chess } from "chess.js";
@@ -78,10 +78,12 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
       onClose={handleClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        sx: {
-          position: "fixed",
-          top: 0,
+      slotProps={{
+        paper: {
+          sx: {
+            position: "fixed",
+            top: 0,
+          },
         },
       }}
     >

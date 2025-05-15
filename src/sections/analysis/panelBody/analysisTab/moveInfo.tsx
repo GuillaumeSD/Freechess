@@ -1,4 +1,4 @@
-import { Grid2 as Grid, Skeleton, Stack, Typography } from "@mui/material";
+import { Grid, Skeleton, Stack, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom, currentPositionAtom } from "../../states";
 import { useMemo } from "react";

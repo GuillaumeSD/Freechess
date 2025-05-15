@@ -1,6 +1,6 @@
 import { getCapturedPieces, getMaterialDifference } from "@/lib/chess";
 import { Color } from "@/types/enums";
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { CSSProperties, useMemo } from "react";
 
 export interface Props {

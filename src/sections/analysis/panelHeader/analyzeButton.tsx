@@ -12,13 +12,12 @@ import {
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { getEvaluateGameParams } from "@/lib/chess";
 import { useGameDatabase } from "@/hooks/useGameDatabase";
-import { LoadingButton } from "@mui/lab";
 import { useEngine } from "@/hooks/useEngine";
 import { logAnalyticsEvent } from "@/lib/firebase";
 import { SavedEvals } from "@/types/eval";
 import { useEffect, useCallback } from "react";
 import { usePlayersData } from "@/hooks/usePlayersData";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useCurrentPosition } from "../hooks/useCurrentPosition";
 
 export default function AnalyzeButton() {
@@ -111,7 +110,7 @@ export default function AnalyzeButton() {
   if (evaluationProgress) return null;
 
   return (
-    <LoadingButton
+    <Button
       variant="contained"
       size="small"
       startIcon={<Icon icon="streamline:magnifying-glass-solid" height={12} />}
@@ -121,6 +120,6 @@ export default function AnalyzeButton() {
       <Typography fontSize="0.9em" fontWeight="500" lineHeight="1.4em">
         {gameEval ? "Analyze again" : "Analyze"}
       </Typography>
-    </LoadingButton>
+    </Button>
   );
 }
