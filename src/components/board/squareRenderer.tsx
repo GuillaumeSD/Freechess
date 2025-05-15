@@ -2,7 +2,7 @@ import { CurrentPosition } from "@/types/eval";
 import { MoveClassification } from "@/types/enums";
 import { PrimitiveAtom, atom, useAtomValue } from "jotai";
 import Image from "next/image";
-import { CSSProperties, forwardRef } from "react";
+import { CSSProperties, forwardRef, useMemo } from "react";
 import {
   CustomSquareProps,
   Square,
@@ -36,15 +36,21 @@ export function getSquareRenderer({
       const toSquare = position.lastMove?.to;
       const moveClassification = position?.eval?.moveClassification;
 
-      const highlightSquareStyle: CSSProperties | undefined =
-        clickedSquares.includes(square)
-          ? rightClickSquareStyle
-          : fromSquare === square || toSquare === square
-            ? previousMoveSquareStyle(moveClassification)
-            : undefined;
+      const highlightSquareStyle: CSSProperties | undefined = useMemo(
+        () =>
+          clickedSquares.includes(square)
+            ? rightClickSquareStyle
+            : fromSquare === square || toSquare === square
+              ? previousMoveSquareStyle(moveClassification)
+              : undefined,
+        [clickedSquares, square, fromSquare, toSquare, moveClassification]
+      );
 
-      const playableSquareStyle: CSSProperties | undefined =
-        playableSquares.includes(square) ? playableSquareStyles : undefined;
+      const playableSquareStyle: CSSProperties | undefined = useMemo(
+        () =>
+          playableSquares.includes(square) ? playableSquareStyles : undefined,
+        [playableSquares, square]
+      );
 
       return (
         <div
@@ -52,7 +58,7 @@ export function getSquareRenderer({
           style={{
             ...style,
             position: "relative",
-            filter: `hue-rotate(-${boardHue}deg)`,
+            filter: boardHue ? `hue-rotate(-${boardHue}deg)` : undefined,
           }}
         >
           {children}

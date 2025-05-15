@@ -10,7 +10,7 @@ import {
   Square,
 } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChessActions";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Color, MoveClassification } from "@/types/enums";
 import { Chess } from "chess.js";
 import { getSquareRenderer } from "./squareRenderer";
@@ -64,10 +64,11 @@ export default function Board({
   const boardHue = useAtomValue(boardHueAtom);
 
   const gameFen = game.fen();
-
-  useEffect(() => {
+  const [previousFen, setPreviousFen] = useState(gameFen);
+  if (gameFen !== previousFen) {
+    setPreviousFen(gameFen);
     setClickedSquares([]);
-  }, [gameFen, setClickedSquares]);
+  }
 
   const isPiecePlayable = useCallback(
     ({ piece }: { piece: string }): boolean => {
@@ -78,117 +79,134 @@ export default function Board({
     [canPlay, game]
   );
 
-  const onPieceDrop = (
-    source: Square,
-    target: Square,
-    piece: string
-  ): boolean => {
-    if (!isPiecePlayable({ piece })) return false;
+  const onPieceDrop = useCallback(
+    (source: Square, target: Square, piece: string): boolean => {
+      if (!isPiecePlayable({ piece })) return false;
 
-    const result = playMove({
-      from: source,
-      to: target,
-      promotion: piece[1]?.toLowerCase() ?? "q",
-    });
+      const result = playMove({
+        from: source,
+        to: target,
+        promotion: piece[1]?.toLowerCase() ?? "q",
+      });
 
-    return !!result;
-  };
+      return !!result;
+    },
+    [isPiecePlayable, playMove]
+  );
 
-  const resetMoveClick = (square?: Square | null) => {
-    setMoveClickFrom(square ?? null);
-    setMoveClickTo(null);
-    setShowPromotionDialog(false);
-    if (square) {
-      const moves = game.moves({ square, verbose: true });
-      setPlayableSquares(moves.map((m) => m.to));
-    } else {
-      setPlayableSquares([]);
-    }
-  };
+  const resetMoveClick = useCallback(
+    (square?: Square | null) => {
+      setMoveClickFrom(square ?? null);
+      setMoveClickTo(null);
+      setShowPromotionDialog(false);
+      if (square) {
+        const moves = game.moves({ square, verbose: true });
+        setPlayableSquares(moves.map((m) => m.to));
+      } else {
+        setPlayableSquares([]);
+      }
+    },
+    [setMoveClickFrom, setMoveClickTo, setPlayableSquares, game]
+  );
 
-  const handleSquareLeftClick = (square: Square, piece?: string) => {
-    setClickedSquares([]);
+  const handleSquareLeftClick = useCallback(
+    (square: Square, piece?: string) => {
+      setClickedSquares([]);
 
-    if (!moveClickFrom) {
-      if (piece && !isPiecePlayable({ piece })) return;
-      resetMoveClick(square);
-      return;
-    }
+      if (!moveClickFrom) {
+        if (piece && !isPiecePlayable({ piece })) return;
+        resetMoveClick(square);
+        return;
+      }
 
-    const validMoves = game.moves({ square: moveClickFrom, verbose: true });
-    const move = validMoves.find((m) => m.to === square);
+      const validMoves = game.moves({ square: moveClickFrom, verbose: true });
+      const move = validMoves.find((m) => m.to === square);
 
-    if (!move) {
-      resetMoveClick(square);
-      return;
-    }
+      if (!move) {
+        resetMoveClick(square);
+        return;
+      }
 
-    setMoveClickTo(square);
+      setMoveClickTo(square);
 
-    if (
-      move.piece === "p" &&
-      ((move.color === "w" && square[1] === "8") ||
-        (move.color === "b" && square[1] === "1"))
-    ) {
-      setShowPromotionDialog(true);
-      return;
-    }
+      if (
+        move.piece === "p" &&
+        ((move.color === "w" && square[1] === "8") ||
+          (move.color === "b" && square[1] === "1"))
+      ) {
+        setShowPromotionDialog(true);
+        return;
+      }
 
-    const result = playMove({
-      from: moveClickFrom,
-      to: square,
-    });
-
-    resetMoveClick(result ? undefined : square);
-  };
-
-  const handleSquareRightClick = (square: Square) => {
-    setClickedSquares((prev) =>
-      prev.includes(square)
-        ? prev.filter((s) => s !== square)
-        : [...prev, square]
-    );
-  };
-
-  const handlePieceDragBegin = (_: string, square: Square) => {
-    resetMoveClick(square);
-  };
-
-  const handlePieceDragEnd = () => {
-    resetMoveClick();
-  };
-
-  const onPromotionPieceSelect = (
-    piece?: PromotionPieceOption,
-    from?: Square,
-    to?: Square
-  ) => {
-    if (!piece) return false;
-    const promotionPiece = piece[1]?.toLowerCase() ?? "q";
-
-    if (moveClickFrom && moveClickTo) {
       const result = playMove({
         from: moveClickFrom,
-        to: moveClickTo,
-        promotion: promotionPiece,
+        to: square,
       });
-      resetMoveClick();
-      return !!result;
-    }
 
-    if (from && to) {
-      const result = playMove({
-        from,
-        to,
-        promotion: promotionPiece,
-      });
-      resetMoveClick();
-      return !!result;
-    }
+      resetMoveClick(result ? undefined : square);
+    },
+    [
+      game,
+      isPiecePlayable,
+      moveClickFrom,
+      playMove,
+      resetMoveClick,
+      setClickedSquares,
+    ]
+  );
 
-    resetMoveClick(moveClickFrom);
-    return false;
-  };
+  const handleSquareRightClick = useCallback(
+    (square: Square) => {
+      setClickedSquares((prev) =>
+        prev.includes(square)
+          ? prev.filter((s) => s !== square)
+          : [...prev, square]
+      );
+    },
+    [setClickedSquares]
+  );
+
+  const handlePieceDragBegin = useCallback(
+    (_: string, square: Square) => {
+      resetMoveClick(square);
+    },
+    [resetMoveClick]
+  );
+
+  const handlePieceDragEnd = useCallback(() => {
+    resetMoveClick();
+  }, [resetMoveClick]);
+
+  const onPromotionPieceSelect = useCallback(
+    (piece?: PromotionPieceOption, from?: Square, to?: Square) => {
+      if (!piece) return false;
+      const promotionPiece = piece[1]?.toLowerCase() ?? "q";
+
+      if (moveClickFrom && moveClickTo) {
+        const result = playMove({
+          from: moveClickFrom,
+          to: moveClickTo,
+          promotion: promotionPiece,
+        });
+        resetMoveClick();
+        return !!result;
+      }
+
+      if (from && to) {
+        const result = playMove({
+          from,
+          to,
+          promotion: promotionPiece,
+        });
+        resetMoveClick();
+        return !!result;
+      }
+
+      resetMoveClick(moveClickFrom);
+      return false;
+    },
+    [moveClickFrom, moveClickTo, playMove, resetMoveClick]
+  );
 
   const customArrows: Arrow[] = useMemo(() => {
     const bestMove = position?.lastEval?.bestMove;
@@ -249,6 +267,22 @@ export default function Board({
     [pieceSet]
   );
 
+  const customBoardStyle = useMemo(() => {
+    const commonBoardStyle = {
+      borderRadius: "5px",
+      boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+    };
+
+    if (boardHue) {
+      return {
+        ...commonBoardStyle,
+        filter: `hue-rotate(${boardHue}deg)`,
+      };
+    }
+
+    return commonBoardStyle;
+  }, [boardHue]);
+
   return (
     <Grid
       container
@@ -293,11 +327,7 @@ export default function Board({
             boardOrientation={
               boardOrientation === Color.White ? "white" : "black"
             }
-            customBoardStyle={{
-              borderRadius: "5px",
-              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-              filter: `hue-rotate(${boardHue}deg)`,
-            }}
+            customBoardStyle={customBoardStyle}
             customArrows={customArrows}
             isDraggablePiece={isPiecePlayable}
             customSquare={SquareRenderer}
