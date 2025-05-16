@@ -78,10 +78,12 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
       onClose={handleClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        sx: {
-          position: "fixed",
-          top: 0,
+      slotProps={{
+        paper: {
+          sx: {
+            position: "fixed",
+            top: 0,
+          },
         },
       }}
     >
