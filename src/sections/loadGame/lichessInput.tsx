@@ -8,22 +8,75 @@ import {
   ListItemButton,
   ListItemText,
   TextField,
+  Autocomplete,
 } from "@mui/material";
+import { Icon } from "@iconify/react";
 import { useSetAtom } from "jotai";
 import { boardOrientationAtom } from "../analysis/states";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 
 interface Props {
   onSelect: (pgn: string) => void;
 }
 
 export default function LichessInput({ onSelect }: Props) {
-  const [lichessUsername, setLichessUsername] = useLocalStorage(
+  const [rawStoredValue, setStoredValues] = useLocalStorage<string[] | string>(
     "lichess-username",
-    ""
+    []
   );
-  const debouncedUsername = useDebounce(lichessUsername, 500);
+
+  const storedValues = useMemo(() => {
+    if (Array.isArray(rawStoredValue)) return rawStoredValue;
+    if (typeof rawStoredValue === "string") return [rawStoredValue];
+    return [];
+  }, [rawStoredValue]);
+
+  const [inputValue, setInputValue] = useState("");
+  const [hasEdited, setHasEdited] = useState(false);
+
+  useEffect(() => {
+    if (!hasEdited && storedValues && storedValues.length > 0 && !inputValue) {
+      setInputValue(storedValues[0]);
+    }
+  }, [storedValues, hasEdited, inputValue]);
+
+  const updateHistory = (username: string) => {
+    const trimmed = username.trim();
+    if (!trimmed) return;
+    const lower = trimmed.toLowerCase();
+    const exists =
+      storedValues && storedValues.some((u) => u.toLowerCase() === lower);
+    if (!exists) {
+      setStoredValues([
+        trimmed,
+        ...(storedValues ? storedValues.filter((u) => u !== trimmed) : []),
+      ]);
+    }
+  };
+
+  const deleteUsername = (usernameToDelete: string) => {
+    if (storedValues) {
+      const updated = storedValues.filter((u) => u !== usernameToDelete);
+      setStoredValues(updated);
+    }
+  };
+
+  const handleChange = (_: React.SyntheticEvent, newValue: string | null) => {
+    const value = newValue ?? "";
+    setInputValue(value);
+  };
+
+  const handleInputChange = (
+    _: React.SyntheticEvent,
+    newInputValue: string
+  ) => {
+    setInputValue(newInputValue);
+    if (!hasEdited) setHasEdited(true);
+  };
+
+  const debouncedUsername = useDebounce(inputValue, 500);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
 
   const {
@@ -41,15 +94,44 @@ export default function LichessInput({ onSelect }: Props) {
   return (
     <>
       <FormControl sx={{ m: 1, width: 300 }}>
-        <TextField
-          label="Enter your Lichess username..."
-          variant="outlined"
-          value={lichessUsername ?? ""}
-          onChange={(e) => setLichessUsername(e.target.value)}
+        <Autocomplete
+          freeSolo
+          options={storedValues}
+          inputValue={inputValue}
+          onInputChange={handleInputChange}
+          onChange={handleChange}
+          renderOption={(props, option) => (
+            <li
+              {...props}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingRight: 8,
+              }}
+            >
+              <span>{option}</span>
+              <Icon
+                icon="mdi:close"
+                style={{ cursor: "pointer" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteUsername(option);
+                }}
+              />
+            </li>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Enter your Lichess username..."
+              variant="outlined"
+            />
+          )}
         />
       </FormControl>
 
-      {lichessUsername && (
+      {inputValue && (
         <Grid
           container
           gap={2}
@@ -72,8 +154,9 @@ export default function LichessInput({ onSelect }: Props) {
             games.map((game) => (
               <ListItemButton
                 onClick={() => {
+                  updateHistory(inputValue);
                   setBoardOrientation(
-                    lichessUsername.toLowerCase() !==
+                    inputValue.toLowerCase() !==
                       game.players?.black?.user?.name?.toLowerCase()
                   );
                   onSelect(game.pgn);
