@@ -165,7 +165,7 @@ export const useCurrentPosition = (engine: UciEngine | null) => {
 
     return () => {
       if (engine?.getIsReady()) {
-        engine?.stopSearch();
+        engine?.stopAllCurrentJobs();
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

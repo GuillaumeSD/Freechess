@@ -101,6 +101,10 @@ export default function AnalyzeButton() {
     black.rating,
   ]);
 
+  useEffect(() => {
+    setEvaluationProgress(0);
+  }, [engine, setEvaluationProgress]);
+
   // Automatically analyze when a new game is loaded and ready to analyze
   useEffect(() => {
     if (!gameEval && readyToAnalyse) {

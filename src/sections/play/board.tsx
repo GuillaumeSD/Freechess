@@ -46,7 +46,7 @@ export default function BoardContainer() {
     playEngineMove();
 
     return () => {
-      engine?.stopSearch();
+      engine?.stopAllCurrentJobs();
     };
   }, [gameFen, isGameInProgress]); // eslint-disable-line react-hooks/exhaustive-deps
 

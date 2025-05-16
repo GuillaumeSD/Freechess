@@ -10,7 +10,7 @@ import {
   Square,
 } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChessActions";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Color, MoveClassification } from "@/types/enums";
 import { Chess } from "chess.js";
 import { getSquareRenderer } from "./squareRenderer";
@@ -64,11 +64,10 @@ export default function Board({
   const boardHue = useAtomValue(boardHueAtom);
 
   const gameFen = game.fen();
-  const [previousFen, setPreviousFen] = useState(gameFen);
-  if (gameFen !== previousFen) {
-    setPreviousFen(gameFen);
+
+  useEffect(() => {
     setClickedSquares([]);
-  }
+  }, [gameFen, setClickedSquares]);
 
   const isPiecePlayable = useCallback(
     ({ piece }: { piece: string }): boolean => {

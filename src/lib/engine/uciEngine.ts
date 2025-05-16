@@ -84,8 +84,6 @@ export class UciEngine {
   private async setMultiPv(multiPv: number) {
     if (multiPv === this.multiPv) return;
 
-    this.throwErrorIfNotReady();
-
     if (multiPv < 2 || multiPv > 6) {
       throw new Error(`Invalid MultiPV value : ${multiPv}`);
     }
@@ -100,8 +98,6 @@ export class UciEngine {
 
   private async setElo(elo: number) {
     if (elo === this.elo) return;
-
-    this.throwErrorIfNotReady();
 
     if (elo < 1320 || elo > 3190) {
       throw new Error(`Invalid Elo value : ${elo}`);
@@ -142,12 +138,12 @@ export class UciEngine {
 
   private terminateWorker(worker: EngineWorker) {
     console.log(`Terminating worker from ${this.enginePath}`);
-    worker.uci("quit");
-    worker.terminate?.();
     worker.isReady = false;
+    worker.uci("quit");
+    worker.terminate();
   }
 
-  public async stopSearch(): Promise<void> {
+  public async stopAllCurrentJobs(): Promise<void> {
     this.workerQueue = [];
     await this.sendCommandsToEachWorker(["stop", "isready"], "readyok");
 
@@ -255,10 +251,10 @@ export class UciEngine {
     workersNb = 1,
   }: EvaluateGameParams): Promise<GameEval> {
     this.throwErrorIfNotReady();
-    setEvaluationProgress?.(1);
-    await this.setMultiPv(multiPv);
     this.isReady = false;
+    setEvaluationProgress?.(1);
 
+    await this.setMultiPv(multiPv);
     await this.sendCommandsToEachWorker(["ucinewgame", "isready"], "readyok");
     this.setWorkersNb(workersNb);
 
@@ -308,7 +304,9 @@ export class UciEngine {
         updateEval(i, result);
       })
     );
+
     await this.setWorkersNb(1);
+    this.isReady = true;
 
     const positionsWithClassification = getMovesClassification(
       positions,
@@ -322,7 +320,6 @@ export class UciEngine {
       playersRatings?.black
     );
 
-    this.isReady = true;
     return {
       positions: positionsWithClassification,
       estimatedElo,
@@ -369,7 +366,7 @@ export class UciEngine {
 
     const lichessEvalPromise = getLichessEval(fen, multiPv);
 
-    await this.stopSearch();
+    await this.stopAllCurrentJobs();
     await this.setMultiPv(multiPv);
 
     const onNewMessage = (messages: string[]) => {
@@ -404,6 +401,8 @@ export class UciEngine {
     depth = 16
   ): Promise<string | undefined> {
     this.throwErrorIfNotReady();
+
+    await this.stopAllCurrentJobs();
     await this.setElo(elo);
 
     console.log(`Evaluating position: ${fen}`);
