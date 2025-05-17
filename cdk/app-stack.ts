@@ -13,18 +13,27 @@ import {
   Source,
 } from "aws-cdk-lib/aws-s3-deployment";
 import path from "path";
+import { renameSync } from "fs";
 import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
 
 interface AppStackProps extends cdk.StackProps {
   domainName: string;
+  pagePaths: string[];
 }
 
 export class AppStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: AppStackProps) {
     super(scope, id, props);
-    const { domainName } = props;
+    const { domainName, pagePaths } = props;
+
+    for (const pageName of pagePaths) {
+      renameSync(
+        path.resolve(__dirname, `../out/${pageName}.html`),
+        path.resolve(__dirname, `../out/${pageName}`)
+      );
+    }
 
     const mainBucket = new Bucket(this, "Bucket", {
       accessControl: BucketAccessControl.PRIVATE,
@@ -47,11 +56,29 @@ export class AppStack extends cdk.Stack {
           exclude: ["engines"],
         }),
       ],
+      exclude: pagePaths,
       memoryLimit: 512,
       cacheControl: [
         CacheControl.setPublic(),
         CacheControl.maxAge(cdk.Duration.hours(1)),
       ],
+    });
+
+    new BucketDeployment(this, "BucketPagesDeployment", {
+      destinationBucket: mainBucket,
+      sources: [
+        Source.asset(path.resolve(__dirname, "../out"), {
+          exclude: ["engines"],
+        }),
+      ],
+      exclude: ["*"],
+      include: pagePaths,
+      memoryLimit: 512,
+      cacheControl: [
+        CacheControl.setPublic(),
+        CacheControl.maxAge(cdk.Duration.hours(1)),
+      ],
+      contentType: "text/html",
     });
 
     new BucketDeployment(this, "BucketEnginesDeployment", {
