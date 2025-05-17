@@ -12,12 +12,13 @@ import {
   InputLabel,
   OutlinedInput,
   DialogActions,
-  Typography,
   Grid2 as Grid,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { setContext as setSentryContext } from "@sentry/react";
 import { Chess } from "chess.js";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import GamePgnInput from "./gamePgnInput";
 import ChessComInput from "./chessComInput";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -38,12 +39,12 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
     GameOrigin.ChessCom
   );
   const [parsingError, setParsingError] = useState("");
+  const parsingErrorTimeout = useRef<NodeJS.Timeout | null>(null);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
   const { addGame } = useGameDatabase();
 
-  const handleAddGame = (pgn: string) => {
+  const handleAddGame = (pgn: string, boardOrientation?: boolean) => {
     if (!pgn) return;
-    setParsingError("");
 
     try {
       const gameToAdd = getGameFromPgn(pgn);
@@ -55,20 +56,33 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
         addGame(gameToAdd);
       }
 
+      setBoardOrientation(boardOrientation ?? true);
       handleClose();
     } catch (error) {
       console.error(error);
+
+      if (parsingErrorTimeout.current) {
+        clearTimeout(parsingErrorTimeout.current);
+      }
+
       setParsingError(
         error instanceof Error
           ? `${error.message} !`
-          : "Unknown error while parsing PGN !"
+          : "Invalid PGN: unknown error !"
       );
+
+      parsingErrorTimeout.current = setTimeout(() => {
+        setParsingError("");
+      }, 3000);
     }
   };
 
   const handleClose = () => {
     setPgn("");
     setParsingError("");
+    if (parsingErrorTimeout.current) {
+      clearTimeout(parsingErrorTimeout.current);
+    }
     onClose();
   };
 
@@ -129,13 +143,16 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
             <LichessInput onSelect={handleAddGame} />
           )}
 
-          {parsingError && (
-            <FormControl fullWidth>
-              <Typography color="salmon" textAlign="center" marginTop={1}>
-                {parsingError}
-              </Typography>
-            </FormControl>
-          )}
+          <Snackbar open={!!parsingError}>
+            <Alert
+              onClose={() => setParsingError("")}
+              severity="error"
+              variant="filled"
+              sx={{ width: "100%" }}
+            >
+              {parsingError}
+            </Alert>
+          </Snackbar>
         </Grid>
       </DialogContent>
       <DialogActions sx={{ m: 2 }}>
@@ -147,7 +164,6 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
             variant="contained"
             sx={{ marginLeft: 2 }}
             onClick={() => {
-              setBoardOrientation(true);
               handleAddGame(pgn);
             }}
           >
