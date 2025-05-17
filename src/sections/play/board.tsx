@@ -15,6 +15,7 @@ import { uciMoveParams } from "@/lib/chess";
 import Board from "@/components/board";
 import { useGameData } from "@/hooks/useGameData";
 import { usePlayersData } from "@/hooks/usePlayersData";
+import { sleep } from "@/lib/helpers";
 
 export default function BoardContainer() {
   const screenSize = useScreenSize();
@@ -40,7 +41,11 @@ export default function BoardContainer() {
       ) {
         return;
       }
+
+      const timePromise = sleep(1000);
       const move = await engine.getEngineNextMove(gameFen, engineElo);
+      await timePromise;
+
       if (move) playMove(uciMoveParams(move));
     };
     playEngineMove();

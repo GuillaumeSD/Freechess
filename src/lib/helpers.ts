@@ -13,3 +13,6 @@ export const isInViewport = (element: HTMLElement) => {
     rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
   );
 };
+
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
