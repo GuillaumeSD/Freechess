@@ -38,9 +38,9 @@ import {
   STRONGEST_ENGINE,
 } from "@/constants";
 import { getRecommendedWorkersNb } from "@/lib/engine/worker";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover";
+import { Icon } from "@iconify/react";
 
 interface Props {
   open: boolean;
@@ -228,7 +228,7 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
                 marksFilter={1}
               />
               <IconButton size="medium" onClick={handleHelpClick} sx={{ ml: 2 }} aria-label="Help about number of threads">
-                <HelpOutlineIcon fontSize="medium" />
+                <Icon icon="material-symbols:help-outline" fontSize={28} />
               </IconButton>
             </Box>
             <Popover
