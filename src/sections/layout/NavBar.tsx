@@ -3,17 +3,31 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import NavMenu from "./NavMenu";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import NavLink from "@/components/NavLink";
 import Image from "next/image";
+import { styled } from "@mui/material/styles";
 
 interface Props {
   darkMode: boolean;
   switchDarkMode: () => void;
 }
+
+// Styled component to make the link look like a button
+const StyledIconButtonLink = styled("a")({
+  color: "inherit",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textDecoration: "none", // Remove underline from link
+  // Add any other styles to make it look like a button, e.g., padding, borderRadius
+  "&:hover": {
+    cursor: "pointer", // Change cursor on hover
+  },
+});
 
 export default function NavBar({ darkMode, switchDarkMode }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -22,17 +36,6 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
   useEffect(() => {
     setDrawerOpen(false);
   }, [router.pathname]);
-
-  const handleIconClick = useCallback((url: string, event: React.MouseEvent) => {
-    if (event.button === 0 || event.button === 1) {
-      // Left click (0) or middle click (1)
-      window.open(url, "_blank", "noopener,noreferrer");
-      if (event.button === 0) {
-        // If left click, focus the new tab
-        window.focus();
-      }
-    }
-  }, []);
 
   return (
     <Box sx={{ flexGrow: 1, display: "flex" }}>
@@ -75,23 +78,28 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
               Chesskit
             </Typography>
           </NavLink>
-          <IconButton
-            color="inherit"
-            onClick={(event) =>
-              handleIconClick("https://discord.gg/Yr99abAcUr", event)
-            }
+
+          <StyledIconButtonLink
+            href="https://discord.gg/Yr99abAcUr"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <Icon icon="ri:discord-fill" />
-          </IconButton>
-          <IconButton
-            color="inherit"
+            <IconButton color="inherit" component="span">
+              <Icon icon="ri:discord-fill" />
+            </IconButton>
+          </StyledIconButtonLink>
+
+          <StyledIconButtonLink
+            href="https://github.com/GuillaumeSD/Chesskit"
+            target="_blank"
+            rel="noopener noreferrer"
             sx={{ ml: "min(0.6rem, 0.8vw)" }}
-            onClick={(event) =>
-              handleIconClick("https://github.com/GuillaumeSD/Chesskit", event)
-            }
           >
-            <Icon icon="mdi:github" />
-          </IconButton>
+            <IconButton color="inherit" component="span">
+              <Icon icon="mdi:github" />
+            </IconButton>
+          </StyledIconButtonLink>
+
           <IconButton
             sx={{ ml: "min(0.6rem, 0.8vw)" }}
             onClick={switchDarkMode}
