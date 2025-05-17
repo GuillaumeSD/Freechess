@@ -23,7 +23,6 @@ const StyledIconButtonLink = styled("a")({
   alignItems: "center",
   justifyContent: "center",
   textDecoration: "none", // Remove underline from link
-  // Add any other styles to make it look like a button, e.g., padding, borderRadius
   "&:hover": {
     cursor: "pointer", // Change cursor on hover
   },
@@ -59,12 +58,14 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
           >
             <Icon icon="mdi:menu" />
           </IconButton>
+
           <Image
             src="/favicon-32x32.png"
             alt="Chesskit logo"
             width={32}
             height={32}
           />
+
           <NavLink href="/">
             <Typography
               variant="h6"
