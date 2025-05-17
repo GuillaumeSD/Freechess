@@ -56,11 +56,11 @@ export class AppStack extends cdk.Stack {
           exclude: ["engines"],
         }),
       ],
-      exclude: pagePaths,
+      exclude: [...pagePaths, "*.html"],
       memoryLimit: 512,
       cacheControl: [
         CacheControl.setPublic(),
-        CacheControl.maxAge(cdk.Duration.hours(1)),
+        CacheControl.maxAge(cdk.Duration.days(1)),
       ],
     });
 
@@ -72,11 +72,11 @@ export class AppStack extends cdk.Stack {
         }),
       ],
       exclude: ["*"],
-      include: pagePaths,
+      include: [...pagePaths, "*.html"],
       memoryLimit: 512,
       cacheControl: [
-        CacheControl.setPublic(),
-        CacheControl.maxAge(cdk.Duration.hours(1)),
+        CacheControl.noCache(),
+        CacheControl.maxAge(cdk.Duration.millis(0)),
       ],
       contentType: "text/html",
     });
