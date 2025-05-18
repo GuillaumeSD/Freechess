@@ -60,7 +60,7 @@ export const setGameHeaders = (
   game.setHeader("Site", "Chesskit.org");
   game.setHeader(
     "Date",
-    new Date().toISOString().split("T")[0].replaceAll("-", ".")
+    new Date().toISOString().split("T")[0].replace(/-/g, ".")
   );
 
   const { white, black, resigned } = params;

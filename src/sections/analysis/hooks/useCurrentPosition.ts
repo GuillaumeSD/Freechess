@@ -60,7 +60,7 @@ export const useCurrentPosition = (engine: UciEngine | null) => {
     }
 
     if (!position.eval?.opening) {
-      for (const move of boardHistory.toReversed()) {
+      for (const move of boardHistory.slice().reverse()) {
         const moveFen = move.after.split(" ")[0];
         const opening = openings.find((opening) => opening.fen === moveFen);
         if (opening) {
