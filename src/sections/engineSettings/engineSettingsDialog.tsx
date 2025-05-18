@@ -16,7 +16,6 @@ import {
   Box,
   useTheme,
 } from "@mui/material";
-import React from "react";
 import {
   engineNameAtom,
   engineDepthAtom,
@@ -38,9 +37,6 @@ import {
   STRONGEST_ENGINE,
 } from "@/constants";
 import { getRecommendedWorkersNb } from "@/lib/engine/worker";
-import IconButton from "@mui/material/IconButton";
-import Popover from "@mui/material/Popover";
-import { Icon } from "@iconify/react";
 
 interface Props {
   open: boolean;
@@ -66,15 +62,6 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
 
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const handleHelpClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleHelpClose = () => {
-    setAnchorEl(null);
-  };
-  const helpOpen = Boolean(anchorEl);
 
   useEffect(() => {
     if (!isEngineSupported(engineName)) {
@@ -217,35 +204,31 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
             </FormControl>
           </Grid>
 
-          <Grid container justifyContent="center" alignItems="center" size={{ xs: 12, sm: 7 }}>
-            <Box sx={{ display: "flex", alignItems: "center", width: "100%", flex: 1 }}>
-              <Slider
-                label="Number of threads"
-                value={engineWorkersNb}
-                setValue={setEngineWorkersNb}
-                min={1}
-                max={10}
-                marksFilter={1}
-              />
-              <IconButton size="medium" onClick={handleHelpClick} sx={{ ml: 2 }} aria-label="Help about number of threads">
-                <Icon icon="material-symbols:help-outline" fontSize={28} />
-              </IconButton>
-            </Box>
-            <Popover
-              open={helpOpen}
-              anchorEl={anchorEl}
-              onClose={handleHelpClose}
-              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-              transformOrigin={{ vertical: "top", horizontal: "center" }}
-            >
-              <Box sx={{ p: 2, maxWidth: 350 }}>
-                <Typography variant="body2">
-                  More threads means faster analysis, but only if your device can handle them—otherwise, it may have the opposite effect. The estimated optimal value for your device is {getRecommendedWorkersNb()}.<br />
-                  Due to privacy restrictions in some browsers, detection may be inaccurate and result in underestimated recommendations.<br />
-                  If the recommended value is unusually low, we suggest using a number close to your CPU’s thread count minus 1 or 2.
-                </Typography>
-              </Box>
-            </Popover>
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            size={{ xs: 12, md: 11 }}
+          >
+            <Slider
+              label="Number of threads"
+              value={engineWorkersNb}
+              setValue={setEngineWorkersNb}
+              min={1}
+              max={12}
+              marksFilter={1}
+              infoContent={
+                <>
+                  More threads means faster analysis, but only if your device
+                  can handle them, otherwise it may have the opposite effect.
+                  The estimated optimal value for your device is{" "}
+                  {getRecommendedWorkersNb()}.<br />
+                  Due to privacy restrictions in some browsers, this estimated
+                  value might be underestimated. Don't hesitate to try different
+                  values to find the best one for your device.
+                </>
+              }
+            />
           </Grid>
         </Grid>
       </DialogContent>

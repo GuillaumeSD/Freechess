@@ -1,9 +1,15 @@
+import { Icon } from "@iconify/react";
 import {
   Grid2 as Grid,
+  IconButton,
   Slider as MuiSlider,
+  Popover,
+  Stack,
   styled,
   Typography,
+  TypographyProps,
 } from "@mui/material";
+import { useState } from "react";
 
 export interface Props {
   value: number;
@@ -14,6 +20,7 @@ export interface Props {
   size?: number;
   marksFilter?: number;
   step?: number;
+  infoContent?: TypographyProps["children"];
 }
 
 export default function Slider({
@@ -25,7 +32,18 @@ export default function Slider({
   size,
   marksFilter,
   step = 1,
+  infoContent,
 }: Props) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Grid
       container
@@ -33,14 +51,43 @@ export default function Slider({
       alignItems="center"
       size={size ?? 11}
     >
-      <Typography
-        id={`input-${label}`}
-        textAlign="left"
-        width="100%"
-        variant="body2"
-      >
-        {step === 1 && marksFilter ? label : `${label}: ${value}`}
-      </Typography>
+      <Stack direction="row" width="100%">
+        <Typography id={`input-${label}`} variant="body2">
+          {step === 1 && marksFilter ? label : `${label}: ${value}`}
+        </Typography>
+
+        {!!infoContent && (
+          <>
+            <IconButton
+              size="medium"
+              aria-owns={anchorEl ? "mouse-over-popover" : undefined}
+              aria-haspopup="true"
+              onClick={handleOpenPopover}
+              onMouseEnter={handleOpenPopover}
+              onMouseLeave={handleClosePopover}
+              sx={{ ml: 1, padding: 0 }}
+              aria-label="Help about number of threads"
+            >
+              <Icon icon="mdi:info-outline" width="1.1rem" />
+            </IconButton>
+
+            <Popover
+              id="mouse-over-popover"
+              open={!!anchorEl}
+              anchorEl={anchorEl}
+              onClose={handleClosePopover}
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+              transformOrigin={{ vertical: "top", horizontal: "center" }}
+              sx={{ pointerEvents: "none" }}
+              disableRestoreFocus
+            >
+              <Typography variant="body2" sx={{ padding: 2, maxWidth: 500 }}>
+                {infoContent}
+              </Typography>
+            </Popover>
+          </>
+        )}
+      </Stack>
 
       <CustomSlider
         min={min}
