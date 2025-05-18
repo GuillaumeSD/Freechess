@@ -13,12 +13,12 @@ export const italianGameVariations: Variation[] = [
     moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "c3", "Nf6", "d3", "d6", "O-O", "O-O"],
   },
   {
-    name: "Evans Gambit",
-    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "b4", "Bxb4", "c3", "Ba5", "d4", "exd4", "O-O"],
+    name: "Evans Gambit Accepted",
+    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "b4", "Bxb4", "c3", "Ba5", "d4", "d6", "Qb3"],
   },
   {
     name: "Two Knights Defense",
-    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6"],
+    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6", "d5", "exd5", "e5", "d5", "Bb5", "Nxe4", "d4"],
   },
   {
     name: "Fried Liver Attack",
@@ -26,23 +26,19 @@ export const italianGameVariations: Variation[] = [
   },
   {
     name: "Traxler Counterattack",
-    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6", "Ng5", "Bc5"],
+    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6", "Ng5", "Bc5", "Nxf7", "Bxf2+",],
   },
   {
-    name: "Lolli Attack",
-    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6", "Ng5", "d5", "exd5", "Nxd5", "d4"],
+    name: "Scotch Gambit Accepted",
+    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6", "d4", "exd4", "O-O", "Nxe4", "Re1", "d5", "Bxd5", "Qxd5", "Nc3", "Qa5", "Nxe4", "Be7", "Bg5", "O-O", "Bxe7", "Nxe7", "Nxd4", "Qb6"],
   },
   {
-    name: "Scotch Gambit",
-    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6", "d4"],
-  },
-  {
-    name: "Hungarian Defense",
-    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Be7"],
+    name: "Benima Defense",
+    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Be7", "d4", "exd4", "Nxd4", "Nf6", "Nxc6", "bxc6", "e5", "Nd5", "Qg4", "O-O", "Bh6", "Bf6"],
   },
   {
     name: "Paris Defense",
-    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "d6"],
+    moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "d6", "d4", "exd4", "Nxd4", "Nf6", "O-O", "Nxd4", "Qxd4", "Be7", "Nc3", "O-O", "Bf4"],
   },
   {
     name: "Rousseau Gambit",
