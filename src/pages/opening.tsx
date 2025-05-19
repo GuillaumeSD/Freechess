@@ -291,7 +291,7 @@ export default function OpeningPage() {
           )}
         </Box>
         {/* Progress bar at the bottom left, always visible */}
-        <Box sx={{ mt: 'auto', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Box sx={{ mt: 'auto', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
           <OpeningProgress
             total={variations.length}
             openingKey={openingKey}
@@ -299,6 +299,41 @@ export default function OpeningPage() {
             completed={completedVariations}
             onReset={handleResetProgress}
           />
+          {/* Action buttons: Skip and Reset, side by side, same style */}
+          <Stack direction="row" spacing={2} sx={{ mt: 2, width: '90%' }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              fullWidth
+              disabled={moveIdx >= selectedVariation?.moves.length || completedVariations.includes(currentVariantIdx)}
+              onClick={() => {
+                // Mark current variation as completed and go to next
+                if (!completedVariations.includes(currentVariantIdx)) {
+                  const updated = [...completedVariations, currentVariantIdx];
+                  setCompletedVariations(updated);
+                  localStorage.setItem(progressStorageKey, JSON.stringify(updated));
+                }
+                // Go to next variation if possible
+                if (currentVariantIdx < variations.length - 1) {
+                  setCurrentVariantIdx(idx => idx + 1);
+                  setMoveIdx(0);
+                  setLastMistake(null);
+                  setLastMistakeVisible(null);
+                  setGame(new Chess());
+                }
+              }}
+            >
+              Skip variation
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              fullWidth
+              onClick={handleResetProgress}
+            >
+              Reset progress
+            </Button>
+          </Stack>
         </Box>
       </Grid>
       {/* Right area: responsive chessboard, always with right margin */}

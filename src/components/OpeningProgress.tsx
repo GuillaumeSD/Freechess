@@ -69,23 +69,7 @@ const OpeningProgress: React.FC<OpeningProgressProps> = ({
       <Box flex={1} minWidth={0}>
         <LinearProgressBar value={percent} label={""} />
       </Box>
-      <Button
-        size="small"
-        variant="contained"
-        color="primary"
-        sx={{
-          ml: 2,
-          borderRadius: 2,
-          textTransform: "none",
-          fontWeight: 500,
-          boxShadow: theme.shadows[1],
-          minWidth: 0,
-          px: 2,
-        }}
-        onClick={handleReset}
-      >
-        Reset Progress
-      </Button>
+      {/* The reset button has been removed. Reset is now handled in the parent page. */}
     </Box>
   );
 };
