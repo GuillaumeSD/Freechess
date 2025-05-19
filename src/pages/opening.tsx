@@ -217,6 +217,11 @@ export default function OpeningPage() {
   const handleResetProgress = () => {
     localStorage.removeItem(progressStorageKey);
     setCompletedVariations([]);
+    setCurrentVariantIdx(0);
+    setMoveIdx(0);
+    setLastMistake(null);
+    setLastMistakeVisible(null);
+    setGame(new Chess());
   };
 
   // Détermination de la case cible du dernier coup joué (pour overlay)
