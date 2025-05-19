@@ -268,17 +268,17 @@ export default function OpeningPage() {
         boxSizing: 'border-box',
         overflowX: 'hidden', // avoid horizontal scroll
       }}>
-      <Grid sx={{ minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%', flex: { xs: 'none', md: 1 } }}>
+      <Grid sx={{ minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%', flex: { xs: 'none', md: 1 }, px: { xs: 1, sm: 2, md: 3 }, pt: { xs: 2, md: 4 } }}>
         {/* Centered container for title and buttons */}
-        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', pt: 3 }}>
+        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 2, pt: 2, pb: 2 }}>
           <Typography variant="h4" gutterBottom sx={{ mb: 2, wordBreak: 'break-word', textAlign: 'center', width: '100%' }}>
             {selectedVariation?.name}
           </Typography>
           <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'center', width: '100%' }}>
-            <Button variant={trainingMode ? "contained" : "outlined"} onClick={() => setTrainingMode(true)}>
+            <Button variant={trainingMode ? "contained" : "outlined"} onClick={() => setTrainingMode(true)} fullWidth>
               Training Mode
             </Button>
-            <Button variant={!trainingMode ? "contained" : "outlined"} onClick={() => setTrainingMode(false)}>
+            <Button variant={!trainingMode ? "contained" : "outlined"} onClick={() => setTrainingMode(false)} fullWidth>
               Learning Mode
             </Button>
           </Stack>
@@ -291,16 +291,15 @@ export default function OpeningPage() {
           )}
         </Box>
         {/* Progress bar at the bottom left, always visible */}
-        <Box sx={{ mt: 'auto', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <Box sx={{ mt: 'auto', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2, pb: 2 }}>
           <OpeningProgress
             total={variations.length}
             openingKey={openingKey}
             mode={progressMode}
             completed={completedVariations}
-            onReset={handleResetProgress}
           />
           {/* Action buttons: Skip and Reset, side by side, same style */}
-          <Stack direction="row" spacing={2} sx={{ mt: 2, width: '90%' }}>
+          <Stack direction="row" spacing={2} sx={{ width: '100%' }}>
             <Button
               variant="outlined"
               color="primary"
