@@ -258,7 +258,16 @@ export default function OpeningPage() {
 
   // Affichage principal
   return (
-    <Grid container gap={4} justifyContent="space-evenly" alignItems="start" sx={{ minHeight: '100vh', width: '100vw', m: 0, p: 0, boxSizing: 'border-box', overflow: 'hidden' }}>
+    <Grid container gap={4} justifyContent="space-evenly" alignItems="start"
+      sx={{
+        minHeight: '100vh',
+        width: '100vw',
+        maxWidth: '100vw',
+        m: 0,
+        p: 0,
+        boxSizing: 'border-box',
+        overflowX: 'hidden', // évite le scroll horizontal
+      }}>
       <Grid sx={{ minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%', flex: { xs: 'none', md: 1 } }}>
         {/* Conteneur centré pour le titre et les boutons */}
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', pt: 3 }}>
@@ -295,7 +304,17 @@ export default function OpeningPage() {
       {/* Zone de droite : échiquier responsive */}
       <Grid sx={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0 }}>
         {selectedVariation && !allDone && game && (
-          <Box sx={{ width: boardSize, height: boardSize, maxWidth: 600, maxHeight: 600, minWidth: { xs: 260, sm: 340, md: 400 }, minHeight: { xs: 260, sm: 340, md: 400 }, mx: 'auto', position: 'relative', aspectRatio: '1' }}>
+          <Box sx={{
+            width: boardSize,
+            height: boardSize,
+            maxWidth: 600,
+            maxHeight: 600,
+            minWidth: { xs: 260, sm: 340, md: 400 },
+            minHeight: { xs: 260, sm: 340, md: 400 },
+            mx: 'auto',
+            position: 'relative',
+            aspectRatio: '1',
+          }}>
             <Board
               id="LearningBoard"
               canPlay={true}
