@@ -302,7 +302,7 @@ export default function OpeningPage() {
         </Box>
       </Grid>
       {/* Zone de droite : échiquier responsive */}
-      <Grid sx={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0 }}>
+      <Grid sx={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0, mr: { xs: 0, md: 6, lg: 20 } }}>
         {selectedVariation && !allDone && game && (
           <Box sx={{
             width: boardSize,
