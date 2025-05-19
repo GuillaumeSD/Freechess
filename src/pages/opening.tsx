@@ -9,6 +9,8 @@ import { Color } from "../types/enums";
 import { CurrentPosition } from "../types/eval";
 import type { Variation } from "../data/openings to learn/italian";
 import OpeningProgress from "../components/OpeningProgress";
+import { Grid2 as Grid } from "@mui/material";
+import { useScreenSize } from "../hooks/useScreenSize";
 
 // Détermine la couleur d'apprentissage pour la variante (par défaut blanc, mais extensible)
 function getLearningColor(variation: Variation): Color {
@@ -244,66 +246,72 @@ export default function OpeningPage() {
     return undefined;
   }, [lastMistakeVisible, lastMoveSquare]);
 
+  const screenSize = useScreenSize();
+  const boardSize = useMemo(() => {
+    const width = screenSize.width;
+    const height = screenSize.height;
+    if (typeof window !== "undefined" && window.innerWidth < 900) {
+      return Math.min(width, height - 150);
+    }
+    return Math.min(width - 300, height * 0.83);
+  }, [screenSize]);
+
   // Affichage principal
   return (
-    <Box sx={{ flexGrow: 1, width: '100vw', minHeight: '100vh', p: { xs: 1, md: 4 }, boxSizing: 'border-box', bgcolor: 'background.default' }}>
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} alignItems="stretch" justifyContent="center" sx={{ height: '100%' }}>
-        {/* Zone de gauche : contrôles et explications */}
-        <Box sx={{ flex: { xs: 'none', md: 1 }, minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%' }}>
-          {/* Titre de la variante */}
-          <Typography variant="h4" gutterBottom sx={{ mb: 2, wordBreak: 'break-word' }}>
+    <Grid container gap={4} justifyContent="space-evenly" alignItems="start" sx={{ minHeight: '100vh', width: '100vw', m: 0, p: 0, boxSizing: 'border-box', overflow: 'hidden' }}>
+      <Grid sx={{ minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%', flex: { xs: 'none', md: 1 } }}>
+        {/* Conteneur centré pour le titre et les boutons */}
+        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', pt: 3 }}>
+          <Typography variant="h4" gutterBottom sx={{ mb: 2, wordBreak: 'break-word', textAlign: 'center', width: '100%' }}>
             {selectedVariation?.name}
           </Typography>
-          {/* Espace aéré avant les boutons */}
-          <Box sx={{ flex: 1, mb: 2 }}>
-            <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
-              <Button variant={trainingMode ? "contained" : "outlined"} onClick={() => setTrainingMode(true)}>
-                Training Mode
-              </Button>
-              <Button variant={!trainingMode ? "contained" : "outlined"} onClick={() => setTrainingMode(false)}>
-                Learning Mode
-              </Button>
-            </Stack>
-            {moveIdx >= selectedVariation.moves.length ? (
-              <Typography color="success.main" sx={{ mb: 2 }}>Variation complete! Next variation loading…</Typography>
-            ) : trainingMode ? (
-              <Typography color="text.secondary" sx={{ mb: 2 }}>Play the correct move to continue. Mistakes will be marked.</Typography>
-            ) : (
-              <Typography color="text.secondary" sx={{ mb: 2 }}>Play the move indicated by the arrow to continue.</Typography>
-            )}
-          </Box>
-          {/* Barre de progression en bas à gauche, toujours visible */}
-          <Box sx={{ mt: 'auto', width: '100%' }}>
-            <OpeningProgress
-              total={variations.length}
-              openingKey={openingKey}
-              mode={progressMode}
-              completed={completedVariations}
-              onReset={handleResetProgress}
-            />
-          </Box>
-        </Box>
-        {/* Zone de droite : échiquier responsive */}
-        <Box sx={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0 }}>
-          {selectedVariation && !allDone && game && (
-            <Box sx={{ width: '100%', maxWidth: 600, aspectRatio: '1', minWidth: { xs: 260, sm: 340, md: 400 }, mx: 'auto', position: 'relative' }}>
-              <Board
-                id="LearningBoard"
-                canPlay={true}
-                gameAtom={gameAtomInstance}
-                boardSize={undefined} // Laisse le composant prendre toute la largeur
-                whitePlayer={{ name: "White" }}
-                blackPlayer={{ name: "Black" }}
-                showBestMoveArrow={!trainingMode}
-                currentPositionAtom={currentPositionAtom}
-                boardOrientation={learningColor}
-                // Nouvelle prop pour feedback visuel sur la case
-                trainingFeedback={trainingFeedback}
-              />
-            </Box>
+          <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'center', width: '100%' }}>
+            <Button variant={trainingMode ? "contained" : "outlined"} onClick={() => setTrainingMode(true)}>
+              Training Mode
+            </Button>
+            <Button variant={!trainingMode ? "contained" : "outlined"} onClick={() => setTrainingMode(false)}>
+              Learning Mode
+            </Button>
+          </Stack>
+          {moveIdx >= selectedVariation.moves.length ? (
+            <Typography color="success.main" sx={{ mb: 2, textAlign: 'center' }}>Variation complete! Next variation loading…</Typography>
+          ) : trainingMode ? (
+            <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the correct move to continue. Mistakes will be marked.</Typography>
+          ) : (
+            <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the move indicated by the arrow to continue.</Typography>
           )}
         </Box>
-      </Stack>
-    </Box>
+        {/* Barre de progression en bas à gauche, toujours visible */}
+        <Box sx={{ mt: 'auto', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <OpeningProgress
+            total={variations.length}
+            openingKey={openingKey}
+            mode={progressMode}
+            completed={completedVariations}
+            onReset={handleResetProgress}
+          />
+        </Box>
+      </Grid>
+      {/* Zone de droite : échiquier responsive */}
+      <Grid sx={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0 }}>
+        {selectedVariation && !allDone && game && (
+          <Box sx={{ width: boardSize, height: boardSize, maxWidth: 600, maxHeight: 600, minWidth: { xs: 260, sm: 340, md: 400 }, minHeight: { xs: 260, sm: 340, md: 400 }, mx: 'auto', position: 'relative', aspectRatio: '1' }}>
+            <Board
+              id="LearningBoard"
+              canPlay={true}
+              gameAtom={gameAtomInstance}
+              boardSize={boardSize}
+              whitePlayer={{ name: "White" }}
+              blackPlayer={{ name: "Black" }}
+              showBestMoveArrow={!trainingMode}
+              currentPositionAtom={currentPositionAtom}
+              boardOrientation={learningColor}
+              // Nouvelle prop pour feedback visuel sur la case
+              trainingFeedback={trainingFeedback}
+            />
+          </Box>
+        )}
+      </Grid>
+    </Grid>
   );
 }
