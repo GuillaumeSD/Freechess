@@ -84,7 +84,7 @@ const OpeningProgress: React.FC<OpeningProgressProps> = ({
         }}
         onClick={handleReset}
       >
-        Réinitialiser
+        Reset Progress
       </Button>
     </Box>
   );

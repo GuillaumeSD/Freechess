@@ -235,14 +235,14 @@ export default function OpeningPage() {
 
   // Détermination du type d’icône à afficher (succès/erreur)
   const trainingFeedback = useMemo(() => {
-    if (!trainingMode || !lastMoveSquare) return undefined;
-    // Afficher l'icône de croix rouge uniquement si le dernier coup a été mal joué par l'humain
+    if (!lastMoveSquare) return undefined;
+    // Afficher l'icône de croix rouge si le dernier coup a été mal joué par l'humain
     if (lastMistakeVisible && lastMistakeVisible.to === lastMoveSquare) {
       return { square: lastMoveSquare, icon: "/icons/mistake.png", alt: "Coup incorrect" };
     }
     // Ne rien afficher si le coup est correct
     return undefined;
-  }, [trainingMode, lastMistakeVisible, lastMoveSquare]);
+  }, [lastMistakeVisible, lastMoveSquare]);
 
   // Affichage principal
   return (
