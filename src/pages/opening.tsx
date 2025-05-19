@@ -21,6 +21,7 @@ export default function OpeningPage() {
   const [moveIdx, setMoveIdx] = useState(0);
   const [trainingMode, setTrainingMode] = useState(false);
   const [lastMistake, setLastMistake] = useState<null | { from: string; to: string; type: string }>(null);
+  const [lastMistakeVisible, setLastMistakeVisible] = useState<null | { from: string; to: string; type: string }>(null);
   // Atom Jotai pour l'état du jeu
   const [gameAtomInstance] = useState(() => atom(new Chess()));
   const [game, setGame] = useAtom(gameAtomInstance);
@@ -109,6 +110,8 @@ export default function OpeningPage() {
     if (!selectedVariation || !game) return;
     if (moveIdx >= selectedVariation.moves.length) return;
     if (!isUserTurn) return; // On ne valide que les coups utilisateur
+    let mistakeTimeout: NodeJS.Timeout | null = null;
+    let undoTimeout: NodeJS.Timeout | null = null;
     try {
       const history = game.history({ verbose: true });
       if (history.length !== moveIdx + 1) return;
@@ -117,19 +120,31 @@ export default function OpeningPage() {
       for (let i = 0; i < moveIdx; i++) expectedMove.move(selectedVariation.moves[i]);
       const expected = expectedMove.move(selectedVariation.moves[moveIdx]);
       if (!expected || last.from !== expected.from || last.to !== expected.to) {
-        // Mauvais coup : annuler et annoter
+        // Mauvais coup : attendre 200ms avant d'afficher l'icône d'erreur, puis undo après 1,5s
         let mistakeType = "Mistake";
         if (last.captured || last.san.includes("#")) mistakeType = "Blunder";
         setLastMistake({ from: last.from, to: last.to, type: mistakeType });
-        setTimeout(() => undoMove(), 350);
+        mistakeTimeout = setTimeout(() => {
+          setLastMistakeVisible({ from: last.from, to: last.to, type: mistakeType });
+        }, 200);
+        undoTimeout = setTimeout(() => {
+          setLastMistake(null);
+          setLastMistakeVisible(null);
+          undoMove();
+        }, 1500);
       } else {
         setLastMistake(null);
+        setLastMistakeVisible(null);
         setMoveIdx((idx) => idx + 1);
       }
     } catch (e) {
-      // Gestion d'erreur : on évite le crash
       setLastMistake(null);
+      setLastMistakeVisible(null);
     }
+    return () => {
+      if (mistakeTimeout) clearTimeout(mistakeTimeout);
+      if (undoTimeout) clearTimeout(undoTimeout);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.history().length, trainingMode, selectedVariation, isUserTurn]);
 
@@ -215,19 +230,14 @@ export default function OpeningPage() {
 
   // Détermination du type d’icône à afficher (succès/erreur)
   const trainingFeedback = useMemo(() => {
-    if (!trainingMode || !lastMoveSquare) return null;
-    // Afficher l'icône uniquement si le dernier coup a été joué par l'humain
-    // (c'est-à-dire si ce n'est plus à l'humain de jouer)
-    if (isUserTurn) return null;
-    if (lastMistake && lastMistake.to === lastMoveSquare) {
-      return { icon: "/icons/mistake.png", alt: "Coup incorrect" };
+    if (!trainingMode || !lastMoveSquare) return undefined;
+    // Afficher l'icône de croix rouge uniquement si le dernier coup a été mal joué par l'humain
+    if (lastMistakeVisible && lastMistakeVisible.to === lastMoveSquare) {
+      return { square: lastMoveSquare, icon: "/icons/mistake.png", alt: "Coup incorrect" };
     }
-    if (lastMistake === null && game.history().length > 0) {
-      // Remplacer l'icône de validation par book.png
-      return { icon: "/icons/book.png", alt: "Coup correct" };
-    }
-    return null;
-  }, [trainingMode, lastMistake, lastMoveSquare, game, isUserTurn]);
+    // Ne rien afficher si le coup est correct
+    return undefined;
+  }, [trainingMode, lastMistakeVisible, lastMoveSquare]);
 
   // Affichage principal
   return (
@@ -283,7 +293,7 @@ export default function OpeningPage() {
                 currentPositionAtom={currentPositionAtom}
                 boardOrientation={learningColor}
                 // Nouvelle prop pour feedback visuel sur la case
-                trainingFeedback={trainingFeedback && lastMoveSquare ? { square: lastMoveSquare, ...trainingFeedback } : undefined}
+                trainingFeedback={trainingFeedback}
               />
             </Box>
           )}
