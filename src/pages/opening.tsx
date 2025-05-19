@@ -7,14 +7,13 @@ import { atom, useAtom } from "jotai";
 import { useChessActions } from "../hooks/useChessActions";
 import { Color } from "../types/enums";
 import { CurrentPosition } from "../types/eval";
-import type { Variation } from "../data/openings to learn/italian";
 import OpeningProgress from "../components/OpeningProgress";
 import { Grid2 as Grid } from "@mui/material";
 import { useScreenSize } from "../hooks/useScreenSize";
 
 // Determine the learning color for the variation (default white, but extensible)
-function getLearningColor(variation: Variation): Color {
-  // TODO: use variation.color if defined, otherwise white
+function getLearningColor(): Color {
+  // Always returns white for now
   return Color.White;
 }
 
@@ -22,7 +21,6 @@ export default function OpeningPage() {
   const [currentVariantIdx, setCurrentVariantIdx] = useState(0);
   const [moveIdx, setMoveIdx] = useState(0);
   const [trainingMode, setTrainingMode] = useState(false);
-  const [lastMistake, setLastMistake] = useState<null | { from: string; to: string; type: string }>(null);
   const [lastMistakeVisible, setLastMistakeVisible] = useState<null | { from: string; to: string; type: string }>(null);
   // Atom Jotai for game state
   const [gameAtomInstance] = useState(() => atom(new Chess()));
@@ -36,7 +34,7 @@ export default function OpeningPage() {
   // Learning color (fixed for the variation)
   const learningColor = useMemo(() => {
     if (!selectedVariation) return Color.White;
-    return getLearningColor(selectedVariation);
+    return getLearningColor(); // No argument needed
   }, [selectedVariation]);
 
   // Indicates if it's the user's turn to play
@@ -125,22 +123,19 @@ export default function OpeningPage() {
         // Wrong move: wait 200ms before showing error icon, then undo after 1.5s
         let mistakeType = "Mistake";
         if (last.captured || last.san.includes("#")) mistakeType = "Blunder";
-        setLastMistake({ from: last.from, to: last.to, type: mistakeType });
+        setLastMistakeVisible({ from: last.from, to: last.to, type: mistakeType });
         mistakeTimeout = setTimeout(() => {
           setLastMistakeVisible({ from: last.from, to: last.to, type: mistakeType });
         }, 200);
         undoTimeout = setTimeout(() => {
-          setLastMistake(null);
           setLastMistakeVisible(null);
           undoMove();
         }, 1500);
       } else {
-        setLastMistake(null);
         setLastMistakeVisible(null);
         setMoveIdx((idx) => idx + 1);
       }
     } catch (e) {
-      setLastMistake(null);
       setLastMistakeVisible(null);
     }
     return () => {
@@ -179,7 +174,6 @@ export default function OpeningPage() {
         setTimeout(() => {
           setCurrentVariantIdx((idx) => idx + 1);
           setMoveIdx(0);
-          setLastMistake(null);
         }, 800);
       }
     }
@@ -221,7 +215,6 @@ export default function OpeningPage() {
     setCompletedVariations([]);
     setCurrentVariantIdx(0);
     setMoveIdx(0);
-    setLastMistake(null);
     setLastMistakeVisible(null);
     setGame(new Chess());
   };
@@ -285,7 +278,7 @@ export default function OpeningPage() {
           {moveIdx >= selectedVariation.moves.length ? (
             <Typography color="success.main" sx={{ mb: 2, textAlign: 'center' }}>Variation complete! Next variation loading…</Typography>
           ) : trainingMode ? (
-            <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the correct move to continue. Mistakes will be marked.</Typography>
+            <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the correct move to continue.</Typography>
           ) : (
             <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the move indicated by the arrow to continue.</Typography>
           )}
@@ -316,7 +309,6 @@ export default function OpeningPage() {
                 if (currentVariantIdx < variations.length - 1) {
                   setCurrentVariantIdx(idx => idx + 1);
                   setMoveIdx(0);
-                  setLastMistake(null);
                   setLastMistakeVisible(null);
                   setGame(new Chess());
                 }

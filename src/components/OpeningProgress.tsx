@@ -1,32 +1,21 @@
 import React, { useEffect, useState } from "react";
 import LinearProgressBar from "./LinearProgressBar";
-import { Button, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 // Props :
 // - total : nombre total de variations
-// - openingKey : identifiant unique de l'ouverture (ex: 'italian')
-// - mode : 'learning' | 'training'
-//
 // - currentVariationIndex : index de la variation en cours (optionnel, pour affichage)
 
 interface OpeningProgressProps {
   total: number;
-  openingKey: string;
-  mode: "learning" | "training";
   // Liste des index de variations terminées
   completed: number[];
-  onReset?: () => void;
 }
-
-const getStorageKey = (openingKey: string, mode: string) => `${openingKey}-progress-${mode}`;
 
 const OpeningProgress: React.FC<OpeningProgressProps> = ({
   total,
-  openingKey,
-  mode,
   completed,
-  onReset,
 }) => {
   const [progress, setProgress] = useState<number[]>(completed);
   const theme = useTheme();
@@ -38,13 +27,6 @@ const OpeningProgress: React.FC<OpeningProgressProps> = ({
   // Calcul du pourcentage
   const percent = total > 0 ? (progress.length / total) * 100 : 0;
   const label = `${progress.length} / ${total}`;
-
-  // Réinitialisation
-  const handleReset = () => {
-    localStorage.removeItem(getStorageKey(openingKey, mode));
-    setProgress([]);
-    onReset && onReset();
-  };
 
   return (
     <Box
@@ -69,7 +51,6 @@ const OpeningProgress: React.FC<OpeningProgressProps> = ({
       <Box flex={1} minWidth={0}>
         <LinearProgressBar value={percent} label={""} />
       </Box>
-      {/* The reset button has been removed. Reset is now handled in the parent page. */}
     </Box>
   );
 };
