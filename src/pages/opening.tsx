@@ -12,9 +12,9 @@ import OpeningProgress from "../components/OpeningProgress";
 import { Grid2 as Grid } from "@mui/material";
 import { useScreenSize } from "../hooks/useScreenSize";
 
-// Détermine la couleur d'apprentissage pour la variante (par défaut blanc, mais extensible)
+// Determine the learning color for the variation (default white, but extensible)
 function getLearningColor(variation: Variation): Color {
-  // TODO: utiliser variation.color si défini, sinon blanc
+  // TODO: use variation.color if defined, otherwise white
   return Color.White;
 }
 
@@ -24,30 +24,30 @@ export default function OpeningPage() {
   const [trainingMode, setTrainingMode] = useState(false);
   const [lastMistake, setLastMistake] = useState<null | { from: string; to: string; type: string }>(null);
   const [lastMistakeVisible, setLastMistakeVisible] = useState<null | { from: string; to: string; type: string }>(null);
-  // Atom Jotai pour l'état du jeu
+  // Atom Jotai for game state
   const [gameAtomInstance] = useState(() => atom(new Chess()));
   const [game, setGame] = useAtom(gameAtomInstance);
   const { undoMove } = useChessActions(gameAtomInstance);
 
-  // Liste des variantes à apprendre (toutes)
+  // List of variations to learn (all)
   const variations = italianGameVariations;
   const selectedVariation = variations[currentVariantIdx] || null;
 
-  // Couleur d'apprentissage (fixe pour la variante)
+  // Learning color (fixed for the variation)
   const learningColor = useMemo(() => {
     if (!selectedVariation) return Color.White;
     return getLearningColor(selectedVariation);
   }, [selectedVariation]);
 
-  // Indique si c'est à l'utilisateur de jouer
+  // Indicates if it's the user's turn to play
   const isUserTurn = useMemo(() => {
     if (!selectedVariation) return false;
-    // moveIdx % 2 === 0 => blanc, 1 => noir (si la séquence commence par blanc)
+    // moveIdx % 2 === 0 => white, 1 => black (if the sequence starts with white)
     const colorToPlay = moveIdx % 2 === 0 ? Color.White : Color.Black;
     return colorToPlay === learningColor;
   }, [moveIdx, learningColor, selectedVariation]);
 
-  // Génération du coup attendu au format UCI pour la flèche (uniquement si c'est à l'utilisateur de jouer)
+  // Generate the expected move in UCI format for the arrow (only if it's the user's turn to play)
   const bestMoveUci = useMemo(() => {
     if (
       selectedVariation &&
@@ -66,7 +66,7 @@ export default function OpeningPage() {
     return undefined;
   }, [selectedVariation, game, moveIdx, isUserTurn]);
 
-  // Atom writable pour currentPosition (lecture/écriture)
+  // Writable atom for currentPosition (read/write)
   const currentPositionAtom = useMemo(
     () =>
       atom<CurrentPosition>({
@@ -90,7 +90,7 @@ export default function OpeningPage() {
     [bestMoveUci]
   );
 
-  // Réinitialisation à chaque variante ou progression
+  // Reset on each variation or progression
   useEffect(() => {
     if (!selectedVariation) return;
     try {
@@ -98,20 +98,20 @@ export default function OpeningPage() {
       for (let i = 0; i < moveIdx; i++) {
         const move = selectedVariation.moves[i];
         const result = chess.move(move);
-        if (!result) break; // Stop si coup invalide
+        if (!result) break; // Stop if invalid move
       }
       setGame(chess);
     } catch (e) {
-      // Gestion d'erreur : on évite le crash
+      // Error handling: avoid crash
       setGame(new Chess());
     }
   }, [selectedVariation, moveIdx, setGame]);
 
-  // Validation du coup utilisateur : si mauvais coup, undo et annotation
+  // Validate user move: if wrong move, undo and annotate
   useEffect(() => {
     if (!selectedVariation || !game) return;
     if (moveIdx >= selectedVariation.moves.length) return;
-    if (!isUserTurn) return; // On ne valide que les coups utilisateur
+    if (!isUserTurn) return; // Only validate user moves
     let mistakeTimeout: NodeJS.Timeout | null = null;
     let undoTimeout: NodeJS.Timeout | null = null;
     try {
@@ -122,7 +122,7 @@ export default function OpeningPage() {
       for (let i = 0; i < moveIdx; i++) expectedMove.move(selectedVariation.moves[i]);
       const expected = expectedMove.move(selectedVariation.moves[moveIdx]);
       if (!expected || last.from !== expected.from || last.to !== expected.to) {
-        // Mauvais coup : attendre 200ms avant d'afficher l'icône d'erreur, puis undo après 1,5s
+        // Wrong move: wait 200ms before showing error icon, then undo after 1.5s
         let mistakeType = "Mistake";
         if (last.captured || last.san.includes("#")) mistakeType = "Blunder";
         setLastMistake({ from: last.from, to: last.to, type: mistakeType });
@@ -150,13 +150,13 @@ export default function OpeningPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.history().length, trainingMode, selectedVariation, isUserTurn]);
 
-  // Avance automatique des coups adverses après un coup utilisateur correct
+  // Automatically advance opponent moves after a correct user move
   useEffect(() => {
     if (!selectedVariation) return;
     if (moveIdx >= selectedVariation.moves.length) return;
-    // Si ce n'est pas à l'utilisateur de jouer, on avance automatiquement les coups adverses
+    // If it's not the user's turn, automatically advance opponent moves
     if (!isUserTurn) {
-      // On joue tous les coups adverses jusqu'au prochain coup utilisateur ou fin de séquence
+      // Play all opponent moves until the next user move or end of sequence
       let nextIdx = moveIdx;
       let colorToPlay = nextIdx % 2 === 0 ? Color.White : Color.Black;
       while (nextIdx < selectedVariation.moves.length && colorToPlay !== learningColor) {
@@ -164,17 +164,17 @@ export default function OpeningPage() {
         colorToPlay = nextIdx % 2 === 0 ? Color.White : Color.Black;
       }
       if (nextIdx !== moveIdx) {
-        // Délai augmenté à 500ms pour laisser le temps à l’animation du coup utilisateur
+        // Delay increased to 500ms to allow time for user move animation
         setTimeout(() => setMoveIdx(nextIdx), 500);
       }
     }
   }, [moveIdx, isUserTurn, selectedVariation, learningColor]);
 
-  // Enchaînement automatique des variantes
+  // Automatically chain variations
   useEffect(() => {
     if (!selectedVariation) return;
     if (moveIdx >= selectedVariation.moves.length) {
-      // Succès : passer à la variante suivante après un court délai
+      // Success: move to the next variation after a short delay
       if (currentVariantIdx < variations.length - 1) {
         setTimeout(() => {
           setCurrentVariantIdx((idx) => idx + 1);
@@ -185,10 +185,10 @@ export default function OpeningPage() {
     }
   }, [moveIdx, selectedVariation, currentVariantIdx, variations.length]);
 
-  // Si toutes les variantes sont terminées
+  // If all variations are completed
   const allDone = currentVariantIdx >= variations.length;
 
-  // Gestion de la progression (persistée par mode)
+  // Progress management (persisted by mode)
   const openingKey = "italian";
   const progressMode = trainingMode ? "training" : "learning";
   const progressStorageKey = `${openingKey}-progress-${progressMode}`;
@@ -202,7 +202,7 @@ export default function OpeningPage() {
     }
   });
 
-  // Marquer une variation comme terminée
+  // Mark a variation as completed
   useEffect(() => {
     if (!selectedVariation) return;
     if (moveIdx >= selectedVariation.moves.length) {
@@ -215,7 +215,7 @@ export default function OpeningPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moveIdx, selectedVariation, currentVariantIdx, progressMode]);
 
-  // Réinitialisation de la progression
+  // Reset progress
   const handleResetProgress = () => {
     localStorage.removeItem(progressStorageKey);
     setCompletedVariations([]);
@@ -226,7 +226,7 @@ export default function OpeningPage() {
     setGame(new Chess());
   };
 
-  // Détermination de la case cible du dernier coup joué (pour overlay)
+  // Determine the target square of the last move played (for overlay)
   const lastMoveSquare = useMemo(() => {
     if (!game) return null;
     const history = game.history({ verbose: true });
@@ -235,14 +235,14 @@ export default function OpeningPage() {
     return last.to;
   }, [game]);
 
-  // Détermination du type d’icône à afficher (succès/erreur)
+  // Determine the type of icon to display (success/error)
   const trainingFeedback = useMemo(() => {
     if (!lastMoveSquare) return undefined;
-    // Afficher l'icône de croix rouge si le dernier coup a été mal joué par l'humain
+    // Show red cross icon if the last move was incorrectly played by the human
     if (lastMistakeVisible && lastMistakeVisible.to === lastMoveSquare) {
-      return { square: lastMoveSquare, icon: "/icons/mistake.png", alt: "Coup incorrect" };
+      return { square: lastMoveSquare, icon: "/icons/mistake.png", alt: "Incorrect move" };
     }
-    // Ne rien afficher si le coup est correct
+    // Show nothing if the move is correct
     return undefined;
   }, [lastMistakeVisible, lastMoveSquare]);
 
@@ -256,7 +256,7 @@ export default function OpeningPage() {
     return Math.min(width - 300, height * 0.83);
   }, [screenSize]);
 
-  // Affichage principal
+  // Main display
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start"
       sx={{
@@ -266,10 +266,10 @@ export default function OpeningPage() {
         m: 0,
         p: 0,
         boxSizing: 'border-box',
-        overflowX: 'hidden', // évite le scroll horizontal
+        overflowX: 'hidden', // avoid horizontal scroll
       }}>
       <Grid sx={{ minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%', flex: { xs: 'none', md: 1 } }}>
-        {/* Conteneur centré pour le titre et les boutons */}
+        {/* Centered container for title and buttons */}
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', pt: 3 }}>
           <Typography variant="h4" gutterBottom sx={{ mb: 2, wordBreak: 'break-word', textAlign: 'center', width: '100%' }}>
             {selectedVariation?.name}
@@ -290,7 +290,7 @@ export default function OpeningPage() {
             <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the move indicated by the arrow to continue.</Typography>
           )}
         </Box>
-        {/* Barre de progression en bas à gauche, toujours visible */}
+        {/* Progress bar at the bottom left, always visible */}
         <Box sx={{ mt: 'auto', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <OpeningProgress
             total={variations.length}
@@ -301,20 +301,31 @@ export default function OpeningPage() {
           />
         </Box>
       </Grid>
-      {/* Zone de droite : échiquier responsive */}
-      <Grid sx={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0, mr: { xs: 0, md: 6, lg: 20 } }}>
+      {/* Right area: responsive chessboard, always with right margin */}
+      <Grid
+        // The chessboard stays on the right with a margin (not stuck to the edge)
+        sx={{
+          flex: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minWidth: 0,
+          mr: { xs: 0, md: 6, lg: 20 }, // Right margin for desktop
+        }}>
         {selectedVariation && !allDone && game && (
-          <Box sx={{
-            width: boardSize,
-            height: boardSize,
-            maxWidth: 600,
-            maxHeight: 600,
-            minWidth: { xs: 260, sm: 340, md: 400 },
-            minHeight: { xs: 260, sm: 340, md: 400 },
-            mx: 'auto',
-            position: 'relative',
-            aspectRatio: '1',
-          }}>
+          // Responsive square chessboard box
+          <Box
+            sx={{
+              width: boardSize,
+              height: boardSize,
+              maxWidth: 600,
+              maxHeight: 600,
+              minWidth: { xs: 260, sm: 340, md: 400 },
+              minHeight: { xs: 260, sm: 340, md: 400 },
+              mx: 'auto',
+              position: 'relative',
+              aspectRatio: '1',
+            }}>
             <Board
               id="LearningBoard"
               canPlay={true}
@@ -325,7 +336,7 @@ export default function OpeningPage() {
               showBestMoveArrow={!trainingMode}
               currentPositionAtom={currentPositionAtom}
               boardOrientation={learningColor}
-              // Nouvelle prop pour feedback visuel sur la case
+              // Visual feedback for the last move (mistake icon, etc.)
               trainingFeedback={trainingFeedback}
             />
           </Box>
