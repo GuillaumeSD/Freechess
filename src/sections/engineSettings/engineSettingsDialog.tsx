@@ -222,10 +222,10 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
                   More threads means faster analysis, but only if your device
                   can handle them, otherwise it may have the opposite effect.
                   The estimated optimal value for your device is{" "}
-                  {getRecommendedWorkersNb()}.<br />
-                  Due to privacy restrictions in some browsers, this estimated
-                  value might be underestimated. Don't hesitate to try different
-                  values to find the best one for your device.
+                  {getRecommendedWorkersNb()}. Due to privacy restrictions in
+                  some browsers, this value might be underestimated. Don't
+                  hesitate to try different values to find the best one for your
+                  device.
                 </>
               }
             />

@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import {
+  ClickAwayListener,
   Grid2 as Grid,
   IconButton,
   Slider as MuiSlider,
@@ -9,7 +10,7 @@ import {
   Typography,
   TypographyProps,
 } from "@mui/material";
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 
 export interface Props {
   value: number;
@@ -36,7 +37,7 @@ export default function Slider({
 }: Props) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenPopover = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -58,18 +59,20 @@ export default function Slider({
 
         {!!infoContent && (
           <>
-            <IconButton
-              size="medium"
-              aria-owns={anchorEl ? "mouse-over-popover" : undefined}
-              aria-haspopup="true"
-              onClick={handleOpenPopover}
-              onMouseEnter={handleOpenPopover}
-              onMouseLeave={handleClosePopover}
-              sx={{ ml: 1, padding: 0 }}
-              aria-label="Help about number of threads"
-            >
-              <Icon icon="mdi:info-outline" width="1.1rem" />
-            </IconButton>
+            <ClickAwayListener onClickAway={handleClosePopover}>
+              <IconButton
+                size="medium"
+                aria-owns={anchorEl ? "mouse-over-popover" : undefined}
+                aria-haspopup="true"
+                onClick={handleOpenPopover}
+                onMouseEnter={handleOpenPopover}
+                onMouseLeave={handleClosePopover}
+                sx={{ ml: 1, padding: 0 }}
+                aria-label="Help about number of threads"
+              >
+                <Icon icon="mdi:info-outline" width="1.1rem" />
+              </IconButton>
+            </ClickAwayListener>
 
             <Popover
               id="mouse-over-popover"
