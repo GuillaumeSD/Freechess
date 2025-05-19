@@ -123,7 +123,7 @@ export default function OpeningPage() {
         // Wrong move: wait 200ms before showing error icon, then undo after 1.5s
         let mistakeType = "Mistake";
         if (last.captured || last.san.includes("#")) mistakeType = "Blunder";
-        setLastMistakeVisible({ from: last.from, to: last.to, type: mistakeType });
+        // Do NOT set lastMistakeVisible immediately
         mistakeTimeout = setTimeout(() => {
           setLastMistakeVisible({ from: last.from, to: last.to, type: mistakeType });
         }, 200);
@@ -287,8 +287,6 @@ export default function OpeningPage() {
         <Box sx={{ mt: 'auto', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2, pb: 2 }}>
           <OpeningProgress
             total={variations.length}
-            openingKey={openingKey}
-            mode={progressMode}
             completed={completedVariations}
           />
           {/* Action buttons: Skip and Reset, side by side, same style */}
