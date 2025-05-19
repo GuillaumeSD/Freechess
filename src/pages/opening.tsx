@@ -209,6 +209,26 @@ export default function OpeningPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moveIdx, selectedVariation, currentVariantIdx, progressMode]);
 
+  // When loading, if there is a completed variation, jump to the first incomplete one
+  useEffect(() => {
+    if (completedVariations.length > 0 && completedVariations.length < variations.length) {
+      // Find the first incomplete variation
+      const firstIncomplete = variations.findIndex((_, idx) => !completedVariations.includes(idx));
+      if (firstIncomplete !== -1 && currentVariantIdx !== firstIncomplete) {
+        setCurrentVariantIdx(firstIncomplete);
+        setMoveIdx(0);
+        setLastMistakeVisible(null);
+        setGame(new Chess());
+      }
+    } else if (completedVariations.length === variations.length && currentVariantIdx !== variations.length) {
+      // All done, move to the end
+      setCurrentVariantIdx(variations.length - 1); // Correction: ne pas dépasser l'index max
+      setMoveIdx(0);
+      setLastMistakeVisible(null);
+      setGame(new Chess());
+    }
+  }, [completedVariations, variations.length, currentVariantIdx, setGame]);
+
   // Reset progress
   const handleResetProgress = () => {
     localStorage.removeItem(progressStorageKey);
@@ -295,17 +315,23 @@ export default function OpeningPage() {
               variant="outlined"
               color="primary"
               fullWidth
-              disabled={moveIdx >= selectedVariation?.moves.length || completedVariations.includes(currentVariantIdx)}
+              disabled={moveIdx >= selectedVariation?.moves.length || allDone}
               onClick={() => {
-                // Mark current variation as completed and go to next
+                // Always allow skip if not allDone
+                let newCompleted = completedVariations;
                 if (!completedVariations.includes(currentVariantIdx)) {
-                  const updated = [...completedVariations, currentVariantIdx];
-                  setCompletedVariations(updated);
-                  localStorage.setItem(progressStorageKey, JSON.stringify(updated));
+                  newCompleted = [...completedVariations, currentVariantIdx];
+                  setCompletedVariations(newCompleted);
+                  localStorage.setItem(progressStorageKey, JSON.stringify(newCompleted));
                 }
                 // Go to next variation if possible
                 if (currentVariantIdx < variations.length - 1) {
                   setCurrentVariantIdx(idx => idx + 1);
+                  setMoveIdx(0);
+                  setLastMistakeVisible(null);
+                  setGame(new Chess());
+                } else {
+                  // If last variation, just reset moveIdx and board
                   setMoveIdx(0);
                   setLastMistakeVisible(null);
                   setGame(new Chess());
