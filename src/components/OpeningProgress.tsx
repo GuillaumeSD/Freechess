@@ -3,13 +3,13 @@ import LinearProgressBar from "./LinearProgressBar";
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-// Props :
-// - total : nombre total de variations
-// - currentVariationIndex : index de la variation en cours (optionnel, pour affichage)
+// Props:
+// - total: total number of variations
+// - currentVariationIndex: index of the current variation (optional, for display)
 
 interface OpeningProgressProps {
   total: number;
-  // Liste des index de variations terminées
+  // List of completed variation indexes
   completed: number[];
 }
 
@@ -24,7 +24,7 @@ const OpeningProgress: React.FC<OpeningProgressProps> = ({
     setProgress(completed);
   }, [completed]);
 
-  // Calcul du pourcentage
+  // Calculate percentage
   const percent = total > 0 ? (progress.length / total) * 100 : 0;
   const label = `${progress.length} / ${total}`;
 
