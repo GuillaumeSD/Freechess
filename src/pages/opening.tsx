@@ -82,7 +82,7 @@ export default function OpeningPage() {
     if (!game || !engine || !engine.getIsReady()) return;
     let cancelled = false;
     const fen = game.fen();
-    // Décale l'analyse pour laisser la priorité à l'animation du coup
+    // Delay the analysis to prioritize move animation
     const timeout = setTimeout(() => {
       if (cancelled) return;
       engine.evaluatePositionWithUpdate({
@@ -98,7 +98,7 @@ export default function OpeningPage() {
           }
         },
       });
-    }, 200); // 200ms laisse le temps à l'animation du coup
+    }, 200); // 200ms allows time for move animation
     return () => {
       cancelled = true;
       clearTimeout(timeout);
@@ -240,7 +240,7 @@ export default function OpeningPage() {
       }
     } else if (completedVariations.length === variations.length && currentVariantIdx !== variations.length) {
       // All done, move to the end
-      setCurrentVariantIdx(variations.length - 1); // Correction: ne pas dépasser l'index max
+      setCurrentVariantIdx(variations.length - 1); // Correction: do not exceed max index
       setMoveIdx(0);
       setLastMistakeVisible(null);
       setGame(new Chess());
@@ -299,7 +299,71 @@ export default function OpeningPage() {
         boxSizing: 'border-box',
         overflowX: 'hidden', // avoid horizontal scroll
       }}>
-      <Grid sx={{ minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%', flex: { xs: 'none', md: 1 }, px: { xs: 1, sm: 2, md: 3 }, pt: { xs: 2, md: 4 } }}>
+      {/* Left area: chessboard and evaluation bar */}
+      <Grid
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minWidth: 0,
+          ml: { xs: 0, md: 2, lg: 0 }, // Reduced left margin
+        }}>
+        {selectedVariation && !allDone && game && (
+          <Box
+            sx={{
+              width: boardSize,
+              height: boardSize,
+              maxWidth: 600,
+              maxHeight: 600,
+              minWidth: { xs: 260, sm: 340, md: 400 },
+              minHeight: { xs: 260, sm: 340, md: 400 },
+              mx: 'auto',
+              position: 'relative',
+              aspectRatio: '1',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+            }}>
+            {/* Evaluation bar on the left of the board, slightly lowered for better alignment */}
+            <Box sx={{
+              height: boardSize,
+              minHeight: boardSize,
+              maxHeight: boardSize,
+              display: { xs: 'none', sm: 'flex' },
+              alignItems: 'flex-start',
+              mr: 1,
+              position: 'relative',
+              top: 52, // Lower the bar by 52px (to align with the board)
+            }}>
+              <EvaluationBar
+                height={boardSize}
+                boardOrientation={learningColor}
+                currentPositionAtom={currentPositionAtom}
+              />
+            </Box>
+            {/* The board itself, not stretched */}
+            <Box sx={{ flex: 'none', height: boardSize, minHeight: boardSize, maxHeight: boardSize, display: 'flex', alignItems: 'flex-start' }}>
+              <Board
+                id="LearningBoard"
+                canPlay={true}
+                gameAtom={gameAtomInstance}
+                boardSize={boardSize}
+                whitePlayer={{ name: "White" }}
+                blackPlayer={{ name: "Black" }}
+                showBestMoveArrow={!trainingMode && !!bestMoveUci && isUserTurn}
+                bestMoveUci={bestMoveUci}
+                currentPositionAtom={currentPositionAtom}
+                boardOrientation={learningColor}
+                // Visual feedback for the last move (mistake icon, etc.)
+                trainingFeedback={trainingFeedback}
+              />
+            </Box>
+          </Box>
+        )}
+      </Grid>
+      {/* Right area: panel with progress, buttons, and text */}
+      <Grid sx={{ minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%', flex: { xs: 'none', md: 1 }, px: { xs: 1, sm: 2, md: 3 }, pt: { xs: 2, md: 4 }, mr: { xs: 1, sm: 2, md: 6, lg: 10 } }}>
         {/* Centered container for title and buttons */}
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 2, pt: 2, pb: 2 }}>
           <Typography variant="h4" gutterBottom sx={{ mb: 2, wordBreak: 'break-word', textAlign: 'center', width: '100%' }}>
@@ -321,7 +385,7 @@ export default function OpeningPage() {
             <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the move indicated by the arrow to continue.</Typography>
           )}
         </Box>
-        {/* Progress bar at the bottom left, always visible */}
+        {/* Progress bar at the bottom right, always visible */}
         <Box sx={{ mt: 'auto', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2, pb: 2 }}>
           <OpeningProgress
             total={variations.length}
@@ -368,71 +432,6 @@ export default function OpeningPage() {
             </Button>
           </Stack>
         </Box>
-      </Grid>
-      {/* Right area: responsive chessboard, always with right margin */}
-      <Grid
-        // The chessboard stays on the right with a margin (not stuck to the edge)
-        sx={{
-          flex: 2,
-          display: 'flex',
-          alignItems: 'center', // ensures vertical alignment
-          justifyContent: 'center',
-          minWidth: 0,
-          mr: { xs: 0, md: 6, lg: 20 }, // Right margin for desktop
-        }}>
-        {selectedVariation && !allDone && game && (
-          <Box
-            sx={{
-              width: boardSize,
-              height: boardSize,
-              maxWidth: 600,
-              maxHeight: 600,
-              minWidth: { xs: 260, sm: 340, md: 400 },
-              minHeight: { xs: 260, sm: 340, md: 400 },
-              mx: 'auto',
-              position: 'relative',
-              aspectRatio: '1',
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'flex-start', // revert to top alignment
-              justifyContent: 'center',
-            }}>
-            {/* Evaluation bar on the left of the board, slightly lowered for better alignment */}
-            <Box sx={{
-              height: boardSize,
-              minHeight: boardSize,
-              maxHeight: boardSize,
-              display: { xs: 'none', sm: 'flex' },
-              alignItems: 'flex-start',
-              mr: 1,
-              position: 'relative',
-              top: 52, // Lower the bar by 52px (To be aligned with the board)
-            }}>
-              <EvaluationBar
-                height={boardSize}
-                boardOrientation={learningColor}
-                currentPositionAtom={currentPositionAtom}
-              />
-            </Box>
-            {/* The board itself, not stretched */}
-            <Box sx={{ flex: 'none', height: boardSize, minHeight: boardSize, maxHeight: boardSize, display: 'flex', alignItems: 'flex-start' }}>
-              <Board
-                id="LearningBoard"
-                canPlay={true}
-                gameAtom={gameAtomInstance}
-                boardSize={boardSize}
-                whitePlayer={{ name: "White" }}
-                blackPlayer={{ name: "Black" }}
-                showBestMoveArrow={!trainingMode && !!bestMoveUci && isUserTurn}
-                bestMoveUci={bestMoveUci}
-                currentPositionAtom={currentPositionAtom}
-                boardOrientation={learningColor}
-                // Visual feedback for the last move (mistake icon, etc.)
-                trainingFeedback={trainingFeedback}
-              />
-            </Box>
-          </Box>
-        )}
       </Grid>
     </Grid>
   );
