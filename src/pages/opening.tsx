@@ -10,6 +10,9 @@ import { CurrentPosition } from "../types/eval";
 import OpeningProgress from "../components/OpeningProgress";
 import { Grid2 as Grid } from "@mui/material";
 import { useScreenSize } from "../hooks/useScreenSize";
+import EvaluationBar from "../components/board/evaluationBar";
+import { useEngine } from "../hooks/useEngine";
+import { EngineName } from "../types/enums";
 
 // Determine the learning color for the variation (default white, but extensible)
 function getLearningColor(): Color {
@@ -50,8 +53,7 @@ export default function OpeningPage() {
     if (
       selectedVariation &&
       game &&
-      moveIdx < selectedVariation.moves.length &&
-      isUserTurn
+      moveIdx < selectedVariation.moves.length
     ) {
       const chess = new Chess(game.fen());
       const san = selectedVariation.moves[moveIdx];
@@ -65,28 +67,44 @@ export default function OpeningPage() {
   }, [selectedVariation, game, moveIdx, isUserTurn]);
 
   // Writable atom for currentPosition (read/write)
-  const currentPositionAtom = useMemo(
-    () =>
-      atom<CurrentPosition>({
-        lastEval: bestMoveUci
-          ? {
-              bestMove: bestMoveUci,
-              lines: [
-                {
-                  pv: [bestMoveUci],
-                  depth: 10,
-                  multiPv: 1,
-                },
-              ],
-            }
-          : { lines: [] },
-        eval: {
-          moveClassification: undefined,
-          lines: [],
+  // Instead of a local atom, use the engine evaluation mechanism already present in the project
+  // (see useEngine, useGameData, or similar hooks if available)
+  // Here, we use a simple effect to update the evaluation after each move using the engine
+  const [currentPositionAtom, setCurrentPositionAtom] = useState(() => atom<CurrentPosition>({
+    lastEval: { lines: [] },
+    eval: { moveClassification: undefined, lines: [] },
+  }));
+
+  // Engine integration for real-time evaluation
+  const engine = useEngine(EngineName.Stockfish17Lite);
+
+  useEffect(() => {
+    if (!game || !engine || !engine.getIsReady()) return;
+    let cancelled = false;
+    const fen = game.fen();
+    // Décale l'analyse pour laisser la priorité à l'animation du coup
+    const timeout = setTimeout(() => {
+      if (cancelled) return;
+      engine.evaluatePositionWithUpdate({
+        fen,
+        depth: 14,
+        multiPv: 2,
+        setPartialEval: (evalResult) => {
+          if (!cancelled) {
+            setCurrentPositionAtom(atom<CurrentPosition>({
+              lastEval: evalResult,
+              eval: evalResult,
+            }));
+          }
         },
-      }),
-    [bestMoveUci]
-  );
+      });
+    }, 200); // 200ms laisse le temps à l'animation du coup
+    return () => {
+      cancelled = true;
+      clearTimeout(timeout);
+      engine.stopAllCurrentJobs();
+    };
+  }, [game, moveIdx, engine]);
 
   // Reset on each variation or progression
   useEffect(() => {
@@ -357,13 +375,12 @@ export default function OpeningPage() {
         sx={{
           flex: 2,
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'center', // ensures vertical alignment
           justifyContent: 'center',
           minWidth: 0,
           mr: { xs: 0, md: 6, lg: 20 }, // Right margin for desktop
         }}>
         {selectedVariation && !allDone && game && (
-          // Responsive square chessboard box
           <Box
             sx={{
               width: boardSize,
@@ -375,20 +392,45 @@ export default function OpeningPage() {
               mx: 'auto',
               position: 'relative',
               aspectRatio: '1',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'flex-start', // revert to top alignment
+              justifyContent: 'center',
             }}>
-            <Board
-              id="LearningBoard"
-              canPlay={true}
-              gameAtom={gameAtomInstance}
-              boardSize={boardSize}
-              whitePlayer={{ name: "White" }}
-              blackPlayer={{ name: "Black" }}
-              showBestMoveArrow={!trainingMode}
-              currentPositionAtom={currentPositionAtom}
-              boardOrientation={learningColor}
-              // Visual feedback for the last move (mistake icon, etc.)
-              trainingFeedback={trainingFeedback}
-            />
+            {/* Evaluation bar on the left of the board, slightly lowered for better alignment */}
+            <Box sx={{
+              height: boardSize,
+              minHeight: boardSize,
+              maxHeight: boardSize,
+              display: { xs: 'none', sm: 'flex' },
+              alignItems: 'flex-start',
+              mr: 1,
+              position: 'relative',
+              top: 52, // Lower the bar by 52px (To be aligned with the board)
+            }}>
+              <EvaluationBar
+                height={boardSize}
+                boardOrientation={learningColor}
+                currentPositionAtom={currentPositionAtom}
+              />
+            </Box>
+            {/* The board itself, not stretched */}
+            <Box sx={{ flex: 'none', height: boardSize, minHeight: boardSize, maxHeight: boardSize, display: 'flex', alignItems: 'flex-start' }}>
+              <Board
+                id="LearningBoard"
+                canPlay={true}
+                gameAtom={gameAtomInstance}
+                boardSize={boardSize}
+                whitePlayer={{ name: "White" }}
+                blackPlayer={{ name: "Black" }}
+                showBestMoveArrow={!trainingMode && !!bestMoveUci && isUserTurn}
+                bestMoveUci={bestMoveUci}
+                currentPositionAtom={currentPositionAtom}
+                boardOrientation={learningColor}
+                // Visual feedback for the last move (mistake icon, etc.)
+                trainingFeedback={trainingFeedback}
+              />
+            </Box>
           </Box>
         )}
       </Grid>

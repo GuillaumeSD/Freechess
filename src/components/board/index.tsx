@@ -41,6 +41,7 @@ export interface Props {
   showPlayerMoveIconAtom?: PrimitiveAtom<boolean>;
   showEvaluationBar?: boolean;
   trainingFeedback?: TrainingFeedback;
+  bestMoveUci?: string;
 }
 
 export default function Board({
@@ -56,6 +57,7 @@ export default function Board({
   showPlayerMoveIconAtom,
   showEvaluationBar = false,
   trainingFeedback,
+  bestMoveUci,
 }: Props) {
   const boardRef = useRef<HTMLDivElement>(null);
   const game = useAtomValue(gameAtom);
@@ -216,9 +218,19 @@ export default function Board({
   );
 
   const customArrows: Arrow[] = useMemo(() => {
+    if (bestMoveUci && showBestMoveArrow) {
+      // Priorité à la flèche d'ouverture
+      return [[
+        bestMoveUci.slice(0, 2),
+        bestMoveUci.slice(2, 4),
+        tinycolor(CLASSIFICATION_COLORS[MoveClassification.Best])
+          .spin(-boardHue)
+          .toHexString(),
+      ] as Arrow];
+    }
+    // Fallback moteur
     const bestMove = position?.lastEval?.bestMove;
     const moveClassification = position?.eval?.moveClassification;
-
     if (
       bestMove &&
       showBestMoveArrow &&
@@ -234,12 +246,10 @@ export default function Board({
           .spin(-boardHue)
           .toHexString(),
       ] as Arrow;
-
       return [bestMoveArrow];
     }
-
     return [];
-  }, [position, showBestMoveArrow, boardHue]);
+  }, [bestMoveUci, position, showBestMoveArrow, boardHue]);
 
   const SquareRenderer: CustomSquareRenderer = useMemo(() => {
     return getSquareRenderer({
