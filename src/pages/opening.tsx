@@ -278,13 +278,25 @@ export default function OpeningPage() {
   }, [lastMistakeVisible, lastMoveSquare]);
 
   const screenSize = useScreenSize();
+  // Largeur réservée à la barre d'évaluation (toujours visible)
+  const evalBarWidth = 32; // px, ajustable selon la largeur réelle de la barre
+  const evalBarGap = 8; // espace réel entre la barre et l'échiquier
   const boardSize = useMemo(() => {
     const width = screenSize.width;
     const height = screenSize.height;
-    if (typeof window !== "undefined" && window.innerWidth < 900) {
-      return Math.min(width, height - 150);
+    // On ne retire plus evalBarGap du calcul de la taille
+    let maxBoardWidth = width - 300; // desktop par défaut
+    if (typeof window !== "undefined") {
+      if (window.innerWidth < 900) {
+        // Sur mobile, réserver la place pour la barre
+        maxBoardWidth = width - evalBarWidth - 24; // 24px de marge de sécurité
+        // Hauteur réduite pour éviter le scroll
+        return Math.max(180, Math.min(maxBoardWidth, height - 150));
+      }
+      // Desktop : réserver la place aussi
+      maxBoardWidth = width - 300 - evalBarWidth;
     }
-    return Math.min(width - 300, height * 0.83);
+    return Math.max(240, Math.min(maxBoardWidth, height * 0.83));
   }, [screenSize]);
 
   // Main display
@@ -306,7 +318,7 @@ export default function OpeningPage() {
           alignItems: 'center',
           justifyContent: 'center',
           minWidth: 0,
-          ml: { xs: 0, md: 2, lg: 0 }, // Reduced left margin
+          ml: 0, // Suppression de toute marge à gauche
         }}>
         {selectedVariation && !allDone && game && (
           <Box
@@ -324,17 +336,23 @@ export default function OpeningPage() {
               flexDirection: 'row',
               alignItems: 'flex-start',
               justifyContent: 'center',
+              // Ajout d'une marge à droite égale à evalBarGap pour équilibrer
+              mr: `${evalBarGap * 2}px`,
             }}>
-            {/* Evaluation bar on the left of the board, slightly lowered for better alignment */}
+            {/* Evaluation bar à gauche de l'échiquier, toujours visible et centrée */}
             <Box sx={{
               height: boardSize,
-              minHeight: boardSize,
-              maxHeight: boardSize,
-              display: { xs: 'none', sm: 'flex' },
-              alignItems: 'flex-start',
-              mr: 1,
+              width: evalBarWidth,
+              minWidth: evalBarWidth,
+              maxWidth: evalBarWidth,
+              display: 'flex',
+              alignItems: 'center', // centre la barre verticalement dans le conteneur
+              justifyContent: 'center',
+              p: 0,
+              m: 0,
+              mr: `${evalBarGap}px`, // Ajoute l'espace réel entre la barre et l'échiquier
               position: 'relative',
-              top: 52, // Lower the bar by 52px (to align with the board)
+              zIndex: 1,
             }}>
               <EvaluationBar
                 height={boardSize}
@@ -342,8 +360,17 @@ export default function OpeningPage() {
                 currentPositionAtom={currentPositionAtom}
               />
             </Box>
-            {/* The board itself, not stretched */}
-            <Box sx={{ flex: 'none', height: boardSize, minHeight: boardSize, maxHeight: boardSize, display: 'flex', alignItems: 'flex-start' }}>
+            {/* L'échiquier, collé à la barre d'évaluation */}
+            <Box sx={{
+              flex: 'none',
+              height: boardSize,
+              minHeight: boardSize,
+              maxHeight: boardSize,
+              display: 'flex',
+              alignItems: 'center', // centre l'échiquier verticalement
+              p: 0,
+              m: 0,
+            }}>
               <Board
                 id="LearningBoard"
                 canPlay={true}
