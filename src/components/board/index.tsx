@@ -42,6 +42,7 @@ export interface Props {
   showEvaluationBar?: boolean;
   trainingFeedback?: TrainingFeedback;
   bestMoveUci?: string;
+  hidePlayerHeaders?: boolean;
 }
 
 export default function Board({
@@ -58,6 +59,7 @@ export default function Board({
   showEvaluationBar = false,
   trainingFeedback,
   bestMoveUci,
+  hidePlayerHeaders = false,
 }: Props) {
   const boardRef = useRef<HTMLDivElement>(null);
   const game = useAtomValue(gameAtom);
@@ -326,11 +328,14 @@ export default function Board({
         paddingLeft={showEvaluationBar ? 2 : 0}
         size="grow"
       >
-        <PlayerHeader
-          color={boardOrientation === Color.White ? Color.Black : Color.White}
-          gameAtom={gameAtom}
-          player={boardOrientation === Color.White ? blackPlayer : whitePlayer}
-        />
+        {/* Enlève l'affichage des PlayerHeader si hidePlayerHeaders est true */}
+        {!hidePlayerHeaders && (
+          <PlayerHeader
+            color={boardOrientation === Color.White ? Color.Black : Color.White}
+            gameAtom={gameAtom}
+            player={boardOrientation === Color.White ? blackPlayer : whitePlayer}
+          />
+        )}
 
         <Grid
           container
@@ -362,11 +367,13 @@ export default function Board({
           />
         </Grid>
 
-        <PlayerHeader
-          color={boardOrientation}
-          gameAtom={gameAtom}
-          player={boardOrientation === Color.White ? whitePlayer : blackPlayer}
-        />
+        {!hidePlayerHeaders && (
+          <PlayerHeader
+            color={boardOrientation}
+            gameAtom={gameAtom}
+            player={boardOrientation === Color.White ? whitePlayer : blackPlayer}
+          />
+        )}
       </Grid>
     </Grid>
   );

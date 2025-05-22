@@ -74,6 +74,7 @@ export default function BoardContainer() {
       blackPlayer={black}
       boardOrientation={playerColor}
       currentPositionAtom={gameDataAtom}
+      hidePlayerHeaders={true}
     />
   );
 }

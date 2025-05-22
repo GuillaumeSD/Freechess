@@ -14,7 +14,7 @@ import EvaluationBar from "../components/board/evaluationBar";
 import { useEngine } from "../hooks/useEngine";
 import { EngineName } from "../types/enums";
 
-// Determine the learning color for the variation (default white, but extensible)
+// Returns the learning color for the variation (default is white, but can be extended)
 function getLearningColor(): Color {
   // Always returns white for now
   return Color.White;
@@ -305,7 +305,15 @@ export default function OpeningPage() {
         overflowX: 'hidden', // avoid horizontal scroll
       }}>
       {/* Left area: evaluation bar + board */}
-      <Grid sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0, ml: 0, height: '85vh' }}>
+      <Grid sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minWidth: 0, 
+        ml: 0, 
+        height: { xs: 'auto', sm: '85vh' },
+        maxHeight: { xs: 380, sm: 'none' }, // Limit height on mobile to keep right box close
+      }}>
         {selectedVariation && !allDone && game && (
           <Box
             sx={{
@@ -366,6 +374,7 @@ export default function OpeningPage() {
                 currentPositionAtom={currentPositionAtom}
                 boardOrientation={learningColor}
                 trainingFeedback={trainingFeedback}
+                hidePlayerHeaders={true}
               />
             </Box>
           </Box>
