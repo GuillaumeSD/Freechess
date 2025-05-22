@@ -305,7 +305,7 @@ export default function OpeningPage() {
         overflowX: 'hidden', // avoid horizontal scroll
       }}>
       {/* Left area: evaluation bar + board */}
-      <Grid sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0, ml: 0 }}>
+      <Grid sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0, ml: 0, height: '85vh' }}>
         {selectedVariation && !allDone && game && (
           <Box
             sx={{
