@@ -278,28 +278,21 @@ export default function OpeningPage() {
   }, [lastMistakeVisible, lastMoveSquare]);
 
   const screenSize = useScreenSize();
-  // Largeur réservée à la barre d'évaluation (toujours visible)
-  const evalBarWidth = 32; // px, ajustable selon la largeur réelle de la barre
-  const evalBarGap = 8; // espace réel entre la barre et l'échiquier
+  // Responsive constants
+  const evalBarWidth = 32; // px
+  const evalBarGap = 8; // px
+
+  // Dynamic board size calculation
   const boardSize = useMemo(() => {
-    const width = screenSize.width;
-    const height = screenSize.height;
-    // On ne retire plus evalBarGap du calcul de la taille
-    let maxBoardWidth = width - 300; // desktop par défaut
-    if (typeof window !== "undefined") {
-      if (window.innerWidth < 900) {
-        // Sur mobile, réserver la place pour la barre
-        maxBoardWidth = width - evalBarWidth - 24; // 24px de marge de sécurité
-        // Hauteur réduite pour éviter le scroll
-        return Math.max(180, Math.min(maxBoardWidth, height - 150));
-      }
-      // Desktop : réserver la place aussi
-      maxBoardWidth = width - 300 - evalBarWidth;
+    const { width, height } = screenSize;
+    let maxBoardWidth = width - 300 - evalBarWidth;
+    if (typeof window !== "undefined" && window.innerWidth < 900) {
+      maxBoardWidth = width - evalBarWidth - 24;
+      return Math.max(180, Math.min(maxBoardWidth, height - 150));
     }
     return Math.max(240, Math.min(maxBoardWidth, height * 0.83));
   }, [screenSize]);
 
-  // Main display
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start"
       sx={{
@@ -311,15 +304,8 @@ export default function OpeningPage() {
         boxSizing: 'border-box',
         overflowX: 'hidden', // avoid horizontal scroll
       }}>
-      {/* Left area: chessboard and evaluation bar */}
-      <Grid
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minWidth: 0,
-          ml: 0, // Suppression de toute marge à gauche
-        }}>
+      {/* Left area: evaluation bar + board */}
+      <Grid sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0, ml: 0 }}>
         {selectedVariation && !allDone && game && (
           <Box
             sx={{
@@ -334,23 +320,20 @@ export default function OpeningPage() {
               aspectRatio: '1',
               display: 'flex',
               flexDirection: 'row',
-              alignItems: 'flex-start',
+              alignItems: 'center',
               justifyContent: 'center',
-              // Ajout d'une marge à droite égale à evalBarGap pour équilibrer
-              mr: `${evalBarGap * 2}px`,
+              mr: `${evalBarGap * 2}px`, // Right margin for visual balance
             }}>
-            {/* Evaluation bar à gauche de l'échiquier, toujours visible et centrée */}
+            {/* Evaluation bar on the left, vertically centered */}
             <Box sx={{
               height: boardSize,
               width: evalBarWidth,
               minWidth: evalBarWidth,
               maxWidth: evalBarWidth,
               display: 'flex',
-              alignItems: 'center', // centre la barre verticalement dans le conteneur
+              alignItems: 'center',
               justifyContent: 'center',
-              p: 0,
-              m: 0,
-              mr: `${evalBarGap}px`, // Ajoute l'espace réel entre la barre et l'échiquier
+              mr: `${evalBarGap}px`,
               position: 'relative',
               zIndex: 1,
             }}>
@@ -360,20 +343,20 @@ export default function OpeningPage() {
                 currentPositionAtom={currentPositionAtom}
               />
             </Box>
-            {/* L'échiquier, collé à la barre d'évaluation */}
+            {/* Chessboard */}
             <Box sx={{
               flex: 'none',
               height: boardSize,
               minHeight: boardSize,
               maxHeight: boardSize,
               display: 'flex',
-              alignItems: 'center', // centre l'échiquier verticalement
+              alignItems: 'center',
               p: 0,
               m: 0,
             }}>
               <Board
                 id="LearningBoard"
-                canPlay={true}
+                canPlay
                 gameAtom={gameAtomInstance}
                 boardSize={boardSize}
                 whitePlayer={{ name: "White" }}
@@ -382,14 +365,13 @@ export default function OpeningPage() {
                 bestMoveUci={bestMoveUci}
                 currentPositionAtom={currentPositionAtom}
                 boardOrientation={learningColor}
-                // Visual feedback for the last move (mistake icon, etc.)
                 trainingFeedback={trainingFeedback}
               />
             </Box>
           </Box>
         )}
       </Grid>
-      {/* Right area: panel with progress, buttons, and text */}
+      {/* Right area: progress panel, buttons, text */}
       <Grid sx={{ minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%', flex: { xs: 'none', md: 1 }, px: { xs: 1, sm: 2, md: 3 }, pt: { xs: 2, md: 4 }, mr: { xs: 1, sm: 2, md: 6, lg: 10 } }}>
         {/* Centered container for title and buttons */}
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 2, pt: 2, pb: 2 }}>
