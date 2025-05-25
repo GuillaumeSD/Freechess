@@ -60,8 +60,9 @@ const getCapturedPiecesComponents = (
       key={pieceSymbol}
       spacing={`-${1.2 * PIECE_SCALE}rem`}
     >
-      {new Array(pieceCount).fill(
+      {new Array(pieceCount).fill(0).map((_, index) => (
         <Box
+          key={`${pieceSymbol}-${index}`}
           width={`${2 * PIECE_SCALE}rem`}
           height={`${2 * PIECE_SCALE}rem`}
           sx={{
@@ -69,7 +70,7 @@ const getCapturedPiecesComponents = (
             backgroundRepeat: "no-repeat",
           }}
         />
-      )}
+      ))}
     </Stack>
   );
 };
