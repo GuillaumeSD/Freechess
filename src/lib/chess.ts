@@ -317,11 +317,10 @@ export const getCapturedPieces = (
       new RegExp(piece, "g")
     )?.length;
     const newPiece = pieceFenToSymbol[piece] ?? piece;
-    if (!count) return { piece: newPiece, count };
 
     return {
       piece: newPiece,
-      count: count - (piecesLeftCount ?? 0),
+      count: Math.max(0, count - (piecesLeftCount ?? 0)),
     };
   });
 };

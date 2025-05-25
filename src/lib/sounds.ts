@@ -1,10 +1,16 @@
 import { Move } from "chess.js";
 import { getWhoIsCheckmated, isCheck } from "./chess";
 
+let audioContext: AudioContext | null = null;
 let audio: HTMLAudioElement | null = null;
 
 const playSound = async (url: string) => {
-  if (!audio) audio = new Audio();
+  if (!audio) {
+    audioContext = new AudioContext();
+    audio = new Audio();
+    const source = audioContext.createMediaElementSource(audio);
+    source.connect(audioContext.destination);
+  }
 
   audio.src = url;
   try {
