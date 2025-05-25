@@ -67,6 +67,10 @@ Run it with :
 npm run lint
 ```
 
+## Contribute
+
+See [contributing](CONTRIBUTING.md) for details on how to contribute to the project.
+
 ## Deploy
 
 To deploy the app, install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [authenticate](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html), then run :
