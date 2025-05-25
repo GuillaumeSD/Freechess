@@ -1,13 +1,19 @@
 import { useCallback } from "react";
 import { Chess } from "chess.js";
 
-interface Mistake {
+/**
+ * A mistake made by the user during opening training.
+ */
+export interface Mistake {
   from: string;
   to: string;
   type: string;
 }
 
-interface UseMistakeHandlerParams {
+/**
+ * Params for the useMistakeHandler hook.
+ */
+export interface UseMistakeHandlerParams {
   selectedVariation: { moves: string[] } | null;
   game: Chess;
   moveIdx: number;
@@ -17,6 +23,10 @@ interface UseMistakeHandlerParams {
   undoMove: () => void;
 }
 
+/**
+ * Custom hook that checks if the user's move matches the expected move in the opening sequence,
+ * and handles mistakes (visual feedback + undo).
+ */
 export function useMistakeHandler({
   selectedVariation,
   game,
@@ -34,11 +44,12 @@ export function useMistakeHandler({
     if (history.length !== moveIdx + 1) return;
     const last = history[history.length - 1];
     const expectedMove = new Chess();
-    for (let i = 0; i < moveIdx; i++) expectedMove.move(selectedVariation.moves[i]);
+    for (let i = 0; i < moveIdx; i++) {
+      expectedMove.move(selectedVariation.moves[i]);
+    }
     const expected = expectedMove.move(selectedVariation.moves[moveIdx]);
     if (!expected || last.from !== expected.from || last.to !== expected.to) {
-      let mistakeType = "Mistake";
-      if (last.captured || last.san.includes("#")) mistakeType = "Blunder";
+      const mistakeType = (last.captured || last.san.includes("#")) ? "Blunder" : "Mistake";
       setTimeout(() => {
         setLastMistakeVisible({ from: last.from, to: last.to, type: mistakeType });
         setTimeout(() => {
@@ -51,3 +62,4 @@ export function useMistakeHandler({
     }
   }, [selectedVariation, game, moveIdx, isUserTurn, setMoveIdx, setLastMistakeVisible, undoMove]);
 }
+

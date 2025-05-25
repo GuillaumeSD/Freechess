@@ -1,7 +1,11 @@
-import React from "react";
-import { Button, Stack } from "@mui/material";
 
-interface OpeningControlsProps {
+import { Button, Stack } from "@mui/material";
+import { memo } from "react";
+
+/**
+ * Control buttons for skipping or resetting the opening variation.
+ */
+export interface OpeningControlsProps {
   moveIdx: number;
   selectedVariationMovesLength: number;
   allDone: boolean;
@@ -10,34 +14,36 @@ interface OpeningControlsProps {
   disabled?: boolean;
 }
 
-const OpeningControls: React.FC<OpeningControlsProps> = ({
+function OpeningControls({
   moveIdx,
   selectedVariationMovesLength,
   allDone,
   onSkip,
   onReset,
   disabled = false,
-}) => (
-  <Stack direction="row" spacing={2} sx={{ width: '100%' }}>
-    <Button
-      variant="outlined"
-      color="primary"
-      fullWidth
-      disabled={moveIdx >= selectedVariationMovesLength || allDone || disabled}
-      onClick={onSkip}
-    >
-      Skip variation
-    </Button>
-    <Button
-      variant="outlined"
-      color="primary"
-      fullWidth
-      onClick={onReset}
-      disabled={disabled}
-    >
-      Reset progress
-    </Button>
-  </Stack>
-);
+}: OpeningControlsProps) {
+  return (
+    <Stack direction="row" spacing={2} sx={{ width: '100%' }}>
+      <Button
+        variant="outlined"
+        color="primary"
+        fullWidth
+        disabled={moveIdx >= selectedVariationMovesLength || allDone || disabled}
+        onClick={onSkip}
+      >
+        Skip variation
+      </Button>
+      <Button
+        variant="outlined"
+        color="primary"
+        fullWidth
+        onClick={onReset}
+        disabled={disabled}
+      >
+        Reset progress
+      </Button>
+    </Stack>
+  );
+}
 
-export default OpeningControls;
+export default memo(OpeningControls);

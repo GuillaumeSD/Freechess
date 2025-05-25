@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import LinearProgressBar from "./LinearProgressBar";
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -7,16 +7,16 @@ import { useTheme } from "@mui/material/styles";
 // - total: total number of variations
 // - currentVariationIndex: index of the current variation (optional, for display)
 
-interface OpeningProgressProps {
+/**
+ * Progress bar for opening training, showing completed variations out of total.
+ */
+export interface OpeningProgressProps {
   total: number;
   // List of completed variation indexes
   completed: number[];
 }
 
-const OpeningProgress: React.FC<OpeningProgressProps> = ({
-  total,
-  completed,
-}) => {
+function OpeningProgress({ total, completed }: OpeningProgressProps) {
   const [progress, setProgress] = useState<number[]>(completed);
   const theme = useTheme();
 
@@ -55,4 +55,4 @@ const OpeningProgress: React.FC<OpeningProgressProps> = ({
   );
 };
 
-export default OpeningProgress;
+export default memo(OpeningProgress);

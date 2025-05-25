@@ -6,9 +6,15 @@ import {
   linearProgressClasses,
 } from "@mui/material";
 
-const LinearProgressBar = (
-  props: LinearProgressProps & { value: number; label: string }
-) => {
+/**
+ * A styled linear progress bar with optional label and percentage display.
+ */
+interface LinearProgressBarProps extends LinearProgressProps {
+  value: number;
+  label: string;
+}
+
+function LinearProgressBar({ value, label, ...rest }: LinearProgressBarProps) {
   return (
     <Grid
       container
@@ -19,13 +25,17 @@ const LinearProgressBar = (
       columnGap={2}
       size={12}
     >
-      <Typography variant="caption" align="center">
-        {props.label}
+      <Typography variant="caption" align="center" aria-label="progress-label">
+        {label}
       </Typography>
       <Grid sx={{ width: "100%" }}>
         <LinearProgress
           variant="determinate"
-          {...props}
+          value={value}
+          aria-valuenow={value}
+          aria-valuemax={100}
+          aria-label={label}
+          {...rest}
           sx={(theme) => ({
             borderRadius: "5px",
             height: "5px",
@@ -42,7 +52,7 @@ const LinearProgressBar = (
       </Grid>
       <Grid>
         <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value
+          value
         )}%`}</Typography>
       </Grid>
     </Grid>

@@ -1,7 +1,11 @@
-import React from "react";
-import { Typography, Stack, Button } from "@mui/material";
 
-interface VariationHeaderProps {
+import { Typography, Stack, Button } from "@mui/material";
+import { memo } from "react";
+
+/**
+ * Header for the opening variation panel.
+ */
+export interface VariationHeaderProps {
   variationName?: string;
   trainingMode: boolean;
   onSetTrainingMode: (training: boolean) => void;
@@ -37,4 +41,4 @@ const VariationHeader: React.FC<VariationHeaderProps> = ({
   </>
 );
 
-export default VariationHeader;
+export default memo(VariationHeader);
