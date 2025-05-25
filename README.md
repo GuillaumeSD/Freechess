@@ -16,15 +16,15 @@
 </div>
 <br />
 
-Chesskit is an open-source chess web app to play, view and analyze your chess games for free on any device with Stockfish !
+Chesskit is an open-source chess website to play, view, analyze and review your chess games for free on any device with Stockfish !
 
 ## Mission
 
-It aims to offer all the features it can from the best chess apps, while being free and open-source. It is designed to be easy to use, fast, and reliable.
+Chesskit aims to offer all the chess related features it can, while being free and open-source. It is designed to be easy to use, fast, and reliable.
 
 ## Features
 
-- Load and analyze games from [chess.com](https://chess.com) and [lichess.org](https://lichess.org)
+- Load and review games from [chess.com](https://chess.com) and [lichess.org](https://lichess.org)
 - Analysis board with live engine evaluation, custom arrows, evaluation graph, ...
 - Moves classification (Brilliant, Great, Good, Mistake, Blunder, ...)
 - Chess960 and Puzzles support

@@ -16,7 +16,7 @@ export default function Layout({ children }: PropsWithChildren) {
             main: red[400],
           },
           primary: {
-            main: "#5d9948",
+            main: "#5a9943",
           },
           secondary: {
             main: isDarkMode ? "#424242" : "#ffffff",
