@@ -47,16 +47,16 @@ export const sendCommandsToWorker = (
 export const getRecommendedWorkersNb = (): number => {
   const maxWorkersNbFromThreads = Math.max(
     1,
-    navigator.hardwareConcurrency - 4,
+    Math.round(navigator.hardwareConcurrency - 4),
     Math.floor((navigator.hardwareConcurrency * 2) / 3)
   );
 
   const maxWorkersNbFromMemory =
     "deviceMemory" in navigator && typeof navigator.deviceMemory === "number"
-      ? navigator.deviceMemory
+      ? Math.max(1, Math.round(navigator.deviceMemory))
       : 4;
 
-  const maxWorkersNbFromDevice = isIosDevice() ? 2 : isMobileDevice() ? 4 : 10;
+  const maxWorkersNbFromDevice = isIosDevice() ? 2 : isMobileDevice() ? 4 : 8;
 
   return Math.min(
     maxWorkersNbFromThreads,
