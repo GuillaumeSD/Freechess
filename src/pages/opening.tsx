@@ -1,6 +1,6 @@
 import { italianGameVariations } from "../data/openings to learn/italian";
-import { Box, Typography, Button, Stack } from "@mui/material";
-import { useState, useMemo, useEffect } from "react";
+import { Box } from "@mui/material";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Board from "../components/board";
 import { Chess } from "chess.js";
 import { atom, useAtom } from "jotai";
@@ -13,6 +13,9 @@ import { useScreenSize } from "../hooks/useScreenSize";
 import EvaluationBar from "../components/board/evaluationBar";
 import { useEngine } from "../hooks/useEngine";
 import { EngineName } from "../types/enums";
+import OpeningControls from "../components/OpeningControls";
+import VariationHeader from "../components/VariationHeader";
+import { useMistakeHandler } from "../hooks/useMistakeHandler";
 
 // Returns the learning color for the variation (default is white, but can be extended)
 function getLearningColor(): Color {
@@ -20,11 +23,17 @@ function getLearningColor(): Color {
   return Color.White;
 }
 
+interface Mistake {
+  from: string;
+  to: string;
+  type: string;
+}
+
 export default function OpeningPage() {
-  const [currentVariantIdx, setCurrentVariantIdx] = useState(0);
-  const [moveIdx, setMoveIdx] = useState(0);
-  const [trainingMode, setTrainingMode] = useState(false);
-  const [lastMistakeVisible, setLastMistakeVisible] = useState<null | { from: string; to: string; type: string }>(null);
+  const [currentVariantIdx, setCurrentVariantIdx] = useState<number>(0);
+  const [moveIdx, setMoveIdx] = useState<number>(0);
+  const [trainingMode, setTrainingMode] = useState<boolean>(false);
+  const [lastMistakeVisible, setLastMistakeVisible] = useState<Mistake | null>(null);
   // Atom Jotai for game state
   const [gameAtomInstance] = useState(() => atom(new Chess()));
   const [game, setGame] = useAtom(gameAtomInstance);
@@ -248,14 +257,14 @@ export default function OpeningPage() {
   }, [completedVariations, variations.length, currentVariantIdx, setGame]);
 
   // Reset progress
-  const handleResetProgress = () => {
+  const handleResetProgress = useCallback(() => {
     localStorage.removeItem(progressStorageKey);
     setCompletedVariations([]);
     setCurrentVariantIdx(0);
     setMoveIdx(0);
     setLastMistakeVisible(null);
     setGame(new Chess());
-  };
+  }, [setCompletedVariations, setCurrentVariantIdx, setMoveIdx, setLastMistakeVisible, setGame]);
 
   // Determine the target square of the last move played (for overlay)
   const lastMoveSquare = useMemo(() => {
@@ -293,6 +302,37 @@ export default function OpeningPage() {
     return Math.max(240, Math.min(maxBoardWidth, height * 0.83));
   }, [screenSize]);
 
+  // Handler for skip variation
+  const handleSkipVariation = useCallback(() => {
+    let newCompleted = completedVariations;
+    if (!completedVariations.includes(currentVariantIdx)) {
+      newCompleted = [...completedVariations, currentVariantIdx];
+      setCompletedVariations(newCompleted);
+      localStorage.setItem(progressStorageKey, JSON.stringify(newCompleted));
+    }
+    if (currentVariantIdx < variations.length - 1) {
+      setCurrentVariantIdx(idx => idx + 1);
+      setMoveIdx(0);
+      setLastMistakeVisible(null);
+      setGame(new Chess());
+    } else {
+      setMoveIdx(0);
+      setLastMistakeVisible(null);
+      setGame(new Chess());
+    }
+  }, [completedVariations, currentVariantIdx, setCompletedVariations, setCurrentVariantIdx, setMoveIdx, setLastMistakeVisible, setGame, variations.length]);
+
+  // Use mistake handler hook
+  useMistakeHandler({
+    selectedVariation,
+    game,
+    moveIdx,
+    isUserTurn,
+    setMoveIdx,
+    setLastMistakeVisible,
+    undoMove,
+  });
+
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start"
       sx={{
@@ -302,7 +342,7 @@ export default function OpeningPage() {
         m: 0,
         p: 0,
         boxSizing: 'border-box',
-        overflowX: 'hidden', // avoid horizontal scroll
+        overflowX: 'hidden',
       }}>
       {/* Left area: evaluation bar + board */}
       <Grid sx={{ 
@@ -312,7 +352,7 @@ export default function OpeningPage() {
         minWidth: 0, 
         ml: 0, 
         height: { xs: 'auto', sm: '85vh' },
-        maxHeight: { xs: 380, sm: 'none' }, // Limit height on mobile to keep right box close
+        maxHeight: { xs: 380, sm: 'none' },
       }}>
         {selectedVariation && !allDone && game && (
           <Box
@@ -383,25 +423,13 @@ export default function OpeningPage() {
       {/* Right area: progress panel, buttons, text */}
       <Grid sx={{ minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%', flex: { xs: 'none', md: 1 }, px: { xs: 1, sm: 2, md: 3 }, pt: { xs: 2, md: 4 }, mr: { xs: 1, sm: 2, md: 6, lg: 10 } }}>
         {/* Centered container for title and buttons */}
-        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 2, pt: 2, pb: 2 }}>
-          <Typography variant="h4" gutterBottom sx={{ mb: 2, wordBreak: 'break-word', textAlign: 'center', width: '100%' }}>
-            {selectedVariation?.name}
-          </Typography>
-          <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'center', width: '100%' }}>
-            <Button variant={trainingMode ? "contained" : "outlined"} onClick={() => setTrainingMode(true)} fullWidth>
-              Training Mode
-            </Button>
-            <Button variant={!trainingMode ? "contained" : "outlined"} onClick={() => setTrainingMode(false)} fullWidth>
-              Learning Mode
-            </Button>
-          </Stack>
-          {moveIdx >= selectedVariation.moves.length ? (
-            <Typography color="success.main" sx={{ mb: 2, textAlign: 'center' }}>Variation complete! Next variation loading…</Typography>
-          ) : trainingMode ? (
-            <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the correct move to continue.</Typography>
-          ) : (
-            <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the move indicated by the arrow to continue.</Typography>
-          )}
+        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 2, pt: 2, pb: 2}}>
+          <VariationHeader
+            variationName={selectedVariation?.name}
+            trainingMode={trainingMode}
+            onSetTrainingMode={setTrainingMode}
+            variationComplete={moveIdx >= (selectedVariation?.moves.length || 0)}
+          />
         </Box>
         {/* Progress bar at the bottom right, always visible */}
         <Box sx={{ mt: 'auto', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2, pb: 2 }}>
@@ -409,46 +437,13 @@ export default function OpeningPage() {
             total={variations.length}
             completed={completedVariations}
           />
-          {/* Action buttons: Skip and Reset, side by side, same style */}
-          <Stack direction="row" spacing={2} sx={{ width: '100%' }}>
-            <Button
-              variant="outlined"
-              color="primary"
-              fullWidth
-              disabled={moveIdx >= selectedVariation?.moves.length || allDone}
-              onClick={() => {
-                // Always allow skip if not allDone
-                let newCompleted = completedVariations;
-                if (!completedVariations.includes(currentVariantIdx)) {
-                  newCompleted = [...completedVariations, currentVariantIdx];
-                  setCompletedVariations(newCompleted);
-                  localStorage.setItem(progressStorageKey, JSON.stringify(newCompleted));
-                }
-                // Go to next variation if possible
-                if (currentVariantIdx < variations.length - 1) {
-                  setCurrentVariantIdx(idx => idx + 1);
-                  setMoveIdx(0);
-                  setLastMistakeVisible(null);
-                  setGame(new Chess());
-                } else {
-                  // If last variation, just reset moveIdx and board
-                  setMoveIdx(0);
-                  setLastMistakeVisible(null);
-                  setGame(new Chess());
-                }
-              }}
-            >
-              Skip variation
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              fullWidth
-              onClick={handleResetProgress}
-            >
-              Reset progress
-            </Button>
-          </Stack>
+          <OpeningControls
+            moveIdx={moveIdx}
+            selectedVariationMovesLength={selectedVariation?.moves.length || 0}
+            allDone={allDone}
+            onSkip={handleSkipVariation}
+            onReset={handleResetProgress}
+          />
         </Box>
       </Grid>
     </Grid>
