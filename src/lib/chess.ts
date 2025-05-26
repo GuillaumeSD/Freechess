@@ -3,6 +3,7 @@ import { Game, Player } from "@/types/game";
 import { Chess, PieceSymbol, Square } from "chess.js";
 import { getPositionWinPercentage } from "./engine/helpers/winPercentage";
 import { Color } from "@/types/enums";
+import { Piece } from "react-chessboard/dist/chessboard/types";
 
 export const getEvaluateGameParams = (game: Chess): EvaluateGameParams => {
   const history = game.history({ verbose: true });
@@ -288,29 +289,55 @@ export const isCheck = (fen: string): boolean => {
 export const getCapturedPieces = (
   fen: string,
   color: Color
-): Record<string, number | undefined> => {
-  const capturedPieces: Record<string, number | undefined> = {};
-  if (color === Color.White) {
-    capturedPieces.p = 8;
-    capturedPieces.r = 2;
-    capturedPieces.n = 2;
-    capturedPieces.b = 2;
-    capturedPieces.q = 1;
-  } else {
-    capturedPieces.P = 8;
-    capturedPieces.R = 2;
-    capturedPieces.N = 2;
-    capturedPieces.B = 2;
-    capturedPieces.Q = 1;
-  }
+): {
+  piece: string;
+  count: number;
+}[] => {
+  const capturedPieces =
+    color === Color.White
+      ? [
+          { piece: "p", count: 8 },
+          { piece: "b", count: 2 },
+          { piece: "n", count: 2 },
+          { piece: "r", count: 2 },
+          { piece: "q", count: 1 },
+        ]
+      : [
+          { piece: "P", count: 8 },
+          { piece: "B", count: 2 },
+          { piece: "N", count: 2 },
+          { piece: "R", count: 2 },
+          { piece: "Q", count: 1 },
+        ];
 
   const fenPiecePlacement = fen.split(" ")[0];
-  for (const piece of Object.keys(capturedPieces)) {
-    const count = fenPiecePlacement.match(new RegExp(piece, "g"))?.length;
-    if (count) capturedPieces[piece] = (capturedPieces[piece] ?? 0) - count;
-  }
 
-  return capturedPieces;
+  return capturedPieces.map(({ piece, count }) => {
+    const piecesLeftCount = fenPiecePlacement.match(
+      new RegExp(piece, "g")
+    )?.length;
+    const newPiece = pieceFenToSymbol[piece] ?? piece;
+
+    return {
+      piece: newPiece,
+      count: Math.max(0, count - (piecesLeftCount ?? 0)),
+    };
+  });
+};
+
+const pieceFenToSymbol: Record<string, Piece | undefined> = {
+  p: "bP",
+  b: "bB",
+  n: "bN",
+  r: "bR",
+  q: "bQ",
+  k: "bK",
+  P: "wP",
+  B: "wB",
+  N: "wN",
+  R: "wR",
+  Q: "wQ",
+  K: "wK",
 };
 
 export const getLineEvalLabel = (

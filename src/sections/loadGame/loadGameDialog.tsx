@@ -29,7 +29,7 @@ import { boardOrientationAtom } from "../analysis/states";
 interface Props {
   open: boolean;
   onClose: () => void;
-  setGame?: (game: Chess) => void;
+  setGame?: (game: Chess) => Promise<void>;
 }
 
 export default function NewGameDialog({ open, onClose, setGame }: Props) {
@@ -43,7 +43,7 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
   const { addGame } = useGameDatabase();
 
-  const handleAddGame = (pgn: string, boardOrientation?: boolean) => {
+  const handleAddGame = async (pgn: string, boardOrientation?: boolean) => {
     if (!pgn) return;
 
     try {
@@ -51,9 +51,9 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
       setSentryContext("loadedGame", { pgn });
 
       if (setGame) {
-        setGame(gameToAdd);
+        await setGame(gameToAdd);
       } else {
-        addGame(gameToAdd);
+        await addGame(gameToAdd);
       }
 
       setBoardOrientation(boardOrientation ?? true);
@@ -92,10 +92,12 @@ export default function NewGameDialog({ open, onClose, setGame }: Props) {
       onClose={handleClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        sx: {
-          position: "fixed",
-          top: 0,
+      slotProps={{
+        paper: {
+          sx: {
+            position: "fixed",
+            top: 0,
+          },
         },
       }}
     >
