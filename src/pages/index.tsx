@@ -27,7 +27,7 @@ import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton
 import GraphTab from "@/sections/analysis/panelBody/graphTab";
 import { PageTitle } from "@/components/pageTitle";
 
-export default function GameReview() {
+export default function GameAnalysis() {
   const theme = useTheme();
   const [tab, setTab] = useState(0);
   const isLgOrGreater = useMediaQuery(theme.breakpoints.up("lg"));
@@ -59,7 +59,7 @@ export default function GameReview() {
 
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start">
-      <PageTitle title="Chesskit Game Review" />
+      <PageTitle title="Chesskit Game Analysis" />
 
       <Board />
 
