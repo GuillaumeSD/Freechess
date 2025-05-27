@@ -5,13 +5,13 @@ export const TAB_ICONS_COLOR = "#FE7F2D";
 export const LINEAR_PROGRESS_BAR_COLOR = "#3B9AC6";
 
 export const CLASSIFICATION_COLORS: Record<MoveClassification, string> = {
-  [MoveClassification.Book]: "#dbac86",
+  [MoveClassification.Opening]: "#dbac86",
   [MoveClassification.Forced]: "#dbac86",
   [MoveClassification.Brilliant]: "#19d4af",
-  [MoveClassification.Great]: "#3894eb",
+  [MoveClassification.Perfect]: "#3894eb",
   [MoveClassification.Best]: "#22ac38",
   [MoveClassification.Excellent]: "#22ac38",
-  [MoveClassification.Good]: "#74b038",
+  [MoveClassification.Okay]: "#74b038",
   [MoveClassification.Inaccuracy]: "#f2be1f",
   [MoveClassification.Mistake]: "#e69f00",
   [MoveClassification.Blunder]: "#df5353",

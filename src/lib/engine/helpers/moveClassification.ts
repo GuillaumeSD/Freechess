@@ -25,7 +25,7 @@ export const getMovesClassification = (
       return {
         ...rawPosition,
         opening: opening.name,
-        moveClassification: MoveClassification.Book,
+        moveClassification: MoveClassification.Opening,
       };
     }
 
@@ -76,7 +76,7 @@ export const getMovesClassification = (
       index > 1 ? [uciMoves[index - 2], uciMoves[index - 1]] : null;
 
     if (
-      isGreatMove(
+      isPerfectMove(
         lastPositionWinPercentage,
         positionWinPercentage,
         isWhiteMove,
@@ -88,7 +88,7 @@ export const getMovesClassification = (
       return {
         ...rawPosition,
         opening: currentOpening,
-        moveClassification: MoveClassification.Great,
+        moveClassification: MoveClassification.Perfect,
       };
     }
 
@@ -128,7 +128,7 @@ const getMoveBasicClassification = (
   if (winPercentageDiff < -20) return MoveClassification.Blunder;
   if (winPercentageDiff < -10) return MoveClassification.Mistake;
   if (winPercentageDiff < -5) return MoveClassification.Inaccuracy;
-  if (winPercentageDiff < -2) return MoveClassification.Good;
+  if (winPercentageDiff < -2) return MoveClassification.Okay;
   return MoveClassification.Excellent;
 };
 
@@ -183,7 +183,7 @@ const isLosingOrAlternateCompletelyWinning = (
   return isLosing || isAlternateCompletelyWinning;
 };
 
-const isGreatMove = (
+const isPerfectMove = (
   lastPositionWinPercentage: number,
   positionWinPercentage: number,
   isWhiteMove: boolean,

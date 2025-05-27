@@ -18,12 +18,12 @@ export enum MoveClassification {
   Blunder = "blunder",
   Mistake = "mistake",
   Inaccuracy = "inaccuracy",
-  Good = "good",
+  Okay = "okay",
   Excellent = "excellent",
   Best = "best",
   Forced = "forced",
-  Book = "book",
-  Great = "great",
+  Opening = "opening",
+  Perfect = "perfect",
   Brilliant = "brilliant",
 }
 
