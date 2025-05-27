@@ -3,6 +3,7 @@ import { PropsWithChildren, useMemo } from "react";
 import NavBar from "./NavBar";
 import { red } from "@mui/material/colors";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { MAIN_THEME_COLOR } from "@/constants";
 
 export default function Layout({ children }: PropsWithChildren) {
   const [isDarkMode, setDarkMode] = useLocalStorage("useDarkMode", true);
@@ -16,7 +17,7 @@ export default function Layout({ children }: PropsWithChildren) {
             main: red[400],
           },
           primary: {
-            main: "#5a9943",
+            main: MAIN_THEME_COLOR,
           },
           secondary: {
             main: isDarkMode ? "#424242" : "#ffffff",

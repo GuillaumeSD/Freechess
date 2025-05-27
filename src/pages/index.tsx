@@ -26,6 +26,7 @@ import { Icon } from "@iconify/react";
 import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
 import GraphTab from "@/sections/analysis/panelBody/graphTab";
 import { PageTitle } from "@/components/pageTitle";
+import { TAB_ICONS_COLOR } from "@/constants";
 
 export default function GameAnalysis() {
   const theme = useTheme();
@@ -118,7 +119,9 @@ export default function GameAnalysis() {
             <Tab
               label="Analysis"
               id="tab0"
-              icon={<Icon icon="mdi:magnify" color="#27f019" height={15} />}
+              icon={
+                <Icon icon="mdi:magnify" color={TAB_ICONS_COLOR} height={15} />
+              }
               iconPosition="start"
               sx={{
                 textTransform: "none",
@@ -134,7 +137,7 @@ export default function GameAnalysis() {
               icon={
                 <Icon
                   icon="mdi:format-list-bulleted"
-                  color="#27f019"
+                  color={TAB_ICONS_COLOR}
                   height={15}
                 />
               }
@@ -151,7 +154,13 @@ export default function GameAnalysis() {
             <Tab
               label="Graph"
               id="tab2"
-              icon={<Icon icon="mdi:chart-line" color="#27f019" height={15} />}
+              icon={
+                <Icon
+                  icon="mdi:chart-line"
+                  color={TAB_ICONS_COLOR}
+                  height={15}
+                />
+              }
               iconPosition="start"
               sx={{
                 textTransform: "none",

@@ -1,3 +1,4 @@
+import { LINEAR_PROGRESS_BAR_COLOR } from "@/constants";
 import {
   Grid2 as Grid,
   LinearProgress,
@@ -37,7 +38,7 @@ const LinearProgressBar = (
             },
             [`& .${linearProgressClasses.bar}`]: {
               borderRadius: 5,
-              backgroundColor: "#308fe8",
+              backgroundColor: LINEAR_PROGRESS_BAR_COLOR,
             },
           })}
         />
