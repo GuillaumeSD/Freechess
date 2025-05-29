@@ -2,33 +2,70 @@ import { Move } from "chess.js";
 import { getWhoIsCheckmated, isCheck } from "./chess";
 
 let audioContext: AudioContext | null = null;
-let audio: HTMLAudioElement | null = null;
 
-const playSound = async (url: string) => {
-  if (!audio) {
-    audioContext = new AudioContext();
-    audio = new Audio();
-    const source = audioContext.createMediaElementSource(audio);
-    source.connect(audioContext.destination);
+type SoundType = 'move' | 'capture' | 'castle' | 'check' | 'promote' | 'gameEnd' | 'gameStart' | 'illegal';
+
+const soundUrls: Record<SoundType, string> = {
+  move: "/sounds/move.webm",
+  capture: "/sounds/capture.webm",
+  castle: "/sounds/castle.webm",
+  check: "/sounds/move-check.webm",
+  promote: "/sounds/promote.webm",
+  gameEnd: "/sounds/game-end.webm",
+  gameStart: "/sounds/game-start.webm",
+  illegal: "/sounds/illegal-move.webm"
+};
+
+const getAudioContext = (): AudioContext | null => {
+  if (!audioContext) {
+    try {
+      // @ts-ignore - Support Safari
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass) {
+        audioContext = new AudioContextClass();
+      }
+    } catch {
+      return null;
+    }
   }
+  return audioContext;
+};
 
-  audio.src = url;
+const audioBufferCache = new Map<string, AudioBuffer>();
+
+const playSound = async (soundType: SoundType) => {
   try {
-    await audio.play();
+    const ctx = getAudioContext();
+    if (!ctx) {
+      if ('vibrate' in navigator) navigator.vibrate(80);
+      return;
+    }
+    if (ctx.state === 'suspended') await ctx.resume();
+    const url = soundUrls[soundType];
+    let audioBuffer = audioBufferCache.get(url);
+    if (!audioBuffer) {
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+      audioBufferCache.set(url, audioBuffer);
+    }
+    const source = ctx.createBufferSource();
+    source.connect(ctx.destination);
+    source.buffer = audioBuffer;
+    source.start(ctx.currentTime);
   } catch {
-    console.warn("Audio play failed");
+    if ('vibrate' in navigator) navigator.vibrate(50);
   }
 };
 
-export const playCaptureSound = () => playSound("/sounds/capture.webm");
-export const playCastleSound = () => playSound("/sounds/castle.webm");
-export const playGameEndSound = () => playSound("/sounds/game-end.webm");
-export const playGameStartSound = () => playSound("/sounds/game-start.webm");
-export const playIllegalMoveSound = () =>
-  playSound("/sounds/illegal-move.webm");
-export const playMoveCheckSound = () => playSound("/sounds/move-check.webm");
-export const playMoveSound = () => playSound("/sounds/move.webm");
-export const playPromoteSound = () => playSound("/sounds/promote.webm");
+export const playCaptureSound = () => playSound('capture');
+export const playCastleSound = () => playSound('castle');
+export const playGameEndSound = () => playSound('gameEnd');
+export const playGameStartSound = () => playSound('gameStart');
+export const playIllegalMoveSound = () => playSound('illegal');
+export const playMoveCheckSound = () => playSound('check');
+export const playMoveSound = () => playSound('move');
+export const playPromoteSound = () => playSound('promote');
 
 export const playSoundFromMove = async (move: Move | null) => {
   if (!move) {
