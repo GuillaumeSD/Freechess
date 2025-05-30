@@ -58,4 +58,5 @@ public/piece/companion | David L. Brown | ["freeware"](http://www.enpassant.dk/c
 public/piece/leipzig | Armando Hernandez Marroquin | ["freeware"](http://www.enpassant.dk/chess/fonteng.htm#LEIPZIG)
 public/piece/reillycraig | [Reilly Craig](https://instagram.com/fader_) |
 public/piece/symmetric | [Arcticpenguins](https://github.com/lichess-org/lichobile/issues/215) |
+public/sounds | [Lichess](https://github.com/lichess-org/lila) | [GNU AGPL v3](https://github.com/lichess-org/lila?tab=License-2-ov-file)
 public/piece/riohacha | |

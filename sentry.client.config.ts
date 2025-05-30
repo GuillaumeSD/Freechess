@@ -32,6 +32,8 @@ if (
       "AbortError: The user aborted a request.",
       "Failed to fetch",
       "Fetch is aborted",
+      "The operation was aborted.",
+      "AbortError: AbortError",
     ],
   });
 }

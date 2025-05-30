@@ -9,13 +9,11 @@ import {
   ListItemText,
   TextField,
 } from "@mui/material";
-import { useSetAtom } from "jotai";
-import { boardOrientationAtom } from "../analysis/states";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
 
 interface Props {
-  onSelect: (pgn: string) => void;
+  onSelect: (pgn: string, boardOrientation?: boolean) => void;
 }
 
 export default function LichessInput({ onSelect }: Props) {
@@ -24,7 +22,6 @@ export default function LichessInput({ onSelect }: Props) {
     ""
   );
   const debouncedUsername = useDebounce(lichessUsername, 500);
-  const setBoardOrientation = useSetAtom(boardOrientationAtom);
 
   const {
     data: games,
@@ -72,11 +69,10 @@ export default function LichessInput({ onSelect }: Props) {
             games.map((game) => (
               <ListItemButton
                 onClick={() => {
-                  setBoardOrientation(
+                  const boardOrientation =
                     lichessUsername.toLowerCase() !==
-                      game.players?.black?.user?.name?.toLowerCase()
-                  );
-                  onSelect(game.pgn);
+                    game.players?.black?.user?.name?.toLowerCase();
+                  onSelect(game.pgn, boardOrientation);
                 }}
                 style={{ width: 350, maxWidth: 350 }}
                 key={game.id}

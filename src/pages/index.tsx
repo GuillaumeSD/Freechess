@@ -27,7 +27,7 @@ import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton
 import GraphTab from "@/sections/analysis/panelBody/graphTab";
 import { PageTitle } from "@/components/pageTitle";
 
-export default function GameReview() {
+export default function GameAnalysis() {
   const theme = useTheme();
   const [tab, setTab] = useState(0);
   const isLgOrGreater = useMediaQuery(theme.breakpoints.up("lg"));
@@ -59,7 +59,7 @@ export default function GameReview() {
 
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start">
-      <PageTitle title="Chesskit Game Review" />
+      <PageTitle title="Chesskit Game Analysis" />
 
       <Board />
 
@@ -118,7 +118,7 @@ export default function GameReview() {
             <Tab
               label="Analysis"
               id="tab0"
-              icon={<Icon icon="mdi:magnify" color="#27f019" height={15} />}
+              icon={<Icon icon="mdi:magnify" height={15} />}
               iconPosition="start"
               sx={{
                 textTransform: "none",
@@ -131,13 +131,7 @@ export default function GameReview() {
             <Tab
               label="Moves"
               id="tab1"
-              icon={
-                <Icon
-                  icon="mdi:format-list-bulleted"
-                  color="#27f019"
-                  height={15}
-                />
-              }
+              icon={<Icon icon="mdi:format-list-bulleted" height={15} />}
               iconPosition="start"
               sx={{
                 textTransform: "none",
@@ -151,7 +145,7 @@ export default function GameReview() {
             <Tab
               label="Graph"
               id="tab2"
-              icon={<Icon icon="mdi:chart-line" color="#27f019" height={15} />}
+              icon={<Icon icon="mdi:chart-line" height={15} />}
               iconPosition="start"
               sx={{
                 textTransform: "none",

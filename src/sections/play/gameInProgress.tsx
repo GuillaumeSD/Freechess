@@ -7,7 +7,6 @@ import {
 import { useAtom, useAtomValue } from "jotai";
 import { gameAtom, isGameInProgressAtom } from "./states";
 import { useEffect } from "react";
-import { playGameEndSound } from "@/lib/sounds";
 import UndoMoveButton from "./undoMoveButton";
 
 export default function GameInProgress() {
@@ -19,7 +18,6 @@ export default function GameInProgress() {
   }, [game, setIsGameInProgress]);
 
   const handleResign = () => {
-    playGameEndSound();
     setIsGameInProgress(false);
   };
 

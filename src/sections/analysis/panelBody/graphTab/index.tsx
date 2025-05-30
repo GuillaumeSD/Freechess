@@ -65,8 +65,8 @@ export default function GraphTab(props: GridProps) {
 
       if (
         [
-          MoveClassification.Brilliant,
-          MoveClassification.Great,
+          MoveClassification.Splendid,
+          MoveClassification.Perfect,
           MoveClassification.Blunder,
           MoveClassification.Mistake,
         ].includes(moveClass) ||

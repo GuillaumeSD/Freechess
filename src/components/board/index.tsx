@@ -237,9 +237,9 @@ export default function Board({
       bestMove &&
       showBestMoveArrow &&
       moveClassification !== MoveClassification.Best &&
-      moveClassification !== MoveClassification.Book &&
+      moveClassification !== MoveClassification.Opening &&
       moveClassification !== MoveClassification.Forced &&
-      moveClassification !== MoveClassification.Great
+      moveClassification !== MoveClassification.Perfect
     ) {
       const bestMoveArrow = [
         bestMove.slice(0, 2),

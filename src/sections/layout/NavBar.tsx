@@ -9,11 +9,24 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import NavLink from "@/components/NavLink";
 import Image from "next/image";
+import { styled } from "@mui/material/styles";
 
 interface Props {
   darkMode: boolean;
   switchDarkMode: () => void;
 }
+
+// Styled component to make the link look like a button
+const StyledIconButtonLink = styled("a")({
+  color: "inherit",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textDecoration: "none", // Remove underline from link
+  "&:hover": {
+    cursor: "pointer", // Change cursor on hover
+  },
+});
 
 export default function NavBar({ darkMode, switchDarkMode }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -45,12 +58,14 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
           >
             <Icon icon="mdi:menu" />
           </IconButton>
+
           <Image
             src="/favicon-32x32.png"
             alt="Chesskit logo"
             width={32}
             height={32}
           />
+
           <NavLink href="/">
             <Typography
               variant="h6"
@@ -64,21 +79,28 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
               Chesskit
             </Typography>
           </NavLink>
-          <IconButton
-            color="inherit"
-            onClick={() => window.open("https://discord.gg/Yr99abAcUr")}
+
+          <StyledIconButtonLink
+            href="https://discord.gg/Yr99abAcUr"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <Icon icon="ri:discord-fill" />
-          </IconButton>
-          <IconButton
-            color="inherit"
+            <IconButton color="inherit" component="span">
+              <Icon icon="ri:discord-fill" />
+            </IconButton>
+          </StyledIconButtonLink>
+
+          <StyledIconButtonLink
+            href="https://github.com/GuillaumeSD/Chesskit"
+            target="_blank"
+            rel="noopener noreferrer"
             sx={{ ml: "min(0.6rem, 0.8vw)" }}
-            onClick={() =>
-              window.open("https://github.com/GuillaumeSD/Chesskit")
-            }
           >
-            <Icon icon="mdi:github" />
-          </IconButton>
+            <IconButton color="inherit" component="span">
+              <Icon icon="mdi:github" />
+            </IconButton>
+          </StyledIconButtonLink>
+
           <IconButton
             sx={{ ml: "min(0.6rem, 0.8vw)" }}
             onClick={switchDarkMode}

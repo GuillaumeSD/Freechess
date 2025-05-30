@@ -28,7 +28,7 @@ export default function PanelHeader() {
         <Icon icon="streamline:clipboard-check" height={24} />
 
         <Typography variant="h5" align="center">
-          Game Review
+          Game Analysis
         </Typography>
       </Grid>
 

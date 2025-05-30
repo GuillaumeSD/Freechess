@@ -1,3 +1,4 @@
+import { LINEAR_PROGRESS_BAR_COLOR } from "@/constants";
 import {
   Grid2 as Grid,
   LinearProgress,
@@ -15,6 +16,8 @@ interface LinearProgressBarProps extends LinearProgressProps {
 }
 
 function LinearProgressBar({ value, label, ...rest }: LinearProgressBarProps) {
+  // Allow rendering if label === "" (OpeningProgress case), otherwise hide if value === 0
+  if (value === 0 && label !== "") return null;
   return (
     <Grid
       container
@@ -45,7 +48,7 @@ function LinearProgressBar({ value, label, ...rest }: LinearProgressBarProps) {
             },
             [`& .${linearProgressClasses.bar}`]: {
               borderRadius: 5,
-              backgroundColor: "#308fe8",
+              backgroundColor: LINEAR_PROGRESS_BAR_COLOR,
             },
           })}
         />

@@ -50,12 +50,12 @@ export default function MovesClassificationsRecap() {
 }
 
 export const sortedMoveClassfications = [
-  MoveClassification.Brilliant,
-  MoveClassification.Great,
+  MoveClassification.Splendid,
+  MoveClassification.Perfect,
   MoveClassification.Best,
   MoveClassification.Excellent,
-  MoveClassification.Good,
-  MoveClassification.Book,
+  MoveClassification.Okay,
+  MoveClassification.Opening,
   MoveClassification.Inaccuracy,
   MoveClassification.Mistake,
   MoveClassification.Blunder,

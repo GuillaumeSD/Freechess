@@ -204,24 +204,31 @@ export default function EngineSettingsDialog({ open, onClose }: Props) {
             </FormControl>
           </Grid>
 
-          <Grid container justifyContent="center" size={{ xs: 12, sm: 7 }}>
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            size={{ xs: 12, md: 11 }}
+          >
             <Slider
               label="Number of threads"
               value={engineWorkersNb}
               setValue={setEngineWorkersNb}
               min={1}
-              max={10}
+              max={12}
               marksFilter={1}
+              infoContent={
+                <>
+                  More threads means faster analysis, but only if your device
+                  can handle them, otherwise it may have the opposite effect.
+                  The estimated optimal value for your device is{" "}
+                  {getRecommendedWorkersNb()}. Due to privacy restrictions in
+                  some browsers, this value might be underestimated. Don't
+                  hesitate to try different values to find the best one for your
+                  device.
+                </>
+              }
             />
-          </Grid>
-
-          <Grid container justifyContent="center" size={{ xs: 12, sm: 5 }}>
-            <Typography variant="body2">
-              More threads means quicker analysis but only if your device can
-              handle them, otherwise it may have the opposite effect. The
-              estimated best value for your device is{" "}
-              {getRecommendedWorkersNb()}.
-            </Typography>
           </Grid>
         </Grid>
       </DialogContent>
