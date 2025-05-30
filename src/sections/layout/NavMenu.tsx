@@ -20,9 +20,9 @@ const MenuOptions = [
     href: "/database",
   },
   {
-    text: "Opening",
+    text: "Opening Trainer",
     icon: "mdi:book-open-variant",
-    href: "/opening",
+    href: "/opening-trainer",
   },
 ];
 
