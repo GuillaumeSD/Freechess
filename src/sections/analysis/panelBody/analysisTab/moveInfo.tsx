@@ -54,7 +54,7 @@ export default function MoveInfo() {
     moveClassification === MoveClassification.Best ||
     moveClassification === MoveClassification.Opening ||
     moveClassification === MoveClassification.Forced ||
-    moveClassification === MoveClassification.Brilliant ||
+    moveClassification === MoveClassification.Splendid ||
     moveClassification === MoveClassification.Perfect
       ? null
       : `${bestMoveSan} was the best move`;
@@ -110,7 +110,7 @@ export default function MoveInfo() {
 const moveClassificationLabels: Record<MoveClassification, string> = {
   [MoveClassification.Opening]: "an opening move",
   [MoveClassification.Forced]: "forced",
-  [MoveClassification.Brilliant]: "brilliant !!",
+  [MoveClassification.Splendid]: "splendid !!",
   [MoveClassification.Perfect]: "the only good move !",
   [MoveClassification.Best]: "the best move",
   [MoveClassification.Excellent]: "excellent",

@@ -68,8 +68,10 @@ export const setGameHeaders = (
 
   const whiteHeader = game.getHeaders().White;
   const blackHeader = game.getHeaders().Black;
-  const whiteName = white?.name || whiteHeader !== "?" ? whiteHeader : "White";
-  const blackName = black?.name || blackHeader !== "?" ? blackHeader : "Black";
+  const whiteName =
+    white?.name || (whiteHeader !== "?" ? whiteHeader : "White");
+  const blackName =
+    black?.name || (blackHeader !== "?" ? blackHeader : "Black");
 
   game.setHeader("White", whiteName);
   game.setHeader("Black", blackName);

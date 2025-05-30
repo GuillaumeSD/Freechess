@@ -1,13 +1,12 @@
 import { EngineName, MoveClassification } from "./types/enums";
 
 export const MAIN_THEME_COLOR = "#3B9AC6";
-export const TAB_ICONS_COLOR = "#FE7F2D";
 export const LINEAR_PROGRESS_BAR_COLOR = "#3B9AC6";
 
 export const CLASSIFICATION_COLORS: Record<MoveClassification, string> = {
   [MoveClassification.Opening]: "#dbac86",
   [MoveClassification.Forced]: "#dbac86",
-  [MoveClassification.Brilliant]: "#19d4af",
+  [MoveClassification.Splendid]: "#19d4af",
   [MoveClassification.Perfect]: "#3894eb",
   [MoveClassification.Best]: "#22ac38",
   [MoveClassification.Excellent]: "#22ac38",

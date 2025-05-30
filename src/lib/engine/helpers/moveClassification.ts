@@ -54,7 +54,7 @@ export const getMovesClassification = (
     const isWhiteMove = index % 2 === 1;
 
     if (
-      isBrilliantMove(
+      isSplendidMove(
         lastPositionWinPercentage,
         positionWinPercentage,
         isWhiteMove,
@@ -67,7 +67,7 @@ export const getMovesClassification = (
       return {
         ...rawPosition,
         opening: currentOpening,
-        moveClassification: MoveClassification.Brilliant,
+        moveClassification: MoveClassification.Splendid,
       };
     }
 
@@ -132,7 +132,7 @@ const getMoveBasicClassification = (
   return MoveClassification.Excellent;
 };
 
-const isBrilliantMove = (
+const isSplendidMove = (
   lastPositionWinPercentage: number,
   positionWinPercentage: number,
   isWhiteMove: boolean,

@@ -28,7 +28,6 @@ import {
   enginePlayNameAtom,
 } from "../states";
 import { useChessActions } from "@/hooks/useChessActions";
-import { playGameStartSound } from "@/lib/sounds";
 import { logAnalyticsEvent } from "@/lib/firebase";
 import { useEffect, useState } from "react";
 import { isEngineSupported } from "@/lib/engine/shared";
@@ -93,7 +92,6 @@ export default function GameSettingsDialog({ open, onClose }: Props) {
 
     setIsGameInProgress(true);
     handleClose();
-    playGameStartSound();
 
     logAnalyticsEvent("play_game", {
       engine: engineName,
