@@ -22,7 +22,7 @@ const MenuOptions = [
   {
     text: "Opening Trainer",
     icon: "mdi:book-open-variant",
-    href: "/opening-trainer",
+    href: "/choose-opening", // Redirige désormais vers la page de choix d'ouverture
   },
 ];
 
