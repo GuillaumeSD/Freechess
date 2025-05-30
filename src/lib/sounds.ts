@@ -8,7 +8,10 @@ const playSound = async (url: string) => {
     audioContext = new AudioContext();
     audio = new Audio();
     const source = audioContext.createMediaElementSource(audio);
-    source.connect(audioContext.destination);
+    const volume = audioContext.createGain();
+    volume.gain.value = 0.3;
+    source.connect(volume);
+    volume.connect(audioContext.destination);
   }
 
   audio.src = url;
