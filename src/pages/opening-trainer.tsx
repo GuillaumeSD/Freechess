@@ -334,26 +334,33 @@ export default function OpeningPage() {
   });
 
   return (
-    <Grid container gap={4} justifyContent="space-evenly" alignItems="start"
+    <Grid
+      container
+      gap={4}
+      justifyContent="space-evenly"
+      alignItems="start"
       sx={{
-        minHeight: '100vh',
-        width: '100vw',
-        maxWidth: '100vw',
+        minHeight: "100vh",
+        width: "100vw",
+        maxWidth: "100vw",
         m: 0,
         p: 0,
-        boxSizing: 'border-box',
-        overflowX: 'hidden',
-      }}>
+        boxSizing: "border-box",
+        overflowX: "hidden",
+      }}
+    >
       {/* Left area: evaluation bar + board */}
-      <Grid sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        minWidth: 0, 
-        ml: 0, 
-        height: { xs: 'auto', sm: '85vh' },
-        maxHeight: { xs: 380, sm: 'none' },
-      }}>
+      <Grid
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minWidth: 0,
+          ml: 0,
+          height: { xs: "auto", sm: "85vh" },
+          maxHeight: { xs: 380, sm: "none" },
+        }}
+      >
         {selectedVariation && !allDone && game && (
           <Box
             sx={{
@@ -363,28 +370,31 @@ export default function OpeningPage() {
               maxHeight: 600,
               minWidth: { xs: 260, sm: 340, md: 400 },
               minHeight: { xs: 260, sm: 340, md: 400 },
-              mx: 'auto',
-              position: 'relative',
-              aspectRatio: '1',
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
+              mx: "auto",
+              position: "relative",
+              aspectRatio: "1",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
               mr: `${evalBarGap * 2}px`, // Right margin for visual balance
-            }}>
+            }}
+          >
             {/* Evaluation bar on the left, vertically centered */}
-            <Box sx={{
-              height: boardSize,
-              width: evalBarWidth,
-              minWidth: evalBarWidth,
-              maxWidth: evalBarWidth,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mr: `${evalBarGap}px`,
-              position: 'relative',
-              zIndex: 1,
-            }}>
+            <Box
+              sx={{
+                height: boardSize,
+                width: evalBarWidth,
+                minWidth: evalBarWidth,
+                maxWidth: evalBarWidth,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mr: `${evalBarGap}px`,
+                position: "relative",
+                zIndex: 1,
+              }}
+            >
               <EvaluationBar
                 height={boardSize}
                 boardOrientation={learningColor}
@@ -392,16 +402,18 @@ export default function OpeningPage() {
               />
             </Box>
             {/* Chessboard */}
-            <Box sx={{
-              flex: 'none',
-              height: boardSize,
-              minHeight: boardSize,
-              maxHeight: boardSize,
-              display: 'flex',
-              alignItems: 'center',
-              p: 0,
-              m: 0,
-            }}>
+            <Box
+              sx={{
+                flex: "none",
+                height: boardSize,
+                minHeight: boardSize,
+                maxHeight: boardSize,
+                display: "flex",
+                alignItems: "center",
+                p: 0,
+                m: 0,
+              }}
+            >
               <Board
                 id="LearningBoard"
                 canPlay
@@ -420,10 +432,40 @@ export default function OpeningPage() {
           </Box>
         )}
       </Grid>
+
       {/* Right area: progress panel, buttons, text */}
-      <Grid sx={{ minWidth: { md: 320 }, maxWidth: 420, mb: { xs: 2, md: 0 }, display: 'flex', flexDirection: 'column', height: '100%', flex: { xs: 'none', md: 1 }, px: { xs: 1, sm: 2, md: 3 }, pt: { xs: 2, md: 4 }, mr: { xs: 1, sm: 2, md: 6, lg: 10 } }}>
+      <Grid
+        sx={{
+          minWidth: { md: 320 },
+          maxWidth: 420,
+          mb: { xs: 2, md: 0 },
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          flex: { xs: "none", md: 1 },
+          px: { xs: 2, sm: 3, md: 4 },
+          pt: { xs: 2, md: 4 },
+          mr: { xs: 1, sm: 2, md: 6, lg: 10 },
+          backgroundColor: "#424242", // Fond gris clair cohérent
+          border: "2px solid", // Bord bleu
+          borderColor: "primary.main",
+          borderRadius: 2, // Coins arrondis
+          boxShadow: 3, // Ombre cohérente
+        }}
+      >
         {/* Centered container for title and buttons */}
-        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 2, pt: 2, pb: 2}}>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            gap: 2,
+            pt: 2,
+            pb: 2,
+          }}
+        >
           <VariationHeader
             variationName={selectedVariation?.name}
             trainingMode={trainingMode}
@@ -431,8 +473,20 @@ export default function OpeningPage() {
             variationComplete={moveIdx >= (selectedVariation?.moves.length || 0)}
           />
         </Box>
+
         {/* Progress bar at the bottom right, always visible */}
-        <Box sx={{ mt: 'auto', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2, pb: 2 }}>
+        <Box
+          sx={{
+            mt: "auto",
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 2,
+            pb: 2,
+          }}
+        >
           <OpeningProgress
             total={variations.length}
             completed={completedVariations}

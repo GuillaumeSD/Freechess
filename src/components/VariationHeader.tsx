@@ -36,7 +36,7 @@ const VariationHeader: React.FC<VariationHeaderProps> = ({
     ) : trainingMode ? (
       <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the correct move to continue.</Typography>
     ) : (
-      <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the move indicated by the arrow to continue.</Typography>
+      <Typography color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>Play the move indicated by the arrow.</Typography>
     )}
   </>
 );
