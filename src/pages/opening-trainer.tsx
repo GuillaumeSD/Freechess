@@ -446,57 +446,57 @@ export default function OpeningPage() {
           px: { xs: 2, sm: 3, md: 4 },
           pt: { xs: 2, md: 4 },
           mr: { xs: 1, sm: 2, md: 6, lg: 10 },
-          backgroundColor: "#424242", // Fond gris clair cohérent
-          border: "2px solid", // Bord bleu
+          backgroundColor: "#424242", // Consistent light gray background
+          border: "2px solid", // Blue border
           borderColor: "primary.main",
-          borderRadius: 2, // Coins arrondis
-          boxShadow: 3, // Ombre cohérente
+          borderRadius: 2, // Rounded corners
+          boxShadow: 3, // Consistent shadow
         }}
       >
         {/* Centered container for title and buttons */}
         <Box
           sx={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            gap: 2,
-            pt: 2,
-            pb: 2,
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 2,
+        pt: 2,
+        pb: 2,
           }}
         >
           <VariationHeader
-            variationName={selectedVariation?.name}
-            trainingMode={trainingMode}
-            onSetTrainingMode={setTrainingMode}
-            variationComplete={moveIdx >= (selectedVariation?.moves.length || 0)}
+        variationName={selectedVariation?.name}
+        trainingMode={trainingMode}
+        onSetTrainingMode={setTrainingMode}
+        variationComplete={moveIdx >= (selectedVariation?.moves.length || 0)}
           />
         </Box>
 
         {/* Progress bar at the bottom right, always visible */}
         <Box
           sx={{
-            mt: "auto",
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 2,
-            pb: 2,
+        mt: "auto",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 2,
+        pb: 2,
           }}
         >
           <OpeningProgress
-            total={variations.length}
-            completed={completedVariations}
+        total={variations.length}
+        completed={completedVariations}
           />
           <OpeningControls
-            moveIdx={moveIdx}
-            selectedVariationMovesLength={selectedVariation?.moves.length || 0}
-            allDone={allDone}
-            onSkip={handleSkipVariation}
-            onReset={handleResetProgress}
+        moveIdx={moveIdx}
+        selectedVariationMovesLength={selectedVariation?.moves.length || 0}
+        allDone={allDone}
+        onSkip={handleSkipVariation}
+        onReset={handleResetProgress}
           />
         </Box>
       </Grid>
