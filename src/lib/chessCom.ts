@@ -15,11 +15,14 @@ export const getChessComUserRecentGames = async (
     { method: "GET", signal }
   );
 
-  if (res.status >= 400) {
+  const data = await res.json();
+
+  if (
+    res.status >= 400 &&
+    data.message !== "Date cannot be set in the future"
+  ) {
     throw new Error("Error fetching games from Chess.com");
   }
-
-  const data = await res.json();
 
   const games: ChessComGame[] = data?.games ?? [];
 
