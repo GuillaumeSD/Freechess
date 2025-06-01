@@ -81,10 +81,13 @@ export default function GameAnalysis() {
           maxWidth: "1200px",
         }}
         rowGap={2}
-        maxHeight={{ lg: "calc(95vh - 80px)", xs: "900px" }}
+        maxHeight={{ lg: "calc(95vh - 60px)", xs: "900px" }}
         display="grid"
-        gridTemplateRows="repeat(3, auto) fit-content(100%)"
-        marginTop={isLgOrGreater && window.innerHeight > 780 ? 4 : 0}
+        gridTemplateRows={
+          gameEval
+            ? "repeat(2, auto) max-content fit-content(100%) fit-content(100%) auto"
+            : "repeat(3, auto) fit-content(100%)"
+        }
         size={{
           xs: 12,
           lg: "grow",
@@ -96,77 +99,91 @@ export default function GameAnalysis() {
           <PanelToolBar key="review-panel-toolbar" />
         )}
 
+        {isLgOrGreater && <Divider sx={{ marginX: "5%" }} />}
+
         {!isLgOrGreater && !gameEval && <Divider sx={{ marginX: "5%" }} />}
         {!isLgOrGreater && !gameEval && (
           <PanelHeader key="analysis-panel-header" />
         )}
 
-        <Box
-          sx={{
-            borderBottom: 1,
-            borderColor: "divider",
-            marginX: { sm: "5%", xs: undefined },
-          }}
-        >
-          <Tabs
-            value={tab}
-            onChange={(_, newValue) => setTab(newValue)}
-            aria-label="basic tabs example"
-            variant="fullWidth"
-            sx={{ minHeight: 0 }}
+        {!isLgOrGreater && (
+          <Box
+            sx={{
+              borderBottom: 1,
+              borderColor: "divider",
+              marginX: { sm: "5%", xs: undefined },
+            }}
           >
-            <Tab
-              label="Analysis"
-              id="tab0"
-              icon={<Icon icon="mdi:magnify" height={15} />}
-              iconPosition="start"
-              sx={{
-                textTransform: "none",
-                minHeight: 15,
-                padding: "5px 0em 12px",
-              }}
-              disableFocusRipple
-            />
+            <Tabs
+              value={tab}
+              onChange={(_, newValue) => setTab(newValue)}
+              aria-label="basic tabs example"
+              variant="fullWidth"
+              sx={{ minHeight: 0 }}
+            >
+              <Tab
+                label="Analysis"
+                id="tab0"
+                icon={<Icon icon="mdi:magnify" height={15} />}
+                iconPosition="start"
+                sx={{
+                  textTransform: "none",
+                  minHeight: 15,
+                  padding: "5px 0em 12px",
+                }}
+                disableFocusRipple
+              />
 
-            <Tab
-              label="Moves"
-              id="tab1"
-              icon={<Icon icon="mdi:format-list-bulleted" height={15} />}
-              iconPosition="start"
-              sx={{
-                textTransform: "none",
-                minHeight: 15,
-                display: isGameLoaded ? undefined : "none",
-                padding: "5px 0em 12px",
-              }}
-              disableFocusRipple
-            />
+              <Tab
+                label="Moves"
+                id="tab1"
+                icon={<Icon icon="mdi:format-list-bulleted" height={15} />}
+                iconPosition="start"
+                sx={{
+                  textTransform: "none",
+                  minHeight: 15,
+                  display: isGameLoaded ? undefined : "none",
+                  padding: "5px 0em 12px",
+                }}
+                disableFocusRipple
+              />
 
-            <Tab
-              label="Graph"
-              id="tab2"
-              icon={<Icon icon="mdi:chart-line" height={15} />}
-              iconPosition="start"
-              sx={{
-                textTransform: "none",
-                minHeight: 15,
-                display: gameEval ? undefined : "none",
-                padding: "5px 0em 12px",
-              }}
-              disableFocusRipple
-            />
-          </Tabs>
-        </Box>
+              <Tab
+                label="Graph"
+                id="tab2"
+                icon={<Icon icon="mdi:chart-line" height={15} />}
+                iconPosition="start"
+                sx={{
+                  textTransform: "none",
+                  minHeight: 15,
+                  display: gameEval ? undefined : "none",
+                  padding: "5px 0em 12px",
+                }}
+                disableFocusRipple
+              />
+            </Tabs>
+          </Box>
+        )}
 
-        <AnalysisTab role="tabpanel" hidden={tab !== 0} id="tabContent0" />
-
-        <ClassificationTab
+        <GraphTab
           role="tabpanel"
-          hidden={tab !== 1}
-          id="tabContent1"
+          hidden={tab !== 2 && !isLgOrGreater}
+          id="tabContent2"
         />
 
-        <GraphTab role="tabpanel" hidden={tab !== 2} id="tabContent2" />
+        <AnalysisTab
+          role="tabpanel"
+          hidden={tab !== 0 && !isLgOrGreater}
+          id="tabContent0"
+        />
+
+        {isGameLoaded && (
+          <ClassificationTab
+            role="tabpanel"
+            hidden={tab !== 1 && !isLgOrGreater}
+            id="tabContent1"
+          />
+        )}
 
         {isLgOrGreater && (
           <Box>

@@ -16,9 +16,10 @@ export default function MovesClassificationsRecap() {
       container
       justifyContent="center"
       alignItems="center"
-      rowGap={1}
+      rowGap={0.7}
       sx={{ scrollbarWidth: "thin", overflowY: "auto" }}
-      maxHeight="100%"
+      height="100%"
+      maxHeight="22rem"
       size={6}
     >
       <Grid

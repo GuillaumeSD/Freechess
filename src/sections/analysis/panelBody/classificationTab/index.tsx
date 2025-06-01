@@ -9,7 +9,7 @@ export default function ClassificationTab(props: GridProps) {
       justifyContent="center"
       alignItems="start"
       height="100%"
-      maxHeight="18rem"
+      maxHeight={{ xs: "18rem", lg: "none" }}
       {...props}
       sx={
         props.hidden ? { display: "none" } : { overflow: "hidden", ...props.sx }

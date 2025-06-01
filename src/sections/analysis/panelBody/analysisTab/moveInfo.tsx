@@ -1,6 +1,6 @@
 import { Grid2 as Grid, Skeleton, Stack, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom, currentPositionAtom } from "../../states";
+import { boardAtom, currentPositionAtom, gameAtom } from "../../states";
 import { useMemo } from "react";
 import { moveLineUciToSan } from "@/lib/chess";
 import { MoveClassification } from "@/types/enums";
@@ -9,6 +9,7 @@ import Image from "next/image";
 export default function MoveInfo() {
   const position = useAtomValue(currentPositionAtom);
   const board = useAtomValue(boardAtom);
+  const game = useAtomValue(gameAtom);
 
   const bestMove = position?.lastEval?.bestMove;
 
@@ -21,7 +22,16 @@ export default function MoveInfo() {
     return moveLineUciToSan(lastPosition)(bestMove);
   }, [bestMove, board]);
 
+  const boardHistory = board.history();
+  const gameHistory = game.history();
+
   if (board.history().length === 0) return null;
+
+  const isGameOver =
+    boardHistory.length > 0 &&
+    (board.isCheckmate() ||
+      board.isDraw() ||
+      boardHistory.join() === gameHistory.join());
 
   if (!bestMoveSan) {
     return (
@@ -86,6 +96,7 @@ export default function MoveInfo() {
           </Typography>
         </Stack>
       )}
+
       {bestMoveLabel && (
         <Stack direction="row" alignItems="center" spacing={1}>
           <Image
@@ -102,6 +113,12 @@ export default function MoveInfo() {
             {bestMoveLabel}
           </Typography>
         </Stack>
+      )}
+
+      {isGameOver && (
+        <Typography align="center" fontSize="0.9rem">
+          Game is over
+        </Typography>
       )}
     </Grid>
   );

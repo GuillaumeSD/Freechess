@@ -93,14 +93,14 @@ export default function GraphTab(props: GridProps) {
       sx={
         props.hidden
           ? { display: "none" }
-          : { marginY: 1, overflow: "hidden", overflowY: "auto", ...props.sx }
+          : { overflow: "hidden", overflowY: "auto", ...props.sx }
       }
     >
       <Box
         width="max(35rem, 90%)"
         maxWidth="100%"
-        height="max(8rem, 100%)"
-        maxHeight="15rem"
+        height="min(8rem, 8vh)"
+        maxHeight="6rem"
         sx={{
           backgroundColor: "#2e2e2e",
           borderRadius: "15px",

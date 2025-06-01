@@ -24,7 +24,7 @@ export const useScreenSize = () => {
     const handleResize = () => {
       setScreenSize((prev) => ({
         ...prev,
-        height: window.innerHeight - 120,
+        height: window.innerHeight - 100,
       }));
     };
 

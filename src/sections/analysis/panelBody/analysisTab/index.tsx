@@ -1,15 +1,9 @@
-import {
-  Grid2 as Grid,
-  Grid2Props as GridProps,
-  List,
-  Typography,
-} from "@mui/material";
+import { Grid2 as Grid, Grid2Props as GridProps, List } from "@mui/material";
 import { useAtomValue } from "jotai";
 import {
   boardAtom,
   currentPositionAtom,
   engineMultiPvAtom,
-  gameAtom,
   gameEvalAtom,
 } from "../../states";
 import LineEvaluation from "./lineEvaluation";
@@ -21,18 +15,8 @@ import Opening from "./opening";
 export default function AnalysisTab(props: GridProps) {
   const linesNumber = useAtomValue(engineMultiPvAtom);
   const position = useAtomValue(currentPositionAtom);
-  const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
   const gameEval = useAtomValue(gameEvalAtom);
-
-  const boardHistory = board.history();
-  const gameHistory = game.history();
-
-  const isGameOver =
-    boardHistory.length > 0 &&
-    (board.isCheckmate() ||
-      board.isDraw() ||
-      boardHistory.join() === gameHistory.join());
 
   const linesSkeleton: LineEval[] = Array.from({ length: linesNumber }).map(
     (_, i) => ({ pv: [`${i}`], depth: 0, multiPv: i + 1 })
@@ -49,7 +33,7 @@ export default function AnalysisTab(props: GridProps) {
       justifyContent="center"
       alignItems="start"
       height="100%"
-      rowGap={1.2}
+      rowGap={0.8}
       {...props}
       sx={
         props.hidden
@@ -77,16 +61,8 @@ export default function AnalysisTab(props: GridProps) {
 
       <Opening />
 
-      {isGameOver && (
-        <Grid size={12}>
-          <Typography align="center" fontSize="0.9rem">
-            Game is over
-          </Typography>
-        </Grid>
-      )}
-
       <Grid container justifyContent="center" alignItems="center" size={12}>
-        <List sx={{ maxWidth: "95%", padding: 0 }}>
+        <List sx={{ width: { xs: "95%", lg: "90%" }, padding: 0 }}>
           {!board.isCheckmate() &&
             engineLines.map((line) => (
               <LineEvaluation key={line.multiPv} line={line} />

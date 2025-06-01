@@ -47,13 +47,13 @@ export default function NavBar({ darkMode, switchDarkMode }: Props) {
         }}
         enableColorOnDark
       >
-        <Toolbar>
+        <Toolbar variant="dense">
           <IconButton
             size="large"
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: "min(0.5vw, 0.6rem)" }}
+            sx={{ mr: "min(0.5vw, 0.6rem)", padding: 1, my: 1 }}
             onClick={() => setDrawerOpen((val) => !val)}
           >
             <Icon icon="mdi:menu" />

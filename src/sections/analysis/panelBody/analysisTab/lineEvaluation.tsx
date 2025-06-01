@@ -50,11 +50,12 @@ export default function LineEvaluation({ line }: Props) {
     <ListItem disablePadding>
       <Typography
         marginRight={1.5}
-        marginY={0.5}
+        marginY={0.3}
         paddingY={0.2}
         noWrap
         overflow="visible"
         width="3.5em"
+        minWidth="3.5em"
         textAlign="center"
         fontSize="0.8rem"
         sx={{
@@ -78,13 +79,9 @@ export default function LineEvaluation({ line }: Props) {
         )}
       </Typography>
 
-      <Typography
-        noWrap
-        maxWidth={{ xs: "12em", sm: "25em", md: "30em", lg: "25em" }}
-        fontSize="0.9rem"
-      >
+      <Typography noWrap fontSize="0.9rem">
         {showSkeleton ? (
-          <Skeleton variant="rounded" animation="wave" width="15em" />
+          <Skeleton variant="rounded" animation="wave" width="20em" />
         ) : (
           line.pv.map((uci, i) => {
             const san = uciToSan(uci);
