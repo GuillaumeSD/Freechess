@@ -378,6 +378,7 @@ export default function OpeningPage() {
               alignItems: "center",
               justifyContent: "center",
               mr: 0, // Supprime la margin-right supplémentaire pour éviter le débordement
+              boxShadow: 4, // Ajout : ombre légère sur le board
             }}
           >
             {/* Evaluation bar on the left, vertically centered */}
@@ -447,7 +448,7 @@ export default function OpeningPage() {
           px: { xs: 1, sm: 2, md: 3 }, // Réduit le padding horizontal
           pt: { xs: 2, md: 4 },
           mr: { xs: 0, sm: 1, md: 2, lg: 0 }, // Réduit la marge droite
-          backgroundColor: "#424242", // Consistent light gray background
+          backgroundColor: (theme) => theme.palette.mode === "dark" ? "#424242" : "background.paper",
           border: "2px solid", // Blue border
           borderColor: "primary.main",
           borderRadius: 2, // Rounded corners
