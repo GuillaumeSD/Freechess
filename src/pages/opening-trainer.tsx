@@ -336,17 +336,17 @@ export default function OpeningPage() {
   return (
     <Grid
       container
-      gap={4}
+      gap={2} // Réduit de 4 à 2 pour diminuer l’espace horizontal
       justifyContent="space-evenly"
       alignItems="start"
       sx={{
-        minHeight: "100vh",
-        width: "100vw",
-        maxWidth: "100vw",
+        width: "100%",
+        minHeight: "100dvh",
+        maxWidth: "100vw", // Ajout : limite la largeur totale à la fenêtre
+        overflowX: "clip", // Ajout : coupe tout débordement horizontal
         m: 0,
         p: 0,
         boxSizing: "border-box",
-        overflowX: "hidden",
       }}
     >
       {/* Left area: evaluation bar + board */}
@@ -377,7 +377,7 @@ export default function OpeningPage() {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              mr: `${evalBarGap * 2}px`, // Right margin for visual balance
+              mr: 0, // Supprime la margin-right supplémentaire pour éviter le débordement
             }}
           >
             {/* Evaluation bar on the left, vertically centered */}
@@ -437,15 +437,16 @@ export default function OpeningPage() {
       <Grid
         sx={{
           minWidth: { md: 320 },
-          maxWidth: 420,
+          maxWidth: 420, // Réduit de 420 à 400 pour limiter le débordement
           mb: { xs: 2, md: 0 },
           display: "flex",
           flexDirection: "column",
-          height: "100%",
+          height: "auto",
+          overflowY: "auto",
           flex: { xs: "none", md: 1 },
-          px: { xs: 2, sm: 3, md: 4 },
+          px: { xs: 1, sm: 2, md: 3 }, // Réduit le padding horizontal
           pt: { xs: 2, md: 4 },
-          mr: { xs: 1, sm: 2, md: 6, lg: 10 },
+          mr: { xs: 0, sm: 1, md: 2, lg: 0 }, // Réduit la marge droite
           backgroundColor: "#424242", // Consistent light gray background
           border: "2px solid", // Blue border
           borderColor: "primary.main",
