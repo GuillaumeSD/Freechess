@@ -5,14 +5,9 @@ let ctx: AudioContext | null = null;
 const bufferCache = new Map<string, AudioBuffer>();
 
 const urls = {
-  move: "/sounds/move.webm",
-  capture: "/sounds/capture.webm",
-  castle: "/sounds/castle.webm",
-  check: "/sounds/move-check.webm",
-  promote: "/sounds/promote.webm",
-  gameEnd: "/sounds/game-end.webm",
-  gameStart: "/sounds/game-start.webm",
-  illegal: "/sounds/illegal-move.webm"
+  move: "/sounds/move.mp3",
+  capture: "/sounds/capture.mp3",
+  illegal: "/sounds/illegal-move.mp3"
 } as const;
 type Sound = keyof typeof urls;
 
@@ -36,20 +31,11 @@ async function play(sound: Sound) {
 }
 
 export const playCaptureSound = () => play("capture");
-export const playCastleSound = () => play("castle");
-export const playGameEndSound = () => play("gameEnd");
-export const playGameStartSound = () => play("gameStart");
 export const playIllegalMoveSound = () => play("illegal");
-export const playMoveCheckSound = () => play("check");
 export const playMoveSound = () => play("move");
-export const playPromoteSound = () => play("promote");
 
 export async function playSoundFromMove(move: Move | null) {
   if (!move) return playIllegalMoveSound();
-  if (getWhoIsCheckmated(move.after)) return playGameEndSound();
-  if (isCheck(move.after)) return playMoveCheckSound();
-  if (move.promotion) return playPromoteSound();
   if (move.captured) return playCaptureSound();
-  if (move.isKingsideCastle() || move.isQueensideCastle()) return playCastleSound();
   return playMoveSound();
 }
