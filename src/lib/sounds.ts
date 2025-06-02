@@ -1,5 +1,4 @@
 import { Move } from "chess.js";
-import { getWhoIsCheckmated, isCheck } from "./chess";
 
 let ctx: AudioContext | null = null;
 const bufferCache = new Map<string, AudioBuffer>();
