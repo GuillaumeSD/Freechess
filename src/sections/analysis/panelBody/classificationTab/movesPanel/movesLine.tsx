@@ -1,5 +1,5 @@
 import { MoveClassification } from "@/types/enums";
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import MoveItem from "./moveItem";
 
 interface Props {
@@ -20,9 +20,13 @@ export default function MovesLine({ moves, moveNb }: Props) {
         {moveNb}.
       </Typography>
 
-      <MoveItem {...moves[0]} moveIdx={(moveNb - 1) * 2 + 1} />
+      <MoveItem {...moves[0]} moveIdx={(moveNb - 1) * 2 + 1} moveColor="w" />
 
-      <MoveItem {...moves[1]} moveIdx={(moveNb - 1) * 2 + 2} />
+      {moves[1] ? (
+        <MoveItem {...moves[1]} moveIdx={(moveNb - 1) * 2 + 2} moveColor="b" />
+      ) : (
+        <Box width="5rem" />
+      )}
     </Grid>
   );
 }

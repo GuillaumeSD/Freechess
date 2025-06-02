@@ -1,5 +1,5 @@
 import { MoveClassification } from "@/types/enums";
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid2 as Grid } from "@mui/material";
 import Image from "next/image";
 import { useAtomValue } from "jotai";
 import { boardAtom, currentPositionAtom, gameAtom } from "../../../states";
@@ -7,14 +7,21 @@ import { useChessActions } from "@/hooks/useChessActions";
 import { useEffect } from "react";
 import { isInViewport } from "@/lib/helpers";
 import { CLASSIFICATION_COLORS } from "@/constants";
+import PrettyMoveSan from "@/components/prettyMoveSan";
 
 interface Props {
   san: string;
   moveClassification?: MoveClassification;
   moveIdx: number;
+  moveColor: "w" | "b";
 }
 
-export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
+export default function MoveItem({
+  san,
+  moveClassification,
+  moveIdx,
+  moveColor,
+}: Props) {
   const game = useAtomValue(gameAtom);
   const { goToMove } = useChessActions(boardAtom);
   const position = useAtomValue(currentPositionAtom);
@@ -47,7 +54,7 @@ export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
       width="5rem"
       wrap="nowrap"
       onClick={handleClick}
-      paddingY={0.6}
+      paddingY={0.5}
       sx={(theme) => ({
         cursor: isCurrentMove ? undefined : "pointer",
         backgroundColor:
@@ -74,9 +81,8 @@ export default function MoveItem({ san, moveClassification, moveIdx }: Props) {
           }}
         />
       )}
-      <Typography color={color} fontSize="0.9rem" lineHeight="0.9rem">
-        {san}
-      </Typography>
+
+      <PrettyMoveSan san={san} color={moveColor} />
     </Grid>
   );
 }

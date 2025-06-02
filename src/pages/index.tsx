@@ -86,7 +86,7 @@ export default function GameAnalysis() {
         gridTemplateRows={
           gameEval
             ? "repeat(2, auto) max-content fit-content(100%) fit-content(100%) auto"
-            : "repeat(3, auto) fit-content(100%)"
+            : "repeat(2, auto) max-content fit-content(100%)"
         }
         size={{
           xs: 12,

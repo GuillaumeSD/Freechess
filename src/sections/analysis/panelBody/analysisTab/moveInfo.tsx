@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { moveLineUciToSan } from "@/lib/chess";
 import { MoveClassification } from "@/types/enums";
 import Image from "next/image";
+import PrettyMoveSan from "@/components/prettyMoveSan";
 
 export default function MoveInfo() {
   const position = useAtomValue(currentPositionAtom);
@@ -56,18 +57,13 @@ export default function MoveInfo() {
   }
 
   const moveClassification = position.eval?.moveClassification;
-  const moveLabel = moveClassification
-    ? `${position.lastMove?.san} is ${moveClassificationLabels[moveClassification]}`
-    : null;
 
-  const bestMoveLabel =
-    moveClassification === MoveClassification.Best ||
-    moveClassification === MoveClassification.Opening ||
-    moveClassification === MoveClassification.Forced ||
-    moveClassification === MoveClassification.Splendid ||
-    moveClassification === MoveClassification.Perfect
-      ? null
-      : `${bestMoveSan} was the best move`;
+  const showBestMoveLabel =
+    moveClassification !== MoveClassification.Best &&
+    moveClassification !== MoveClassification.Opening &&
+    moveClassification !== MoveClassification.Forced &&
+    moveClassification !== MoveClassification.Splendid &&
+    moveClassification !== MoveClassification.Perfect;
 
   return (
     <Grid
@@ -77,27 +73,33 @@ export default function MoveInfo() {
       size={12}
       marginTop={0.5}
     >
-      {moveLabel && (
+      {moveClassification && (
         <Stack direction="row" alignItems="center" spacing={1}>
-          {moveClassification && (
-            <Image
-              src={`/icons/${moveClassification}.png`}
-              alt="move-icon"
-              width={16}
-              height={16}
-              style={{
-                maxWidth: "3.5vw",
-                maxHeight: "3.5vw",
-              }}
-            />
-          )}
-          <Typography align="center" fontSize="0.9rem">
-            {moveLabel}
-          </Typography>
+          <Image
+            src={`/icons/${moveClassification}.png`}
+            alt="move-icon"
+            width={16}
+            height={16}
+            style={{
+              maxWidth: "3.5vw",
+              maxHeight: "3.5vw",
+            }}
+          />
+
+          <PrettyMoveSan
+            typographyProps={{
+              fontSize: "0.9rem",
+            }}
+            san={position.lastMove?.san ?? ""}
+            color={position.lastMove?.color ?? "w"}
+            additionalText={
+              " is " + moveClassificationLabels[moveClassification]
+            }
+          />
         </Stack>
       )}
 
-      {bestMoveLabel && (
+      {showBestMoveLabel && (
         <Stack direction="row" alignItems="center" spacing={1}>
           <Image
             src={"/icons/best.png"}
@@ -109,9 +111,14 @@ export default function MoveInfo() {
               maxHeight: "3.5vw",
             }}
           />
-          <Typography align="center" fontSize="0.9rem">
-            {bestMoveLabel}
-          </Typography>
+          <PrettyMoveSan
+            typographyProps={{
+              fontSize: "0.9rem",
+            }}
+            san={bestMoveSan}
+            color={position.lastMove?.color ?? "w"}
+            additionalText=" was the best move"
+          />
         </Stack>
       )}
 

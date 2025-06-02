@@ -1,21 +1,16 @@
 import { LineEval } from "@/types/eval";
-import { Box, ListItem, Skeleton, Typography, useTheme } from "@mui/material";
+import { ListItem, Skeleton, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { boardAtom } from "../../states";
 import { getLineEvalLabel, moveLineUciToSan } from "@/lib/chess";
-import localFont from "next/font/local";
 import { useChessActions } from "@/hooks/useChessActions";
-
-const myFont = localFont({
-  src: "./chess_merida_unicode.ttf",
-});
+import PrettyMoveSan from "@/components/prettyMoveSan";
 
 interface Props {
   line: LineEval;
 }
 
 export default function LineEvaluation({ line }: Props) {
-  const theme = useTheme();
   const board = useAtomValue(boardAtom);
   const { addMoves } = useChessActions(boardAtom);
   const lineLabel = getLineEvalLabel(line);
@@ -27,23 +22,11 @@ export default function LineEvaluation({ line }: Props) {
   const showSkeleton = line.depth < 6;
 
   const uciToSan = moveLineUciToSan(board.fen());
-  const initialTurn = board.turn();
-  const isDarkMode = theme.palette.mode === "dark";
+  const turn = board.turn();
 
-  const formatSan = (
-    san: string,
-    moveIdx: number
-  ): { icon?: string; text: string } => {
-    const firstChar = san.charAt(0);
-
-    const isPiece = ["K", "Q", "R", "B", "N"].includes(firstChar);
-    if (!isPiece) return { text: san };
-
-    const turn = isDarkMode ? initialTurn : initialTurn === "w" ? "b" : "w";
+  const getColorFromMoveIdx = (moveIdx: number): "w" | "b" => {
     const moveColor = moveIdx % 2 === 0 ? turn : turn === "w" ? "b" : "w";
-    const icon = unicodeMap[firstChar][moveColor];
-
-    return { icon, text: san.slice(1) };
+    return moveColor;
   };
 
   return (
@@ -85,38 +68,28 @@ export default function LineEvaluation({ line }: Props) {
         ) : (
           line.pv.map((uci, i) => {
             const san = uciToSan(uci);
-            const { icon, text } = formatSan(san, i);
+            const moveColor = getColorFromMoveIdx(i);
 
             return (
-              <Box
-                component="span"
+              <PrettyMoveSan
                 key={i}
-                onClick={() => {
-                  addMoves(line.pv.slice(0, i + 1));
-                }}
-                sx={{
-                  cursor: "pointer",
-                  ml: i ? 0.5 : 0,
-                  transition: "opacity 0.2s ease-in-out",
-                  "&:hover": {
-                    opacity: 0.5,
+                san={san}
+                color={moveColor}
+                additionalText={i < line.pv.length - 1 ? "," : ""}
+                boxProps={{
+                  onClick: () => {
+                    addMoves(line.pv.slice(0, i + 1));
+                  },
+                  sx: {
+                    cursor: "pointer",
+                    ml: i ? 0.5 : 0,
+                    transition: "opacity 0.2s ease-in-out",
+                    "&:hover": {
+                      opacity: 0.5,
+                    },
                   },
                 }}
-              >
-                {icon && (
-                  <Typography
-                    component="span"
-                    fontFamily={myFont.style.fontFamily}
-                  >
-                    {icon}
-                  </Typography>
-                )}
-
-                <Typography component="span">
-                  {text}
-                  {i < line.pv.length - 1 && ","}
-                </Typography>
-              </Box>
+              />
             );
           })
         )}
@@ -124,11 +97,3 @@ export default function LineEvaluation({ line }: Props) {
     </ListItem>
   );
 }
-
-const unicodeMap: Record<string, Record<"w" | "b", string>> = {
-  K: { w: "♚", b: "♔" },
-  Q: { w: "♛", b: "♕" },
-  R: { w: "♜", b: "♖" },
-  B: { w: "♝", b: "♗" },
-  N: { w: "♞", b: "♘" },
-};

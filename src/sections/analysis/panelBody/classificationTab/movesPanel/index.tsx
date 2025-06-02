@@ -42,7 +42,8 @@ export default function MovesPanel() {
       container
       justifyContent="center"
       alignItems="start"
-      gap={0.6}
+      gap={0.7}
+      paddingY={1}
       sx={{ scrollbarWidth: "thin", overflowY: "auto" }}
       height="100%"
       size={6}
