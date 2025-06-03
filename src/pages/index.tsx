@@ -36,6 +36,7 @@ export default function GameAnalysis() {
   const { reset: resetGame } = useChessActions(gameAtom);
   const [gameEval, setGameEval] = useAtom(gameEvalAtom);
   const game = useAtomValue(gameAtom);
+  const board = useAtomValue(boardAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
 
   const router = useRouter();
@@ -50,12 +51,12 @@ export default function GameAnalysis() {
     }
   }, [gameId, setGameEval, setBoardOrientation, resetBoard, resetGame]);
 
-  const isGameLoaded = game.history().length > 0;
+  const showMovesTab = game.history().length > 0 || board.history().length > 0;
 
   useEffect(() => {
-    if (tab === 1 && !isGameLoaded) setTab(0);
+    if (tab === 1 && !showMovesTab) setTab(0);
     if (tab === 2 && !gameEval) setTab(0);
-  }, [isGameLoaded, gameEval, tab]);
+  }, [showMovesTab, gameEval, tab]);
 
   return (
     <Grid container gap={4} justifyContent="space-evenly" alignItems="start">
@@ -65,7 +66,7 @@ export default function GameAnalysis() {
 
       <Grid
         container
-        justifyContent="center"
+        justifyContent="start"
         alignItems="center"
         borderRadius={2}
         border={1}
@@ -81,25 +82,23 @@ export default function GameAnalysis() {
           maxWidth: "1200px",
         }}
         rowGap={2}
-        maxHeight={{ lg: "calc(95vh - 60px)", xs: "900px" }}
-        display="grid"
-        gridTemplateRows={
-          gameEval
-            ? "repeat(2, auto) max-content fit-content(100%) fit-content(100%) auto"
-            : "repeat(2, auto) max-content fit-content(100%)"
-        }
+        height={{ xs: tab === 1 ? "40rem" : "auto", lg: "calc(95vh - 60px)" }}
+        display="flex"
+        flexDirection="column"
+        flexWrap="nowrap"
         size={{
           xs: 12,
           lg: "grow",
         }}
       >
         {isLgOrGreater ? (
-          <PanelHeader key="analysis-panel-header" />
+          <Box width="100%">
+            <PanelHeader key="analysis-panel-header" />
+            <Divider sx={{ marginX: "5%", marginTop: 2.5 }} />
+          </Box>
         ) : (
           <PanelToolBar key="review-panel-toolbar" />
         )}
-
-        {isLgOrGreater && <Divider sx={{ marginX: "5%" }} />}
 
         {!isLgOrGreater && !gameEval && <Divider sx={{ marginX: "5%" }} />}
         {!isLgOrGreater && !gameEval && (
@@ -108,6 +107,7 @@ export default function GameAnalysis() {
 
         {!isLgOrGreater && (
           <Box
+            width="95%"
             sx={{
               borderBottom: 1,
               borderColor: "divider",
@@ -142,7 +142,7 @@ export default function GameAnalysis() {
                 sx={{
                   textTransform: "none",
                   minHeight: 15,
-                  display: isGameLoaded ? undefined : "none",
+                  display: showMovesTab ? undefined : "none",
                   padding: "5px 0em 12px",
                 }}
                 disableFocusRipple
@@ -177,24 +177,24 @@ export default function GameAnalysis() {
           id="tabContent0"
         />
 
-        {isGameLoaded && (
-          <ClassificationTab
-            role="tabpanel"
-            hidden={tab !== 1 && !isLgOrGreater}
-            id="tabContent1"
-          />
-        )}
+        <ClassificationTab
+          role="tabpanel"
+          hidden={tab !== 1 && !isLgOrGreater}
+          id="tabContent1"
+        />
 
         {isLgOrGreater && (
-          <Box>
+          <Box width="100%">
             <Divider sx={{ marginX: "5%", marginBottom: 1.5 }} />
             <PanelToolBar key="review-panel-toolbar" />
           </Box>
         )}
 
-        {!isLgOrGreater && gameEval && <Divider sx={{ marginX: "5%" }} />}
         {!isLgOrGreater && gameEval && (
-          <PanelHeader key="analysis-panel-header" />
+          <Box width="100%">
+            <Divider sx={{ marginX: "5%", marginBottom: 2.5 }} />
+            <PanelHeader key="analysis-panel-header" />
+          </Box>
         )}
       </Grid>
 

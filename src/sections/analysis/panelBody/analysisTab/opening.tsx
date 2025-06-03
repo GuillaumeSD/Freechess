@@ -12,7 +12,7 @@ export default function Opening() {
 
   if (!opening) {
     return (
-      <Grid size={12} justifyItems="center" alignContent="center">
+      <Grid justifyItems="center" alignContent="center">
         <Skeleton
           variant="rounded"
           animation="wave"
@@ -28,7 +28,7 @@ export default function Opening() {
   }
 
   return (
-    <Grid size={12}>
+    <Grid>
       <Typography align="center" fontSize="0.9rem">
         {opening}
       </Typography>

@@ -87,20 +87,17 @@ export default function GraphTab(props: GridProps) {
     <Grid
       container
       justifyContent="center"
-      alignItems="start"
-      height="100%"
+      alignItems="center"
+      minHeight="min(10rem, 8vh)"
+      height={{ xs: "8rem", lg: "none" }}
+      maxHeight="10rem"
       {...props}
-      sx={
-        props.hidden
-          ? { display: "none" }
-          : { overflow: "hidden", overflowY: "auto", ...props.sx }
-      }
+      sx={props.hidden ? { display: "none" } : props.sx}
+      size={12}
     >
       <Box
-        width="max(35rem, 90%)"
-        maxWidth="100%"
-        height="min(8rem, 8vh)"
-        maxHeight="6rem"
+        height="100%"
+        width={{ xs: "100%", lg: "90%" }}
         sx={{
           backgroundColor: "#2e2e2e",
           borderRadius: "15px",

@@ -1,74 +1,76 @@
-import { Grid2 as Grid, Grid2Props as GridProps, List } from "@mui/material";
-import { useAtomValue } from "jotai";
 import {
-  boardAtom,
-  currentPositionAtom,
-  engineMultiPvAtom,
-  gameEvalAtom,
-} from "../../states";
-import LineEvaluation from "./lineEvaluation";
-import { LineEval } from "@/types/eval";
+  Grid2 as Grid,
+  Grid2Props as GridProps,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { useAtomValue } from "jotai";
+import { boardAtom, gameAtom, gameEvalAtom } from "../../states";
 import PlayersMetric from "./playersMetric";
 import MoveInfo from "./moveInfo";
 import Opening from "./opening";
+import EngineLines from "./engineLines";
 
 export default function AnalysisTab(props: GridProps) {
-  const linesNumber = useAtomValue(engineMultiPvAtom);
-  const position = useAtomValue(currentPositionAtom);
-  const board = useAtomValue(boardAtom);
   const gameEval = useAtomValue(gameEvalAtom);
+  const game = useAtomValue(gameAtom);
+  const board = useAtomValue(boardAtom);
 
-  const linesSkeleton: LineEval[] = Array.from({ length: linesNumber }).map(
-    (_, i) => ({ pv: [`${i}`], depth: 0, multiPv: i + 1 })
-  );
+  const boardHistory = board.history();
+  const gameHistory = game.history();
 
-  const engineLines = position?.eval?.lines?.length
-    ? position.eval.lines
-    : linesSkeleton;
+  const isGameOver =
+    boardHistory.length > 0 &&
+    (board.isCheckmate() ||
+      board.isDraw() ||
+      boardHistory.join() === gameHistory.join());
 
   return (
     <Grid
       container
-      size={12}
-      justifyContent="center"
-      alignItems="start"
-      height="100%"
-      rowGap={0.8}
+      size={{ xs: 12, lg: gameEval ? 11 : 12 }}
+      justifyContent={{ xs: "center", lg: gameEval ? "start" : "center" }}
+      alignItems="center"
+      flexWrap={{ lg: gameEval ? "nowrap" : undefined }}
+      gap={2}
+      marginY={{ lg: gameEval ? 1 : undefined }}
       {...props}
-      sx={
-        props.hidden
-          ? { display: "none" }
-          : { overflow: "hidden", overflowY: "auto", ...props.sx }
-      }
+      sx={props.hidden ? { display: "none" } : props.sx}
     >
-      {gameEval && (
-        <PlayersMetric
-          title="Accuracy"
-          whiteValue={`${gameEval.accuracy.white.toFixed(1)} %`}
-          blackValue={`${gameEval.accuracy.black.toFixed(1)} %`}
-        />
-      )}
+      <Stack
+        justifyContent="center"
+        alignItems="center"
+        rowGap={1}
+        minWidth={gameEval ? "min(25rem, 95vw)" : undefined}
+      >
+        {gameEval && (
+          <PlayersMetric
+            title="Accuracy"
+            whiteValue={`${gameEval.accuracy.white.toFixed(1)} %`}
+            blackValue={`${gameEval.accuracy.black.toFixed(1)} %`}
+          />
+        )}
 
-      {gameEval?.estimatedElo && (
-        <PlayersMetric
-          title="Game Rating"
-          whiteValue={Math.round(gameEval.estimatedElo.white)}
-          blackValue={Math.round(gameEval.estimatedElo.black)}
-        />
-      )}
+        {gameEval?.estimatedElo && (
+          <PlayersMetric
+            title="Game Rating"
+            whiteValue={Math.round(gameEval.estimatedElo.white)}
+            blackValue={Math.round(gameEval.estimatedElo.black)}
+          />
+        )}
 
-      <MoveInfo />
+        <MoveInfo />
 
-      <Opening />
+        <Opening />
 
-      <Grid container justifyContent="center" alignItems="center" size={12}>
-        <List sx={{ width: { xs: "95%", lg: "90%" }, padding: 0 }}>
-          {!board.isCheckmate() &&
-            engineLines.map((line) => (
-              <LineEvaluation key={line.multiPv} line={line} />
-            ))}
-        </List>
-      </Grid>
+        {isGameOver && (
+          <Typography align="center" fontSize="0.9rem" noWrap>
+            Game is over
+          </Typography>
+        )}
+      </Stack>
+
+      <EngineLines size={{ lg: gameEval ? undefined : 12 }} />
     </Grid>
   );
 }

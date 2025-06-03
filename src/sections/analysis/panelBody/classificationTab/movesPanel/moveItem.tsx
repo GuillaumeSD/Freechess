@@ -23,6 +23,7 @@ export default function MoveItem({
   moveColor,
 }: Props) {
   const game = useAtomValue(gameAtom);
+  const board = useAtomValue(boardAtom);
   const { goToMove } = useChessActions(boardAtom);
   const position = useAtomValue(currentPositionAtom);
   const color = getMoveColor(moveClassification);
@@ -42,7 +43,8 @@ export default function MoveItem({
 
   const handleClick = () => {
     if (isCurrentMove) return;
-    goToMove(moveIdx, game);
+    const gameToUse = game.moveNumber() > 1 ? game : board;
+    goToMove(moveIdx, gameToUse);
   };
 
   return (
@@ -82,7 +84,11 @@ export default function MoveItem({
         />
       )}
 
-      <PrettyMoveSan san={san} color={moveColor} />
+      <PrettyMoveSan
+        san={san}
+        color={moveColor}
+        typographyProps={{ fontSize: "0.9rem" }}
+      />
     </Grid>
   );
 }

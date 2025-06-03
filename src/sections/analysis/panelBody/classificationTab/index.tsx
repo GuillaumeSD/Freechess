@@ -8,8 +8,8 @@ export default function ClassificationTab(props: GridProps) {
       container
       justifyContent="center"
       alignItems="start"
-      height="100%"
-      maxHeight={{ xs: "18rem", lg: "none" }}
+      size={12}
+      flexGrow={1}
       {...props}
       sx={
         props.hidden ? { display: "none" } : { overflow: "hidden", ...props.sx }

@@ -1,4 +1,4 @@
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 
 interface Props {
   title: string;
@@ -12,21 +12,20 @@ export default function PlayersMetric({
   blackValue,
 }: Props) {
   return (
-    <Grid
-      container
+    <Stack
       justifyContent="center"
       alignItems="center"
+      flexDirection="row"
       columnGap={{ xs: "8vw", md: 10 }}
-      size={12}
     >
       <ValueBlock value={whiteValue} color="white" />
 
-      <Typography align="center" fontSize="0.8em">
+      <Typography align="center" fontSize="0.8em" noWrap>
         {title}
       </Typography>
 
       <ValueBlock value={blackValue} color="black" />
-    </Grid>
+    </Stack>
   );
 }
 
@@ -50,6 +49,7 @@ const ValueBlock = ({
       padding={0.8}
       fontWeight="500"
       border="1px solid #424242"
+      noWrap
     >
       {value}
     </Typography>

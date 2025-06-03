@@ -54,7 +54,7 @@ export default function PrettyMoveSan({
         </Typography>
       )}
 
-      <Typography component="span" {...typographyProps}>
+      <Typography component="span" noWrap {...typographyProps}>
         {text}
         {additionalText}
       </Typography>

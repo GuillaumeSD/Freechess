@@ -1,6 +1,6 @@
-import { Grid2 as Grid, Skeleton, Stack, Typography } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { boardAtom, currentPositionAtom, gameAtom } from "../../states";
+import { boardAtom, currentPositionAtom } from "../../states";
 import { useMemo } from "react";
 import { moveLineUciToSan } from "@/lib/chess";
 import { MoveClassification } from "@/types/enums";
@@ -10,7 +10,6 @@ import PrettyMoveSan from "@/components/prettyMoveSan";
 export default function MoveInfo() {
   const position = useAtomValue(currentPositionAtom);
   const board = useAtomValue(boardAtom);
-  const game = useAtomValue(gameAtom);
 
   const bestMove = position?.lastEval?.bestMove;
 
@@ -23,36 +22,22 @@ export default function MoveInfo() {
     return moveLineUciToSan(lastPosition)(bestMove);
   }, [bestMove, board]);
 
-  const boardHistory = board.history();
-  const gameHistory = game.history();
-
   if (board.history().length === 0) return null;
-
-  const isGameOver =
-    boardHistory.length > 0 &&
-    (board.isCheckmate() ||
-      board.isDraw() ||
-      boardHistory.join() === gameHistory.join());
 
   if (!bestMoveSan) {
     return (
-      <Grid
-        size={12}
-        justifyItems="center"
-        alignContent="center"
-        marginTop={0.5}
-      >
+      <Stack direction="row" alignItems="center" columnGap={5} marginTop={0.8}>
         <Skeleton
           variant="rounded"
           animation="wave"
           width={"12em"}
-          sx={{ color: "transparent", maxWidth: "7vw", maxHeight: "3.5vw" }}
+          sx={{ color: "transparent", maxWidth: "7vw" }}
         >
           <Typography align="center" fontSize="0.9rem">
             placeholder
           </Typography>
         </Skeleton>
-      </Grid>
+      </Stack>
     );
   }
 
@@ -66,12 +51,13 @@ export default function MoveInfo() {
     moveClassification !== MoveClassification.Perfect;
 
   return (
-    <Grid
-      container
-      columnGap={5}
+    <Stack
+      direction="row"
+      alignItems="center"
       justifyContent="center"
-      size={12}
+      columnGap={4}
       marginTop={0.5}
+      flexWrap="wrap"
     >
       {moveClassification && (
         <Stack direction="row" alignItems="center" spacing={1}>
@@ -121,13 +107,7 @@ export default function MoveInfo() {
           />
         </Stack>
       )}
-
-      {isGameOver && (
-        <Typography align="center" fontSize="0.9rem">
-          Game is over
-        </Typography>
-      )}
-    </Grid>
+    </Stack>
   );
 }
 
