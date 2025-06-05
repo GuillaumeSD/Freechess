@@ -73,7 +73,6 @@ export const ChessComGameItem: React.FC<ChessComGameProps> = ({
         },
         border: `1px solid ${theme.palette.divider}`,
         cursor: onClick ? "pointer" : "default",
-        // background: theme.palette.background.paper,
       }}
       onClick={onClick}
     >

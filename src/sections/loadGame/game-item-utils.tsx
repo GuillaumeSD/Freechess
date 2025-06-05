@@ -84,7 +84,7 @@ export const MovesChip: React.FC<{ moves: number }> = ({ moves }) => {
   return (
     <Tooltip title="Number of Moves">
       <Chip
-        icon={<Icon icon="material-symbols:flag-2" />}
+        icon={<Icon icon="heroicons:hashtag-20-solid" />}
         label={`${Math.round(moves / 2)} moves`}
         size="small"
       />
