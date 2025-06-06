@@ -10,14 +10,17 @@ import {
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
 import { ChessComGameItem } from "./chess-com-game-item";
+import { ChessComRawGameData, NormalizedGameData } from "@/types/chessCom";
 
 interface Props {
   onSelect: (pgn: string, boardOrientation?: boolean) => void;
 }
 
 // Helper function to normalize Chess.com data
-const normalizeChessComData = (data: any) => {
-  let timeControl = data.time_control + "s" || "unknown";
+const normalizeChessComData = (
+  data: ChessComRawGameData
+): NormalizedGameData => {
+  const timeControl = data.time_control + "s" || "unknown";
 
   // Todo Convert from seconds to minutes to time + increment seconds
 
@@ -45,39 +48,40 @@ const normalizeChessComData = (data: any) => {
     }
   }
 
-  
   //* Function to count moves from PGN. Generated from claude..... :)
   const countMovesFromPGN = (pgn: string) => {
     if (!pgn) return 0;
-    
+
     // Split PGN into lines and find the moves section (after headers)
-    const lines = pgn.split('\n');
-    let movesSection = '';
+    const lines = pgn.split("\n");
+    let movesSection = "";
     let inMoves = false;
-    
+
     for (const line of lines) {
-      if (line.trim() === '' && !inMoves) {
+      if (line.trim() === "" && !inMoves) {
         inMoves = true;
         continue;
       }
       if (inMoves) {
-        movesSection += line + ' ';
+        movesSection += line + " ";
       }
     }
-    
+
     // Remove comments in curly braces and square brackets
-    movesSection = movesSection.replace(/\{[^}]*\}/g, '').replace(/\[[^\]]*\]/g, '');
-    
+    movesSection = movesSection
+      .replace(/\{[^}]*\}/g, "")
+      .replace(/\[[^\]]*\]/g, "");
+
     // Remove result indicators
-    movesSection = movesSection.replace(/1-0|0-1|1\/2-1\/2|\*/g, '');
-    
+    movesSection = movesSection.replace(/1-0|0-1|1\/2-1\/2|\*/g, "");
+
     // Split by move numbers and count them
     // Match pattern like "1." "58." etc.
     const moveNumbers = movesSection.match(/\d+\./g);
-    
+
     return moveNumbers ? moveNumbers.length : 0;
   };
-  
+
   return {
     id: data.uuid || data.url?.split("/").pop() || data.id,
     white: {

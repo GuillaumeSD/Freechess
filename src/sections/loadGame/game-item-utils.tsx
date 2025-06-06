@@ -25,7 +25,7 @@ export const GameResult: React.FC<{
       bgColor = `${theme.palette.error.main}1A`; // 10% opacity
       icon = <Icon icon="material-symbols:sentiment-dissatisfied" />; // A suitable icon for loss
     }
-    label = `White Wins`;
+    label = "White Wins";
   } else if (result === "0-1") {
     // Black wins
     if (perspectiveUserColor === "black") {
@@ -38,12 +38,12 @@ export const GameResult: React.FC<{
       bgColor = `${theme.palette.error.main}1A`; // 10% opacity
       icon = <Icon icon="material-symbols:sentiment-dissatisfied" />; // A suitable icon for loss
     }
-    label = `Black Wins`;
+    label = "Black Wins";
   } else if (result === "1/2-1/2") {
     color = theme.palette.info.main; // Balanced blue (using info for a neutral, distinct color)
     bgColor = `${theme.palette.info.main}1A`; // 10% opacity
     icon = <Icon icon="material-symbols:handshake" />;
-    label = `Draw`;
+    label = "Draw";
   }
   return (
     <Tooltip title={label}>

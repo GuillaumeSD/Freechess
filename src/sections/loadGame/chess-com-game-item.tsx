@@ -36,7 +36,6 @@ type ChessComGameProps = {
   perspectiveUserColor: "white" | "black";
 };
 
-
 export const ChessComGameItem: React.FC<ChessComGameProps> = ({
   white,
   black,

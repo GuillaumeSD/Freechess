@@ -12,13 +12,16 @@ import {
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
 import { LichessGameItem } from "./lichess-game-item";
+import { LichessRawGameData, NormalizedLichessGameData } from "@/types/lichess";
 
 interface Props {
   onSelect: (pgn: string, boardOrientation?: boolean) => void;
 }
 
 // Helper function to normalize Lichess data
-const normalizeLichessData = (data: any) => ({
+const normalizeLichessData = (
+  data: LichessRawGameData
+): NormalizedLichessGameData => ({
   id: data.id,
   white: {
     username: data.players.white.user?.name || "Anonymous",

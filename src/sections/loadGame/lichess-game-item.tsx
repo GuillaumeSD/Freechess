@@ -34,7 +34,6 @@ type LichessGameProps = {
   moves?: number;
   url: string;
   onClick?: () => void;
-  originalData?: any;
   perspectiveUserColor: "white" | "black";
 };
 
