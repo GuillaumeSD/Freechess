@@ -1,10 +1,10 @@
-import { ChessComGame } from "@/types/chessCom";
+import { ChessComRawGameData } from "@/types/chessCom";
 import { getPaddedNumber } from "./helpers";
 
 export const getChessComUserRecentGames = async (
   username: string,
   signal?: AbortSignal
-): Promise<ChessComGame[]> => {
+): Promise<ChessComRawGameData[]> => {
   const date = new Date();
   const year = date.getUTCFullYear();
   const month = date.getUTCMonth() + 1;
@@ -24,7 +24,7 @@ export const getChessComUserRecentGames = async (
     throw new Error("Error fetching games from Chess.com");
   }
 
-  const games: ChessComGame[] = data?.games ?? [];
+  const games: ChessComRawGameData[] = data?.games ?? [];
 
   if (games.length < 50) {
     const previousMonth = month === 1 ? 12 : month - 1;

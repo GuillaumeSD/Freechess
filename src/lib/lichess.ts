@@ -3,7 +3,7 @@ import { sortLines } from "./engine/helpers/parseResults";
 import {
   LichessError,
   LichessEvalBody,
-  LichessGame,
+  LichessRawGameData,
   LichessResponse,
 } from "@/types/lichess";
 import { logErrorToSentry } from "./sentry";
@@ -58,7 +58,7 @@ export const getLichessEval = async (
 export const getLichessUserRecentGames = async (
   username: string,
   signal?: AbortSignal
-): Promise<LichessGame[]> => {
+): Promise<LichessRawGameData[]> => {
   const res = await fetch(
     `https://lichess.org/api/games/user/${username}?until=${Date.now()}&max=50&pgnInJson=true&sort=dateDesc&clocks=true`,
     { method: "GET", headers: { accept: "application/x-ndjson" }, signal }
@@ -69,7 +69,7 @@ export const getLichessUserRecentGames = async (
   }
 
   const rawData = await res.text();
-  const games: LichessGame[] = rawData
+  const games: LichessRawGameData[] = rawData
     .split("\n")
     .filter((game) => game.length > 0)
     .map((game) => JSON.parse(game));
