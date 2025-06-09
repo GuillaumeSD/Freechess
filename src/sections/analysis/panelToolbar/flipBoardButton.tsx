@@ -6,6 +6,20 @@ import { Icon } from "@iconify/react";
 export default function FlipBoardButton() {
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
 
+    useEffect(() => {
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "f") {
+                setBoardOrientation((prev) => !prev);
+            }
+        };
+
+        window.addEventListener("keydown", onKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", onKeyDown);
+        };
+    }, []);
+    
   return (
     <Tooltip title="Flip board">
       <IconButton
