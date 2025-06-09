@@ -1,40 +1,48 @@
 import { Move } from "chess.js";
 
-let ctx: AudioContext | null = null;
-const bufferCache = new Map<string, AudioBuffer>();
+let audioContext: AudioContext | null = null;
+let timeout: NodeJS.Timeout | null = null;
+const soundsCache = new Map<string, AudioBuffer>();
 
-const urls = {
+type Sound = "move" | "capture" | "illegalMove";
+const soundUrls: Record<Sound, string> = {
   move: "/sounds/move.mp3",
   capture: "/sounds/capture.mp3",
-  illegal: "/sounds/illegal-move.mp3"
-} as const;
-type Sound = keyof typeof urls;
+  illegalMove: "/sounds/error.mp3",
+};
+export const play = async (sound: Sound) => {
+  if (timeout) clearTimeout(timeout);
 
-async function play(sound: Sound) {
-  try {
-    ctx ??= new (window.AudioContext || (window as any).webkitAudioContext)();
-    if (ctx.state === "suspended") await ctx.resume();
-    let buf = bufferCache.get(urls[sound]);
-    if (!buf) {
-      const res = await fetch(urls[sound]);
-      buf = await ctx.decodeAudioData(await res.arrayBuffer());
-      bufferCache.set(urls[sound], buf);
+  timeout = setTimeout(async () => {
+    if (!audioContext) audioContext = new AudioContext();
+    if (audioContext.state === "suspended") await audioContext.resume();
+
+    let audioBuffer = soundsCache.get(soundUrls[sound]);
+    if (!audioBuffer) {
+      const res = await fetch(soundUrls[sound]);
+      const buffer = await audioContext.decodeAudioData(
+        await res.arrayBuffer()
+      );
+      audioBuffer = buffer;
+      soundsCache.set(soundUrls[sound], buffer);
     }
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.connect(ctx.destination);
-    src.start();
-  } catch {
-    if ("vibrate" in navigator) navigator.vibrate(50);
-  }
-}
+
+    const audioSrc = audioContext.createBufferSource();
+    audioSrc.buffer = audioBuffer;
+    const volume = audioContext.createGain();
+    volume.gain.value = 0.3;
+    audioSrc.connect(volume);
+    volume.connect(audioContext.destination);
+    audioSrc.start();
+  }, 1);
+};
 
 export const playCaptureSound = () => play("capture");
-export const playIllegalMoveSound = () => play("illegal");
+export const playIllegalMoveSound = () => play("illegalMove");
 export const playMoveSound = () => play("move");
 
-export async function playSoundFromMove(move: Move | null) {
+export const playSoundFromMove = (move: Move | null) => {
   if (!move) return playIllegalMoveSound();
   if (move.captured) return playCaptureSound();
   return playMoveSound();
-}
+};
