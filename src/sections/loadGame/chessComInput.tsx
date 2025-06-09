@@ -6,11 +6,14 @@ import {
   Grid2 as Grid,
   TextField,
   List,
+  Autocomplete,
 } from "@mui/material";
+import { Icon } from "@iconify/react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
 import { ChessComGameItem } from "./chess-com-game-item";
 import { ChessComRawGameData, NormalizedGameData } from "@/types/chessCom";
+import { useMemo, useState } from "react";
 
 interface Props {
   onSelect: (pgn: string, boardOrientation?: boolean) => void;
@@ -106,10 +109,56 @@ const normalizeChessComData = (
 };
 
 export default function ChessComInput({ onSelect }: Props) {
-  const [chessComUsername, setChessComUsername] = useLocalStorage(
+  const [rawStoredValue, setStoredValues] = useLocalStorage<string>(
     "chesscom-username",
     ""
   );
+  const [chessComUsername, setChessComUsername] = useState("");
+  const [hasEdited, setHasEdited] = useState(false);
+
+  const storedValues = useMemo(() => {
+    if (typeof rawStoredValue === "string") {
+      return rawStoredValue
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    }
+
+    return [];
+  }, [rawStoredValue]);
+
+  if (
+    !hasEdited &&
+    storedValues.length &&
+    chessComUsername.trim().toLowerCase() !=
+      storedValues[0].trim().toLowerCase()
+  ) {
+    setChessComUsername(storedValues[0].trim());
+  }
+
+  const updateHistory = (username: string) => {
+    const trimmed = username.trim();
+    if (!trimmed) return;
+    const lower = trimmed.toLowerCase();
+
+    const exists = storedValues.some((u) => u.toLowerCase() === lower);
+    if (!exists) {
+      const updated = [trimmed, ...storedValues.slice(0, 7)];
+      setStoredValues(updated.join(","));
+    }
+  };
+
+  const deleteUsername = (usernameToDelete: string) => {
+    const updated = storedValues.filter((u) => u !== usernameToDelete);
+    setStoredValues(updated.join(","));
+  };
+
+  const handleChange = (_: React.SyntheticEvent, newValue: string | null) => {
+    const newInputValue = newValue ?? "";
+    setChessComUsername(newInputValue.trim());
+    setHasEdited(true);
+  };
+
   const debouncedUsername = useDebounce(chessComUsername, 300);
 
   const {
@@ -127,15 +176,48 @@ export default function ChessComInput({ onSelect }: Props) {
   return (
     <>
       <FormControl sx={{ m: 1, width: 300 }}>
-        <TextField
-          label="Enter your Chess.com username..."
-          variant="outlined"
-          value={chessComUsername ?? ""}
-          onChange={(e) => setChessComUsername(e.target.value)}
+        <Autocomplete
+          freeSolo
+          options={storedValues}
+          inputValue={chessComUsername}
+          onInputChange={handleChange}
+          onChange={handleChange}
+          renderOption={(props, option) => {
+            const { key, ...rest } = props;
+            return (
+              <li
+                key={key}
+                {...rest}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  paddingRight: 8,
+                }}
+              >
+                <span>{option}</span>
+                <Icon
+                  icon="mdi:close"
+                  style={{ cursor: "pointer" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteUsername(option);
+                  }}
+                />
+              </li>
+            );
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Enter your Chess.com username..."
+              variant="outlined"
+            />
+          )}
         />
       </FormControl>
 
-      {chessComUsername && (
+      {debouncedUsername && (
         <Grid
           container
           gap={2}
@@ -170,10 +252,11 @@ export default function ChessComInput({ onSelect }: Props) {
                     {...normalizedGame}
                     perspectiveUserColor={perspectiveUserColor}
                     onClick={() => {
+                      updateHistory(debouncedUsername);
                       const boardOrientation =
-                        chessComUsername.toLowerCase() !==
-                        game.black?.username?.toLowerCase();
-                      onSelect(game.pgn, boardOrientation);
+                    debouncedUsername.toLowerCase() !==
+                    game.black?.username?.toLowerCase();
+                  onSelect(game.pgn, boardOrientation);
                     }}
                   />
                 );

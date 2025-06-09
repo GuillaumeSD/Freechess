@@ -34,6 +34,11 @@ if (
       "Fetch is aborted",
       "The operation was aborted.",
       "AbortError: AbortError",
+      "TypeError: Load failed",
+      "RangeError: Out of memory",
+      "RuntimeError: Out of bounds memory access (evaluating 'n.apply(null,arguments)')",
+      "Uncaught RuntimeError: Aborted(CompileError: WebAssembly.instantiate():",
+      "Uncaught RangeError: WebAssembly.Memory(): could not allocate memory",
     ],
   });
 }

@@ -28,12 +28,13 @@ export default function AnalysisTab(props: GridProps) {
   return (
     <Grid
       container
-      size={{ xs: 12, lg: gameEval ? 11 : 12 }}
+      size={12}
       justifyContent={{ xs: "center", lg: gameEval ? "start" : "center" }}
       alignItems="center"
       flexWrap={{ lg: gameEval ? "nowrap" : undefined }}
       gap={2}
       marginY={{ lg: gameEval ? 1 : undefined }}
+      paddingX={{ xs: 0, lg: "calc(4% - 2rem)" }}
       {...props}
       sx={props.hidden ? { display: "none" } : props.sx}
     >
