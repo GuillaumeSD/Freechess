@@ -1,23 +1,55 @@
+"use client";
+
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getLichessUserRecentGames } from "@/lib/lichess";
-import { capitalize } from "@/lib/helpers";
 import {
   CircularProgress,
   FormControl,
   Grid2 as Grid,
-  ListItemButton,
-  ListItemText,
   TextField,
+  List,
   Autocomplete,
 } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
+import { LichessGameItem } from "./lichess-game-item";
+import { LichessRawGameData, NormalizedLichessGameData } from "@/types/lichess";
 import { useMemo, useState } from "react";
 
 interface Props {
   onSelect: (pgn: string, boardOrientation?: boolean) => void;
 }
+
+// Helper function to normalize Lichess data
+const normalizeLichessData = (
+  data: LichessRawGameData
+): NormalizedLichessGameData => ({
+  id: data.id,
+  white: {
+    username: data.players.white.user?.name || "Anonymous",
+    rating: data.players.white.rating,
+    title: data.players.white.user?.title,
+  },
+  black: {
+    username: data.players.black.user?.name || "Anonymous",
+    rating: data.players.black.rating,
+    title: data.players.black.user?.title,
+  },
+  result:
+    data.status === "draw"
+      ? "1/2-1/2"
+      : data.winner
+        ? data.winner === "white"
+          ? "1-0"
+          : "0-1"
+        : "*",
+  timeControl: `${Math.floor(data.clock?.initial / 60 || 0)}+${data.clock?.increment || 0}`,
+  date: new Date(data.createdAt || data.lastMoveAt).toLocaleDateString(),
+  opening: data.opening?.name,
+  moves: data.moves?.split(" ").length || 0,
+  url: `https://lichess.org/${data.id}`,
+});
 
 export default function LichessInput({ onSelect }: Props) {
   const [rawStoredValue, setStoredValues] = useLocalStorage<string>(
@@ -147,42 +179,31 @@ export default function LichessInput({ onSelect }: Props) {
               No games found. Please check your username.
             </span>
           ) : (
-            games.map((game) => (
-              <ListItemButton
-                onClick={() => {
-                  updateHistory(debouncedUsername);
+            <List sx={{ width: "100%", maxWidth: 800 }}>
+              {games.map((game) => {
+                const normalizedGame = normalizeLichessData(game);
+                const perspectiveUserColor =
+                  normalizedGame.white.username.toLowerCase() ===
+                  lichessUsername.toLowerCase()
+                    ? "white"
+                    : "black";
+
+                return (
+                  <LichessGameItem
+                    key={game.id}
+                    {...normalizedGame}
+                    perspectiveUserColor={perspectiveUserColor}
+                    onClick={() => {
+                      updateHistory(debouncedUsername);
                   const boardOrientation =
                     debouncedUsername.toLowerCase() !==
                     game.players?.black?.user?.name?.toLowerCase();
                   onSelect(game.pgn, boardOrientation);
-                }}
-                style={{ width: 350, maxWidth: 350 }}
-                key={game.id}
-              >
-                <ListItemText
-                  primary={`${
-                    capitalize(game.players?.white?.user?.name || "white") ||
-                    "White"
-                  } (${game.players?.white?.rating || "?"}) vs ${
-                    capitalize(game.players?.black?.user?.name || "black") ||
-                    "Black"
-                  } (${game.players?.black?.rating || "?"})`}
-                  secondary={
-                    game.lastMoveAt
-                      ? `${capitalize(game.speed || "game")} played at ${new Date(
-                          game.lastMoveAt
-                        )
-                          .toLocaleString()
-                          .slice(0, -3)}`
-                      : undefined
-                  }
-                  slotProps={{
-                    primary: { noWrap: true },
-                    secondary: { noWrap: true },
-                  }}
-                />
-              </ListItemButton>
-            ))
+                    }}
+                  />
+                );
+              })}
+            </List>
           )}
         </Grid>
       )}
