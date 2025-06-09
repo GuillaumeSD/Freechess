@@ -13,7 +13,7 @@ import {
 import { Icon } from "@iconify/react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 interface Props {
   onSelect: (pgn: string, boardOrientation?: boolean) => void;
@@ -24,30 +24,28 @@ export default function ChessComInput({ onSelect }: Props) {
     "chesscom-username",
     ""
   );
+  const [chessComUsername, setChessComUsername] = useState("");
+  const [hasEdited, setHasEdited] = useState(false);
 
   const storedValues = useMemo(() => {
-    if (typeof rawStoredValue === "string")
+    if (typeof rawStoredValue === "string") {
       return rawStoredValue
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean);
-    else return [];
+    }
+
+    return [];
   }, [rawStoredValue]);
 
-  const [chessComUsername, setChessComUsername] = useState("");
-  const [hasEdited, setHasEdited] = useState(false);
-
-  useEffect(() => {
-    if (
-      !hasEdited &&
-      storedValues &&
-      storedValues.length > 0 &&
-      chessComUsername.trim().toLowerCase() !=
-        storedValues[0].trim().toLowerCase()
-    ) {
-      setChessComUsername(storedValues[0].trim().toLowerCase());
-    }
-  }, [storedValues, hasEdited, chessComUsername]);
+  if (
+    !hasEdited &&
+    storedValues.length &&
+    chessComUsername.trim().toLowerCase() !=
+      storedValues[0].trim().toLowerCase()
+  ) {
+    setChessComUsername(storedValues[0].trim());
+  }
 
   const updateHistory = (username: string) => {
     const trimmed = username.trim();
@@ -56,7 +54,7 @@ export default function ChessComInput({ onSelect }: Props) {
 
     const exists = storedValues.some((u) => u.toLowerCase() === lower);
     if (!exists) {
-      const updated = [trimmed, ...storedValues.filter((u) => u !== trimmed)];
+      const updated = [trimmed, ...storedValues.slice(0, 7)];
       setStoredValues(updated.join(","));
     }
   };
@@ -68,25 +66,10 @@ export default function ChessComInput({ onSelect }: Props) {
 
   const handleChange = (_: React.SyntheticEvent, newValue: string | null) => {
     const newInputValue = newValue ?? "";
-    if (
-      newInputValue.trim().toLowerCase() !=
-      chessComUsername.trim().toLowerCase()
-    )
-      setChessComUsername(newInputValue.trim().toLowerCase());
+    setChessComUsername(newInputValue.trim());
+    setHasEdited(true);
   };
 
-  const handleInputChange = (
-    _: React.SyntheticEvent,
-    newInputValue: string
-  ) => {
-    if (
-      newInputValue.trim().toLowerCase() !=
-      chessComUsername.trim().toLowerCase()
-    ) {
-      setChessComUsername(newInputValue.trim().toLowerCase());
-      if (!hasEdited) setHasEdited(true);
-    }
-  };
   const debouncedUsername = useDebounce(chessComUsername, 300);
 
   const {
@@ -108,7 +91,7 @@ export default function ChessComInput({ onSelect }: Props) {
           freeSolo
           options={storedValues}
           inputValue={chessComUsername}
-          onInputChange={handleInputChange}
+          onInputChange={handleChange}
           onChange={handleChange}
           renderOption={(props, option) => {
             const { key, ...rest } = props;

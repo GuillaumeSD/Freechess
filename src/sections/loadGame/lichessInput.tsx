@@ -13,7 +13,7 @@ import {
 import { Icon } from "@iconify/react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 interface Props {
   onSelect: (pgn: string, boardOrientation?: boolean) => void;
@@ -24,30 +24,27 @@ export default function LichessInput({ onSelect }: Props) {
     "lichess-username",
     ""
   );
+  const [lichessUsername, setLichessUsername] = useState("");
+  const [hasEdited, setHasEdited] = useState(false);
 
   const storedValues = useMemo(() => {
-    if (typeof rawStoredValue === "string")
+    if (typeof rawStoredValue === "string") {
       return rawStoredValue
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean);
-    else return [];
+    }
+
+    return [];
   }, [rawStoredValue]);
 
-  const [lichessUsername, setLichessUsername] = useState("");
-  const [hasEdited, setHasEdited] = useState(false);
-
-  useEffect(() => {
-    if (
-      !hasEdited &&
-      storedValues &&
-      storedValues.length > 0 &&
-      lichessUsername.trim().toLowerCase() !=
-        storedValues[0].trim().toLowerCase()
-    ) {
-      setLichessUsername(storedValues[0].trim().toLowerCase());
-    }
-  }, [storedValues, hasEdited, lichessUsername]);
+  if (
+    !hasEdited &&
+    storedValues.length &&
+    lichessUsername.trim().toLowerCase() != storedValues[0].trim().toLowerCase()
+  ) {
+    setLichessUsername(storedValues[0].trim());
+  }
 
   const updateHistory = (username: string) => {
     const trimmed = username.trim();
@@ -56,7 +53,7 @@ export default function LichessInput({ onSelect }: Props) {
 
     const exists = storedValues.some((u) => u.toLowerCase() === lower);
     if (!exists) {
-      const updated = [trimmed, ...storedValues.filter((u) => u !== trimmed)];
+      const updated = [trimmed, ...storedValues.slice(0, 7)];
       setStoredValues(updated.join(","));
     }
   };
@@ -68,22 +65,8 @@ export default function LichessInput({ onSelect }: Props) {
 
   const handleChange = (_: React.SyntheticEvent, newValue: string | null) => {
     const newInputValue = newValue ?? "";
-    if (
-      newInputValue.trim().toLowerCase() != lichessUsername.trim().toLowerCase()
-    )
-      setLichessUsername(newInputValue.trim().toLowerCase());
-  };
-
-  const handleInputChange = (
-    _: React.SyntheticEvent,
-    newInputValue: string
-  ) => {
-    if (
-      newInputValue.trim().toLowerCase() != lichessUsername.trim().toLowerCase()
-    ) {
-      setLichessUsername(newInputValue.trim().toLowerCase());
-      if (!hasEdited) setHasEdited(true);
-    }
+    setLichessUsername(newInputValue.trim());
+    setHasEdited(true);
   };
 
   const debouncedUsername = useDebounce(lichessUsername, 500);
@@ -107,7 +90,7 @@ export default function LichessInput({ onSelect }: Props) {
           freeSolo
           options={storedValues}
           inputValue={lichessUsername}
-          onInputChange={handleInputChange}
+          onInputChange={handleChange}
           onChange={handleChange}
           renderOption={(props, option) => {
             const { key, ...rest } = props;

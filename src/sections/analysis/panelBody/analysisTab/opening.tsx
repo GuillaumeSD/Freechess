@@ -29,7 +29,7 @@ export default function Opening() {
 
   return (
     <Grid>
-      <Typography align="center" fontSize="0.9rem">
+      <Typography align="center" fontSize="0.9rem" maxWidth="20rem">
         {opening}
       </Typography>
     </Grid>
