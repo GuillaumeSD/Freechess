@@ -19,4 +19,17 @@ export interface Player {
   name: string;
   rating?: number;
   avatarUrl?: string;
+  title?: string;
+}
+
+export interface LoadedGame {
+  id: string;
+  pgn: string;
+  date?: string;
+  white: Player;
+  black: Player;
+  result?: string;
+  timeControl?: string;
+  movesNb?: number;
+  url?: string;
 }

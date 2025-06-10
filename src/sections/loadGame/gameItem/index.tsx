@@ -3,59 +3,28 @@ import {
   ListItem,
   ListItemText,
   Typography,
-  Chip,
   Box,
   useTheme,
-  IconButton,
-  Tooltip,
 } from "@mui/material";
-import { Icon } from "@iconify/react";
-import {
-  DateChip,
-  GameResult,
-  MovesChip,
-  TimeControlChip,
-} from "./game-item-utils";
+import { LoadedGame } from "@/types/game";
+import TimeControlChip from "./timeControlChip";
+import MovesNbChip from "./movesNbChip";
+import DateChip from "./dateChip";
+import GameResultChip from "./gameResultChip";
 
-type LichessPlayer = {
-  username: string;
-  rating: number;
-  title?: string;
-};
-
-type LichessGameProps = {
-  id: string;
-  white: LichessPlayer;
-  black: LichessPlayer;
-  result: string;
-  timeControl: string;
-  date: string;
-  opening?: string;
-  moves?: number;
-  url: string;
+interface Props {
+  game: LoadedGame;
   onClick?: () => void;
   perspectiveUserColor: "white" | "black";
-};
+}
 
-export const LichessGameItem: React.FC<LichessGameProps> = ({
-  white,
-  black,
-  result,
-  timeControl,
-  date,
-  perspectiveUserColor,
-  moves,
-  url,
+export const GameItem: React.FC<Props> = ({
+  game,
   onClick,
+  perspectiveUserColor,
 }) => {
   const theme = useTheme();
-
-  // If it is a titled played append the title to the start of the name
-  const formatPlayerName = (player: LichessPlayer) => {
-    return player.title
-      ? `${player.title} ${player.username}`
-      : player.username;
-  };
+  const { white, black, result, timeControl, date, movesNb } = game;
 
   const whiteWon = result === "1-0";
   const blackWon = result === "0-1";
@@ -124,7 +93,7 @@ export const LichessGameItem: React.FC<LichessGameProps> = ({
               {formatPlayerName(black)} ({black.rating})
             </Typography>
 
-            <GameResult
+            <GameResultChip
               result={result}
               perspectiveUserColor={perspectiveUserColor}
             />
@@ -140,21 +109,15 @@ export const LichessGameItem: React.FC<LichessGameProps> = ({
             }}
           >
             <TimeControlChip timeControl={timeControl} />
-            {moves && moves > 0 && <MovesChip moves={moves} />}
+            <MovesNbChip movesNb={movesNb} />
             <DateChip date={date} />
-
-            <Chip
-              icon={<Icon icon="simple-icons:lichess" />}
-              label="Lichess"
-              size="small"
-            />
           </Box>
         }
         sx={{ mr: 2 }}
       />
 
-      <Box sx={{ display: "flex", alignItems: "center", ml: "auto" }}>
-        <Tooltip title="View on Lichess">
+      {/* <Box sx={{ display: "flex", alignItems: "center", ml: "auto" }}>
+        <Tooltip title="View on Chess.com">
           <IconButton
             onClick={(e) => {
               e.stopPropagation();
@@ -173,7 +136,11 @@ export const LichessGameItem: React.FC<LichessGameProps> = ({
             <Icon icon="material-symbols:open-in-new" />
           </IconButton>
         </Tooltip>
-      </Box>
+      </Box> */}
     </ListItem>
   );
+};
+
+const formatPlayerName = (player: LoadedGame["white"]) => {
+  return player.title ? `${player.title} ${player.name}` : player.name;
 };

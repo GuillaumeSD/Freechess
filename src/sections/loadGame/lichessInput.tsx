@@ -1,5 +1,3 @@
-"use client";
-
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getLichessUserRecentGames } from "@/lib/lichess";
 import {
@@ -13,43 +11,12 @@ import {
 import { Icon } from "@iconify/react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
-import { LichessGameItem } from "./lichess-game-item";
-import { LichessRawGameData, NormalizedLichessGameData } from "@/types/lichess";
 import { useMemo, useState } from "react";
+import { GameItem } from "./gameItem";
 
 interface Props {
   onSelect: (pgn: string, boardOrientation?: boolean) => void;
 }
-
-// Helper function to normalize Lichess data
-const normalizeLichessData = (
-  data: LichessRawGameData
-): NormalizedLichessGameData => ({
-  id: data.id,
-  white: {
-    username: data.players.white.user?.name || "Anonymous",
-    rating: data.players.white.rating,
-    title: data.players.white.user?.title,
-  },
-  black: {
-    username: data.players.black.user?.name || "Anonymous",
-    rating: data.players.black.rating,
-    title: data.players.black.user?.title,
-  },
-  result:
-    data.status === "draw"
-      ? "1/2-1/2"
-      : data.winner
-        ? data.winner === "white"
-          ? "1-0"
-          : "0-1"
-        : "*",
-  timeControl: `${Math.floor(data.clock?.initial / 60 || 0)}+${data.clock?.increment || 0}`,
-  date: new Date(data.createdAt || data.lastMoveAt).toLocaleDateString(),
-  opening: data.opening?.name,
-  moves: data.moves?.split(" ").length || 0,
-  url: `https://lichess.org/${data.id}`,
-});
 
 export default function LichessInput({ onSelect }: Props) {
   const [rawStoredValue, setStoredValues] = useLocalStorage<string>(
@@ -181,24 +148,23 @@ export default function LichessInput({ onSelect }: Props) {
           ) : (
             <List sx={{ width: "100%", maxWidth: 800 }}>
               {games.map((game) => {
-                const normalizedGame = normalizeLichessData(game);
                 const perspectiveUserColor =
-                  normalizedGame.white.username.toLowerCase() ===
-                  lichessUsername.toLowerCase()
+                  game.white.name.toLowerCase() ===
+                  debouncedUsername.toLowerCase()
                     ? "white"
                     : "black";
 
                 return (
-                  <LichessGameItem
+                  <GameItem
                     key={game.id}
-                    {...normalizedGame}
+                    game={game}
                     perspectiveUserColor={perspectiveUserColor}
                     onClick={() => {
+                      const boardOrientation =
+                        debouncedUsername.toLowerCase() !==
+                        game.black.name.toLowerCase();
+                      onSelect(game.pgn, boardOrientation);
                       updateHistory(debouncedUsername);
-                  const boardOrientation =
-                    debouncedUsername.toLowerCase() !==
-                    game.players?.black?.user?.name?.toLowerCase();
-                  onSelect(game.pgn, boardOrientation);
                     }}
                   />
                 );

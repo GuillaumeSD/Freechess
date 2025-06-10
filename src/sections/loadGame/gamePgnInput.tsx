@@ -10,16 +10,15 @@ interface Props {
 export default function GamePgnInput({ pgn, setPgn }: Props) {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
+    if (!file) return;
+    const reader = new FileReader();
 
-      reader.onload = (e) => {
-        const fileContent = e.target?.result as string;
-        setPgn(fileContent);
-      };
+    reader.onload = (e) => {
+      const fileContent = e.target?.result as string;
+      setPgn(fileContent);
+    };
 
-      reader.readAsText(file); // Read the file as text
-    }
+    reader.readAsText(file);
   };
 
   return (
@@ -39,12 +38,7 @@ export default function GamePgnInput({ pgn, setPgn }: Props) {
         startIcon={<Icon icon="material-symbols:upload" />}
       >
         Choose PGN File
-        <input
-          type="file"
-          hidden // Hide the default file input
-          accept=".pgn" // Only allow .pgn files
-          onChange={handleFileChange}
-        />
+        <input type="file" hidden accept=".pgn" onChange={handleFileChange} />
       </Button>
     </FormControl>
   );
