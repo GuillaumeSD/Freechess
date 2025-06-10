@@ -17,18 +17,32 @@ export enum LichessError {
   NotFound = "No cloud evaluation available for that position",
 }
 
-export interface LichessGame {
-  id: string;
-  speed: string;
-  lastMoveAt: number;
-  players?: {
-    white?: LichessGameUser;
-    black?: LichessGameUser;
+interface LichessPlayer {
+  user: {
+    name: string;
+    title?: string;
   };
-  pgn: string;
+  rating: number;
 }
 
-export interface LichessGameUser {
-  user?: { id: string; name: string };
-  rating?: number;
+interface LichessClock {
+  initial: number;
+  increment: number;
+  totalTime: number;
+}
+
+export interface LichessGame {
+  id: string;
+  createdAt: number;
+  lastMoveAt: number;
+  status: string;
+  players: {
+    white: LichessPlayer;
+    black: LichessPlayer;
+  };
+  winner?: "white" | "black";
+  moves: string;
+  pgn: string;
+  clock: LichessClock;
+  url?: string;
 }

@@ -119,7 +119,7 @@ export const useChessActions = (chessAtom: PrimitiveAtom<Chess>) => {
       const movesNb = fullGame.history().length;
       if (moveIdx > movesNb) return;
 
-      let lastMove: Move | null = null;
+      let lastMove: Move | null = {} as Move;
       for (let i = movesNb; i > moveIdx; i--) {
         lastMove = newGame.undo();
       }

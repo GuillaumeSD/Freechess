@@ -1,14 +1,20 @@
-export interface ChessComGame {
-  uuid: string;
-  white: ChessComUser;
-  black: ChessComUser;
-  end_time: number;
-  pgn: string;
-  time_class: string;
-}
-
-export interface ChessComUser {
+interface ChessComPlayer {
   username: string;
   rating: number;
-  ["@id"]: string;
+  result?: string;
+  title?: string;
+}
+
+export interface ChessComGame {
+  uuid: string;
+  id: string;
+  url: string;
+  pgn: string;
+  white: ChessComPlayer;
+  black: ChessComPlayer;
+  result: string;
+  time_control: string;
+  end_time: number;
+  eco?: string;
+  termination?: string;
 }
