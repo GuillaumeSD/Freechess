@@ -1,5 +1,4 @@
 import { Box, Grid2 as Grid } from "@mui/material";
-import { Chessboard } from "react-chessboard";
 import { PrimitiveAtom, atom, useAtomValue, useSetAtom } from "jotai";
 import {
   Arrow,
@@ -21,6 +20,9 @@ import { Player } from "@/types/game";
 import PlayerHeader from "./playerHeader";
 import { boardHueAtom, pieceSetAtom } from "./states";
 import tinycolor from "tinycolor2";
+import Chessground from "./chessground";
+import { Config } from "@lichess-org/chessground/config";
+import { Key, MoveMetadata } from "@lichess-org/chessground/types";
 
 export interface Props {
   id: string;
@@ -282,6 +284,35 @@ export default function Board({
     return commonBoardStyle;
   }, [boardHue]);
 
+  const boardConfig = useMemo(
+    () =>
+      ({
+        fen: gameFen,
+        orientation: boardOrientation === Color.White ? "white" : "black",
+        animation: { enabled: true, duration: 200 },
+        movable: {
+          color:
+            canPlay === Color.White
+              ? "white"
+              : canPlay === Color.Black
+                ? "black"
+                : canPlay
+                  ? "both"
+                  : undefined,
+          events: {
+            after: (orig: Key, dest: Key, metadata: MoveMetadata) => {
+              console.log(
+                `Move from ${orig} to ${dest} with metadata:`,
+                metadata
+              );
+            },
+          },
+        },
+        premovable: { enabled: false },
+      }) satisfies Config,
+    [gameFen, boardOrientation, canPlay]
+  );
+
   return (
     <Grid
       container
@@ -316,10 +347,12 @@ export default function Board({
           container
           justifyContent="center"
           alignItems="center"
+          height={boardRef?.current?.offsetWidth}
           ref={boardRef}
           size={12}
         >
-          <Chessboard
+          <Chessground config={boardConfig} />
+          {/* {<Chessboard
             id={`${boardId}-${canPlay}`}
             position={gameFen}
             onPieceDrop={onPieceDrop}
@@ -339,7 +372,7 @@ export default function Board({
             promotionToSquare={moveClickTo}
             animationDuration={200}
             customPieces={customPieces}
-          />
+          />} */}
         </Grid>
 
         <PlayerHeader
