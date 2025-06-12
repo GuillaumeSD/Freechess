@@ -41,7 +41,8 @@ Deployed on AWS with [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.htm
 
 ## Running the app in dev mode
 
-At least [Node.js](https://nodejs.org) 22.11 is required.
+> [!IMPORTANT]  
+> At least [Node.js](https://nodejs.org) 22.11 is required.
 
 Install the dependencies :
 
