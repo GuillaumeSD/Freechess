@@ -50,11 +50,12 @@ export default function LichessInput({ onSelect }: Props) {
     if (!trimmed) return;
     const lower = trimmed.toLowerCase();
 
-    const exists = storedValues.some((u) => u.toLowerCase() === lower);
-    if (!exists) {
-      const updated = [trimmed, ...storedValues.slice(0, 7)];
-      setStoredValues(updated.join(","));
-    }
+    const updated = [
+      trimmed,
+      ...storedValues.filter((u) => u.toLowerCase() !== lower),
+    ].slice(0, 8);
+
+    setStoredValues(updated.join(","));
   };
 
   const deleteUsername = (usernameToDelete: string) => {
