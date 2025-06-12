@@ -47,6 +47,10 @@ export const GameItem: React.FC<Props> = ({
       onClick={onClick}
     >
       <ListItemText
+        slotProps={{
+          primary: { component: "div" },
+          secondary: { component: "div" },
+        }}
         primary={
           <Box
             sx={{
