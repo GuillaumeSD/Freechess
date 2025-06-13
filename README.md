@@ -41,6 +41,8 @@ Deployed on AWS with [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.htm
 
 ## Running the app in dev mode
 
+### Using Node.js
+
 At least [Node.js](https://nodejs.org) 22.11 is required.
 
 Install the dependencies :
@@ -55,6 +57,14 @@ Run the development server :
 npm run dev
 ```
 
+### Using Docker
+
+Run the development server :
+
+```bash
+HOST_UID=$(id -u) HOST_GID=$(id -g) COMMAND=dev docker compose up
+```
+
 Open [http://localhost:3000](http://localhost:3000) in the browser to see the app running.
 
 The app will automatically refresh on any source file change.
@@ -65,6 +75,12 @@ Run it with :
 
 ```bash
 npm run lint
+```
+
+or with docker :
+
+```bash
+HOST_UID=$(id -u) HOST_GID=$(id -g) COMMAND=lint docker compose up
 ```
 
 ## Contribute
