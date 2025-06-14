@@ -20,10 +20,9 @@ export default function PanelToolBar() {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (boardHistory.length === 0) return;
-      if (e.key === "ArrowLeft") {
+      if (e.key === "ArrowLeft" && boardHistory.length > 0) {
         undoBoardMove();
-      } else if (e.key === "ArrowDown") {
+      } else if (e.key === "ArrowDown" && boardHistory.length > 0) {
         resetBoard();
       } else if (e.key === " " || e.key === "Spacebar") {
         // Space bar will be handled by PlayButton component
