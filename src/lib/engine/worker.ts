@@ -45,6 +45,11 @@ export const sendCommandsToWorker = (
 };
 
 export const getRecommendedWorkersNb = (): number => {
+  // Return default value during SSR
+  if (typeof navigator === "undefined") {
+    return 4;
+  }
+
   const maxWorkersNbFromThreads = Math.max(
     1,
     Math.round(navigator.hardwareConcurrency - 4),
