@@ -5,6 +5,7 @@ import { boardAtom, gameAtom } from "../states";
 import { useChessActions } from "@/hooks/useChessActions";
 import FlipBoardButton from "./flipBoardButton";
 import NextMoveButton from "./nextMoveButton";
+import PlayButton from "./playButton";
 import GoToLastPositionButton from "./goToLastPositionButton";
 import SaveButton from "./saveButton";
 import { useEffect } from "react";
@@ -24,6 +25,10 @@ export default function PanelToolBar() {
         undoBoardMove();
       } else if (e.key === "ArrowDown") {
         resetBoard();
+      } else if (e.key === " " || e.key === "Spacebar") {
+        // Space bar will be handled by PlayButton component
+        // We prevent default here to avoid page scrolling
+        e.preventDefault();
       }
     };
 
@@ -61,6 +66,8 @@ export default function PanelToolBar() {
           </IconButton>
         </Grid>
       </Tooltip>
+
+      <PlayButton />
 
       <NextMoveButton />
 
