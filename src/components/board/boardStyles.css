@@ -1,0 +1,55 @@
+/** Alternating colors in rank/file/square labels */
+.orientation-white .ranks :nth-child(odd),
+.orientation-white .files :nth-child(odd),
+.orientation-black .ranks :nth-child(even),
+.orientation-black .files :nth-child(even),
+coords.squares:nth-of-type(odd) :nth-child(even),
+coords.squares:nth-of-type(even) :nth-child(odd) {
+  color: rgb(240, 217, 181);
+}
+
+.orientation-white .ranks :nth-child(even),
+.orientation-white .files :nth-child(even),
+.orientation-black .ranks :nth-child(odd),
+.orientation-black .files :nth-child(odd),
+coords.squares:nth-of-type(odd) :nth-child(odd),
+coords.squares:nth-of-type(even) :nth-child(even) {
+  color: rgb(181, 136, 99);
+}
+
+.cg-wrap piece.pawn.white {
+  background-image: var(--wP, url("/piece/cburnett/wP.svg"));
+}
+.cg-wrap piece.bishop.white {
+  background-image: var(--wB, url("/piece/cburnett/wB.svg"));
+}
+.cg-wrap piece.knight.white {
+  background-image: var(--wN, url("/piece/cburnett/wN.svg"));
+}
+.cg-wrap piece.rook.white {
+  background-image: var(--wR, url("/piece/cburnett/wR.svg"));
+}
+.cg-wrap piece.queen.white {
+  background-image: var(--wQ, url("/piece/cburnett/wQ.svg"));
+}
+.cg-wrap piece.king.white {
+  background-image: var(--wK, url("/piece/cburnett/wK.svg"));
+}
+.cg-wrap piece.pawn.black {
+  background-image: var(--bP, url("/piece/cburnett/bP.svg"));
+}
+.cg-wrap piece.bishop.black {
+  background-image: var(--bB, url("/piece/cburnett/bB.svg"));
+}
+.cg-wrap piece.knight.black {
+  background-image: var(--bN, url("/piece/cburnett/bN.svg"));
+}
+.cg-wrap piece.rook.black {
+  background-image: var(--bR, url("/piece/cburnett/bR.svg"));
+}
+.cg-wrap piece.queen.black {
+  background-image: var(--bQ, url("/piece/cburnett/bQ.svg"));
+}
+.cg-wrap piece.king.black {
+  background-image: var(--bK, url("/piece/cburnett/bK.svg"));
+}

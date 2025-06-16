@@ -249,25 +249,6 @@ export default function Board({
     showPlayerMoveIconAtom,
   ]);
 
-  const customPieces = useMemo(
-    () =>
-      PIECE_CODES.reduce<CustomPieces>((acc, piece) => {
-        acc[piece] = ({ squareWidth }) => (
-          <Box
-            width={squareWidth}
-            height={squareWidth}
-            sx={{
-              backgroundImage: `url(/piece/${pieceSet}/${piece}.svg)`,
-              backgroundSize: "contain",
-            }}
-          />
-        );
-
-        return acc;
-      }, {}),
-    [pieceSet]
-  );
-
   const customBoardStyle = useMemo(() => {
     const commonBoardStyle = {
       borderRadius: "5px",
@@ -349,9 +330,9 @@ export default function Board({
           alignItems="center"
           height={boardRef?.current?.offsetWidth}
           ref={boardRef}
-          size={12}
+          width="round(down, 100%, 8px)"
         >
-          <Chessground config={boardConfig} />
+          <Chessground config={boardConfig} pieceSet={pieceSet} />
           {/* {<Chessboard
             id={`${boardId}-${canPlay}`}
             position={gameFen}
@@ -384,18 +365,3 @@ export default function Board({
     </Grid>
   );
 }
-
-export const PIECE_CODES = [
-  "wP",
-  "wB",
-  "wN",
-  "wR",
-  "wQ",
-  "wK",
-  "bP",
-  "bB",
-  "bN",
-  "bR",
-  "bQ",
-  "bK",
-] as const satisfies Piece[];
