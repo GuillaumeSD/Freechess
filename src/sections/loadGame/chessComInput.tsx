@@ -85,7 +85,7 @@ export default function ChessComInput({ onSelect }: Props) {
 
   return (
     <>
-      <FormControl sx={{ m: 1, width: 300 }}>
+      <FormControl sx={{ my: 1, width: 300 }}>
         <Autocomplete
           freeSolo
           options={storedValues}
@@ -147,7 +147,7 @@ export default function ChessComInput({ onSelect }: Props) {
               No games found. Please check your username.
             </span>
           ) : (
-            <List sx={{ width: "100%", maxWidth: 800 }}>
+            <List sx={{ width: "100%" }}>
               {games.map((game) => {
                 const perspectiveUserColor =
                   game.white.name.toLowerCase() ===
@@ -161,11 +161,11 @@ export default function ChessComInput({ onSelect }: Props) {
                     game={game}
                     perspectiveUserColor={perspectiveUserColor}
                     onClick={() => {
-                      updateHistory(debouncedUsername);
                       const boardOrientation =
                         debouncedUsername.toLowerCase() !==
                         game.black?.name?.toLowerCase();
                       onSelect(game.pgn, boardOrientation);
+                      updateHistory(debouncedUsername);
                     }}
                   />
                 );

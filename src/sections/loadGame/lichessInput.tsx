@@ -84,7 +84,7 @@ export default function LichessInput({ onSelect }: Props) {
 
   return (
     <>
-      <FormControl sx={{ m: 1, width: 300 }}>
+      <FormControl sx={{ my: 1, width: 300 }}>
         <Autocomplete
           freeSolo
           options={storedValues}
@@ -146,7 +146,7 @@ export default function LichessInput({ onSelect }: Props) {
               No games found. Please check your username.
             </span>
           ) : (
-            <List sx={{ width: "100%", maxWidth: 800 }}>
+            <List sx={{ width: "100%" }}>
               {games.map((game) => {
                 const perspectiveUserColor =
                   game.white.name.toLowerCase() ===
