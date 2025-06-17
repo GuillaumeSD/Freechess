@@ -1,7 +1,6 @@
 import { ChessComGame } from "@/types/chessCom";
 import { getPaddedNumber } from "./helpers";
 import { LoadedGame } from "@/types/game";
-import { Chess } from "chess.js";
 
 export const getChessComUserRecentGames = async (
   username: string,
@@ -63,8 +62,8 @@ export const getChessComUserAvatar = async (
 };
 
 const formatChessComGame = (data: ChessComGame): LoadedGame => {
-  const game = new Chess();
-  game.loadPgn(data.pgn);
+  const result = data.pgn.match(/\[Result "(.*?)"]/)?.[1];
+  const movesNb = data.pgn.match(/\d+?\. /g)?.length;
 
   return {
     id: data.uuid || data.url?.split("/").pop() || data.id,
@@ -79,12 +78,12 @@ const formatChessComGame = (data: ChessComGame): LoadedGame => {
       rating: data.black?.rating || 0,
       title: data.black?.title,
     },
-    result: game.getHeaders().Result,
+    result,
     timeControl: getGameTimeControl(data),
     date: data.end_time
       ? new Date(data.end_time * 1000).toLocaleDateString()
       : new Date().toLocaleDateString(),
-    movesNb: game.history().length,
+    movesNb: movesNb ? movesNb * 2 : undefined,
     url: data.url,
   };
 };
