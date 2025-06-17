@@ -53,3 +53,7 @@ coords.squares:nth-of-type(even) :nth-child(even) {
 .cg-wrap piece.king.black {
   background-image: var(--bK, url("/piece/cburnett/bK.svg"));
 }
+
+square.move-dest {
+  background: radial-gradient(rgba(0, 0, 0, 0.14) 21%, rgba(0, 0, 0, 0) 22%);
+}

@@ -1,18 +1,14 @@
-import { Box, Grid2 as Grid } from "@mui/material";
+import { Grid2 as Grid } from "@mui/material";
 import { PrimitiveAtom, atom, useAtomValue, useSetAtom } from "jotai";
 import {
   Arrow,
-  CustomPieces,
-  CustomSquareRenderer,
-  Piece,
   PromotionPieceOption,
   Square,
 } from "react-chessboard/dist/chessboard/types";
 import { useChessActions } from "@/hooks/useChessActions";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Color, MoveClassification } from "@/types/enums";
 import { Chess } from "chess.js";
-import { getSquareRenderer } from "./squareRenderer";
 import { CurrentPosition } from "@/types/eval";
 import EvaluationBar from "./evaluationBar";
 import { CLASSIFICATION_COLORS } from "@/constants";
@@ -22,10 +18,10 @@ import { boardHueAtom, pieceSetAtom } from "./states";
 import tinycolor from "tinycolor2";
 import Chessground from "./chessground";
 import { Config } from "@lichess-org/chessground/config";
-import { Key, MoveMetadata } from "@lichess-org/chessground/types";
+import { Key } from "@lichess-org/chessground/types";
+import { playIllegalMoveSound } from "@/lib/sounds";
 
 export interface Props {
-  id: string;
   canPlay?: Color | boolean;
   gameAtom: PrimitiveAtom<Chess>;
   boardSize?: number;
@@ -34,12 +30,11 @@ export interface Props {
   boardOrientation?: Color;
   currentPositionAtom?: PrimitiveAtom<CurrentPosition>;
   showBestMoveArrow?: boolean;
-  showPlayerMoveIconAtom?: PrimitiveAtom<boolean>;
+  showPlayerMoveIcon?: boolean;
   showEvaluationBar?: boolean;
 }
 
 export default function Board({
-  id: boardId,
   canPlay,
   gameAtom,
   boardSize,
@@ -48,7 +43,7 @@ export default function Board({
   boardOrientation = Color.White,
   currentPositionAtom = atom({}),
   showBestMoveArrow = false,
-  showPlayerMoveIconAtom,
+  showPlayerMoveIcon = false,
   showEvaluationBar = false,
 }: Props) {
   const boardRef = useRef<HTMLDivElement>(null);
@@ -56,8 +51,6 @@ export default function Board({
   const { playMove } = useChessActions(gameAtom);
   const clickedSquaresAtom = useMemo(() => atom<Square[]>([]), []);
   const setClickedSquares = useSetAtom(clickedSquaresAtom);
-  const playableSquaresAtom = useMemo(() => atom<Square[]>([]), []);
-  const setPlayableSquares = useSetAtom(playableSquaresAtom);
   const position = useAtomValue(currentPositionAtom);
   const [showPromotionDialog, setShowPromotionDialog] = useState(false);
   const [moveClickFrom, setMoveClickFrom] = useState<Square | null>(null);
@@ -66,10 +59,6 @@ export default function Board({
   const boardHue = useAtomValue(boardHueAtom);
 
   const gameFen = game.fen();
-
-  useEffect(() => {
-    setClickedSquares([]);
-  }, [gameFen, setClickedSquares]);
 
   const isPiecePlayable = useCallback(
     ({ piece }: { piece: string }): boolean => {
@@ -80,34 +69,31 @@ export default function Board({
     [canPlay, game]
   );
 
-  const onPieceDrop = useCallback(
-    (source: Square, target: Square, piece: string): boolean => {
-      if (!isPiecePlayable({ piece })) return false;
+  const onMoveEvent = useCallback(
+    (source: Key, target: Key) => {
+      if (source === "a0" || target === "a0" || game.isGameOver() || !canPlay) {
+        playIllegalMoveSound();
+        return;
+      }
 
-      const result = playMove({
+      const piece = game.get(source);
+      if (!piece) {
+        playIllegalMoveSound();
+        return;
+      }
+
+      if (canPlay !== true && piece.color !== canPlay) {
+        playIllegalMoveSound();
+        return;
+      }
+
+      playMove({
         from: source,
         to: target,
-        promotion: piece[1]?.toLowerCase() ?? "q",
+        promotion: "q", // TODO: handle promotion piece selection
       });
-
-      return !!result;
     },
-    [isPiecePlayable, playMove]
-  );
-
-  const resetMoveClick = useCallback(
-    (square?: Square | null) => {
-      setMoveClickFrom(square ?? null);
-      setMoveClickTo(null);
-      setShowPromotionDialog(false);
-      if (square) {
-        const moves = game.moves({ square, verbose: true });
-        setPlayableSquares(moves.map((m) => m.to));
-      } else {
-        setPlayableSquares([]);
-      }
-    },
-    [setMoveClickFrom, setMoveClickTo, setPlayableSquares, game]
+    [canPlay, game, playMove]
   );
 
   const handleSquareLeftClick = useCallback(
@@ -116,7 +102,6 @@ export default function Board({
 
       if (!moveClickFrom) {
         if (piece && !isPiecePlayable({ piece })) return;
-        resetMoveClick(square);
         return;
       }
 
@@ -124,7 +109,6 @@ export default function Board({
       const move = validMoves.find((m) => m.to === square);
 
       if (!move) {
-        resetMoveClick(square);
         return;
       }
 
@@ -139,44 +123,13 @@ export default function Board({
         return;
       }
 
-      const result = playMove({
+      playMove({
         from: moveClickFrom,
         to: square,
       });
-
-      resetMoveClick(result ? undefined : square);
     },
-    [
-      game,
-      isPiecePlayable,
-      moveClickFrom,
-      playMove,
-      resetMoveClick,
-      setClickedSquares,
-    ]
+    [game, isPiecePlayable, moveClickFrom, playMove, setClickedSquares]
   );
-
-  const handleSquareRightClick = useCallback(
-    (square: Square) => {
-      setClickedSquares((prev) =>
-        prev.includes(square)
-          ? prev.filter((s) => s !== square)
-          : [...prev, square]
-      );
-    },
-    [setClickedSquares]
-  );
-
-  const handlePieceDragBegin = useCallback(
-    (_: string, square: Square) => {
-      resetMoveClick(square);
-    },
-    [resetMoveClick]
-  );
-
-  const handlePieceDragEnd = useCallback(() => {
-    resetMoveClick();
-  }, [resetMoveClick]);
 
   const onPromotionPieceSelect = useCallback(
     (piece?: PromotionPieceOption, from?: Square, to?: Square) => {
@@ -189,7 +142,6 @@ export default function Board({
           to: moveClickTo,
           promotion: promotionPiece,
         });
-        resetMoveClick();
         return !!result;
       }
 
@@ -199,14 +151,12 @@ export default function Board({
           to,
           promotion: promotionPiece,
         });
-        resetMoveClick();
         return !!result;
       }
 
-      resetMoveClick(moveClickFrom);
       return false;
     },
-    [moveClickFrom, moveClickTo, playMove, resetMoveClick]
+    [moveClickFrom, moveClickTo, playMove]
   );
 
   const customArrows: Arrow[] = useMemo(() => {
@@ -235,35 +185,19 @@ export default function Board({
     return [];
   }, [position, showBestMoveArrow, boardHue]);
 
-  const SquareRenderer: CustomSquareRenderer = useMemo(() => {
-    return getSquareRenderer({
-      currentPositionAtom: currentPositionAtom,
-      clickedSquaresAtom,
-      playableSquaresAtom,
-      showPlayerMoveIconAtom,
-    });
-  }, [
-    currentPositionAtom,
-    clickedSquaresAtom,
-    playableSquaresAtom,
-    showPlayerMoveIconAtom,
-  ]);
+  const destSquares = useMemo(() => {
+    const dests = new Map<Key, Key[]>();
 
-  const customBoardStyle = useMemo(() => {
-    const commonBoardStyle = {
-      borderRadius: "5px",
-      boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-    };
-
-    if (boardHue) {
-      return {
-        ...commonBoardStyle,
-        filter: `hue-rotate(${boardHue}deg)`,
-      };
+    const moves = game.moves({ verbose: true });
+    for (const move of moves) {
+      if (!dests.has(move.from)) {
+        dests.set(move.from, []);
+      }
+      dests.get(move.from)?.push(move.to);
     }
 
-    return commonBoardStyle;
-  }, [boardHue]);
+    return dests;
+  }, [game]);
 
   const boardConfig = useMemo(
     () =>
@@ -272,6 +206,7 @@ export default function Board({
         orientation: boardOrientation === Color.White ? "white" : "black",
         animation: { enabled: true, duration: 200 },
         movable: {
+          free: false,
           color:
             canPlay === Color.White
               ? "white"
@@ -280,18 +215,16 @@ export default function Board({
                 : canPlay
                   ? "both"
                   : undefined,
+          showDests: true,
+          dests: destSquares,
           events: {
-            after: (orig: Key, dest: Key, metadata: MoveMetadata) => {
-              console.log(
-                `Move from ${orig} to ${dest} with metadata:`,
-                metadata
-              );
-            },
+            after: onMoveEvent,
           },
         },
         premovable: { enabled: false },
+        draggable: { enabled: true, showGhost: false },
       }) satisfies Config,
-    [gameFen, boardOrientation, canPlay]
+    [gameFen, boardOrientation, canPlay, onMoveEvent, destSquares]
   );
 
   return (
@@ -332,28 +265,11 @@ export default function Board({
           ref={boardRef}
           width="round(down, 100%, 8px)"
         >
-          <Chessground config={boardConfig} pieceSet={pieceSet} />
-          {/* {<Chessboard
-            id={`${boardId}-${canPlay}`}
-            position={gameFen}
-            onPieceDrop={onPieceDrop}
-            boardOrientation={
-              boardOrientation === Color.White ? "white" : "black"
-            }
-            customBoardStyle={customBoardStyle}
-            customArrows={customArrows}
-            isDraggablePiece={isPiecePlayable}
-            customSquare={SquareRenderer}
-            onSquareClick={handleSquareLeftClick}
-            onSquareRightClick={handleSquareRightClick}
-            onPieceDragBegin={handlePieceDragBegin}
-            onPieceDragEnd={handlePieceDragEnd}
-            onPromotionPieceSelect={onPromotionPieceSelect}
-            showPromotionDialog={showPromotionDialog}
-            promotionToSquare={moveClickTo}
-            animationDuration={200}
-            customPieces={customPieces}
-          />} */}
+          <Chessground
+            config={boardConfig}
+            pieceSet={pieceSet}
+            hue={boardHue}
+          />
         </Grid>
 
         <PlayerHeader

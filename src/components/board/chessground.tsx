@@ -12,9 +12,10 @@ interface Props {
   size?: number;
   config?: Config;
   pieceSet?: (typeof PIECE_SETS)[number];
+  hue?: number;
 }
 
-function Chessground({ size, config, pieceSet }: Props) {
+function Chessground({ size, config, pieceSet, hue }: Props) {
   const [api, setApi] = useState<Api | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -44,6 +45,7 @@ function Chessground({ size, config, pieceSet }: Props) {
         paddingBottom: size ? `${size}px` : "100%",
         position: "relative",
         display: "block",
+        filter: `hue-rotate(${hue}deg)`,
       }}
     >
       <StyledBoardContainer
