@@ -193,7 +193,7 @@ export default function CoordinateTrainer() {
     return (
       <Box
         sx={{
-          minHeight: "100vh",
+          minHeight: "auto",
           bgcolor: "background.default",
           display: "flex",
           alignItems: "start",
@@ -298,7 +298,6 @@ export default function CoordinateTrainer() {
   return (
     <Box
       sx={{
-        height: "100vh",
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
         bgcolor: "background.default",
@@ -311,14 +310,11 @@ export default function CoordinateTrainer() {
             md: 1,
           },
           display: "flex",
-          alignItems: {
-            xs: "start",
-            md: "center",
-          },
+          alignItems: "start",
           justifyContent: "center",
           p: { xs: 1, sm: 2 },
           position: "relative",
-          mb: 3,
+          mb: {xs: 3, md: 0},
         }}
       >
         {/* Board Container with Coordinates */}
@@ -433,7 +429,9 @@ export default function CoordinateTrainer() {
                               opacity: 0.8,
                               transform: "scale(0.95)",
                             }
-                          : {},
+                          : {
+                            xs: {  }
+                          },
                       fontSize: { xs: "0.6rem", sm: "0.8rem", md: "1rem" },
                       fontWeight: "bold",
                       color: settings.showCoordinates
@@ -490,7 +488,7 @@ export default function CoordinateTrainer() {
       <Box
         sx={{
           width: { xs: "100%", md: 350 },
-          height: { xs: "auto", md: "100vh" },
+          height: { xs: "auto" },
           bgcolor: "background.paper",
           borderLeft: { md: `1px solid ${theme.palette.divider}` },
           borderTop: { xs: `1px solid ${theme.palette.divider}`, md: "none" },
