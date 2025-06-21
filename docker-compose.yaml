@@ -1,0 +1,11 @@
+services:
+  chesskit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: Chesskit
+    image: GuillaumeSD/chesskit:latest
+    restart: unless-stopped
+    ports:
+      # from : to
+      - 3000:3000
