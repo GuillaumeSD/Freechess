@@ -26,6 +26,7 @@ import { Icon } from "@iconify/react";
 import EngineSettingsButton from "@/sections/engineSettings/engineSettingsButton";
 import GraphTab from "@/sections/analysis/panelBody/graphTab";
 import { PageTitle } from "@/components/pageTitle";
+import { decodeBase64Param } from "@/lib/helpers";
 
 export default function GameAnalysis() {
   const theme = useTheme();
@@ -38,18 +39,31 @@ export default function GameAnalysis() {
   const game = useAtomValue(gameAtom);
   const board = useAtomValue(boardAtom);
   const setBoardOrientation = useSetAtom(boardOrientationAtom);
+  const { setPgn: setGamePgn } = useChessActions(gameAtom);
 
   const router = useRouter();
   const { gameId } = router.query;
+  const pgnParam = decodeBase64Param("pgn");
 
   useEffect(() => {
-    if (!gameId) {
+    if (pgnParam) {
+      setGameEval(undefined);
+      setGamePgn(pgnParam);
+    } else if (!gameId) {
       resetBoard();
       setGameEval(undefined);
       setBoardOrientation(true);
       resetGame({ noHeaders: true });
     }
-  }, [gameId, setGameEval, setBoardOrientation, resetBoard, resetGame]);
+  }, [
+    gameId,
+    pgnParam,
+    setGameEval,
+    setGamePgn,
+    setBoardOrientation,
+    resetBoard,
+    resetGame,
+  ]);
 
   const showMovesTab = game.history().length > 0 || board.history().length > 0;
 
