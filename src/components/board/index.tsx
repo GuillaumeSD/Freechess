@@ -20,6 +20,7 @@ import Chessground from "./chessground";
 import { Config } from "@lichess-org/chessground/config";
 import { Key } from "@lichess-org/chessground/types";
 import { playIllegalMoveSound } from "@/lib/sounds";
+import { DrawShape } from "@lichess-org/chessground/draw";
 
 export interface Props {
   canPlay?: Color | boolean;
@@ -159,7 +160,7 @@ export default function Board({
     [moveClickFrom, moveClickTo, playMove]
   );
 
-  const customArrows: Arrow[] = useMemo(() => {
+  const customShapes: DrawShape[] = useMemo(() => {
     const bestMove = position?.lastEval?.bestMove;
     const moveClassification = position?.eval?.moveClassification;
 
@@ -171,19 +172,17 @@ export default function Board({
       moveClassification !== MoveClassification.Forced &&
       moveClassification !== MoveClassification.Perfect
     ) {
-      const bestMoveArrow = [
-        bestMove.slice(0, 2),
-        bestMove.slice(2, 4),
-        tinycolor(CLASSIFICATION_COLORS[MoveClassification.Best])
-          .spin(-boardHue)
-          .toHexString(),
-      ] as Arrow;
-
-      return [bestMoveArrow];
+      return [
+        {
+          orig: bestMove.slice(0, 2) as Key,
+          dest: bestMove.slice(2, 4) as Key,
+          brush: "yellow",
+        },
+      ];
     }
 
     return [];
-  }, [position, showBestMoveArrow, boardHue]);
+  }, [position, showBestMoveArrow]);
 
   const destSquares = useMemo(() => {
     const dests = new Map<Key, Key[]>();
@@ -223,8 +222,31 @@ export default function Board({
         },
         premovable: { enabled: false },
         draggable: { enabled: true, showGhost: false },
+        drawable: {
+          enabled: true,
+          visible: true,
+          defaultSnapToValidMove: false,
+          eraseOnClick: true,
+          autoShapes: customShapes,
+          brushes: {
+            green: {
+              key: "g",
+              color: "#ffaa00",
+              opacity: 0.8,
+              lineWidth: 10,
+            },
+            red: { key: "r", color: "#882020", opacity: 0.8, lineWidth: 10 },
+            blue: { key: "b", color: "#003088", opacity: 0.8, lineWidth: 10 },
+            yellow: {
+              key: "y",
+              color: "#15781B",
+              opacity: 0.8,
+              lineWidth: 10,
+            },
+          },
+        },
       }) satisfies Config,
-    [gameFen, boardOrientation, canPlay, onMoveEvent, destSquares]
+    [gameFen, boardOrientation, canPlay, onMoveEvent, destSquares, customShapes]
   );
 
   return (
