@@ -83,7 +83,7 @@ export default function ChessKitLanding() {
               Community
             </Link>
             <Button asChild className="bg-[#3b9ac6] hover:bg-[#3b9ac6]/90">
-              <Link href="#get-started">Get Started</Link>
+              <Link href="/analysis">Get Started</Link>
             </Button>
           </nav>
         </div>
@@ -445,9 +445,12 @@ export default function ChessKitLanding() {
             <Button
               size="lg"
               className="bg-[#3b9ac6] hover:bg-[#3b9ac6]/90 text-white px-12 py-4 text-lg"
+              asChild
             >
+              <Link href="/analysis">
               <BarChart3 className="w-6 h-6 mr-2" />
               Analyze Your First Game
+              </Link>
             </Button>
           </div>
         </section>
