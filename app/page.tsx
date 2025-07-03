@@ -524,7 +524,16 @@ export default function ChessKitLanding() {
               >
                 Lichess.org
               </Link>
-              .
+              <p className="mt-4 text-xs">
+                Landing page built with ❤️ by               <Link
+                href="https://github.com/Speedauge"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#3b9ac6] hover:underline"
+              >
+                SpeedAuge
+              </Link>
+              </p>
             </p>
           </div>
         </div>
