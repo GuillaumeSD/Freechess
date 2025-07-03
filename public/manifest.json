@@ -1,0 +1,23 @@
+{
+  "name": "Chesskit - Free Chess Game Analysis",
+  "short_name": "Chesskit",
+  "description": "Analyze your chess games for free with Chesskit. Support for Chess.com, Lichess, and PGN files.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#3b9ac6",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
