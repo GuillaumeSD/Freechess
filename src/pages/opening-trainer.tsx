@@ -343,18 +343,10 @@ export default function OpeningPage() {
   return (
     <Grid
       container
-      gap={2} // Réduit de 4 à 2 pour diminuer l’espace horizontal
+      gap={4}
       justifyContent="space-evenly"
       alignItems="start"
-      sx={{
-        width: "100%",
-        minHeight: "100dvh",
-        maxWidth: "100vw", // Ajout : limite la largeur totale à la fenêtre
-        overflowX: "clip", // Ajout : coupe tout débordement horizontal
-        m: 0,
-        p: 0,
-        boxSizing: "border-box",
-      }}
+      sx={{ width: "100%" }}
     >
       {/* Left area: evaluation bar + board */}
       <Grid
