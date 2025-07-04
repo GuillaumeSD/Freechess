@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Github,
   MessageCircle,
+  MessageCircleWarning,
   Zap,
   Shield,
   Heart,
@@ -93,13 +94,13 @@ export default function ChessKitLanding() {
         {/* Hero Section */}
         <section className="py-20 px-4">
           <div className="container mx-auto text-center max-w-4xl">
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-12">
               <Badge
                 variant="secondary"
                 className="bg-[#2e2e30] text-[#3b9ac6] border-[#3b9ac6]/20"
               >
                 <Star className="w-4 h-4 mr-1" />
-                100% Free & Open Source
+                Free & Open Source
               </Badge>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
@@ -107,8 +108,8 @@ export default function ChessKitLanding() {
               <span className="block text-[#3b9ac6]">Like a Grandmaster</span>
             </h1>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Get deep insights into your chess games with our free, open-source
-              analysis platform. Support for{" "}
+              <br></br>
+              Support for{" "}
               <Link
                 href="https://www.chess.com"
                 target="_blank"
@@ -155,6 +156,7 @@ export default function ChessKitLanding() {
                 </Link>
               </Button>
             </div>
+            <br></br>
             <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
                 <div className="text-3xl font-bold text-[#3b9ac6]">100%</div>
@@ -404,8 +406,23 @@ export default function ChessKitLanding() {
                   Join Discord
                 </Link>
               </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-[#3b9ac6] text-[#3b9ac6] hover:bg-[#3b9ac6] hover:text-white px-8 py-3"
+                asChild
+              >
+                <Link
+                  href="https://tally.so/r/3x7OLy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircleWarning className="w-5 h-5 mr-2" />
+                  Give a Feedback
+                </Link>
+              </Button>
             </div>
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
               <Card className="bg-[#2e2e30] border-[#2e2e30]">
                 <CardHeader className="text-center">
                   <Github className="w-8 h-8 text-[#3b9ac6] mx-auto mb-2" />
@@ -425,6 +442,24 @@ export default function ChessKitLanding() {
                   <CardDescription className="text-gray-400">
                     Get help, share tips, and discuss chess strategy with our
                     friendly community.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+              <Card className="bg-[#2e2e30] border-[#2e2e30]">
+                <CardHeader className="text-center">
+                  <Heart className="w-8 h-8 text-[#3b9ac6] mx-auto mb-2" />
+                  <CardTitle className="text-white">
+                   Community driven
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    We would be happy to hear your {" "}
+                    <Link
+                    href="https://tally.so/r/3x7OLy"
+                    target="_blank"
+                    className="text-[#3b9ac6] hover:underline"
+                  >
+                    feedback
+                  </Link> and suggestions.
                   </CardDescription>
                 </CardHeader>
               </Card>
