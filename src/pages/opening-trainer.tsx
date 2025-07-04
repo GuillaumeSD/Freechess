@@ -435,25 +435,21 @@ export default function OpeningPage() {
 
       {/* Right area: progress panel, buttons, text */}
       <Grid
+        container
+        marginTop={{ xs: 0, md: "2.5em" }}
+        justifyContent="center"
+        alignItems="center"
+        borderRadius={2}
+        border={1}
         sx={{
-          minWidth: { md: 320 },
-          maxWidth: 420, // Réduit de 420 à 400 pour limiter le débordement
-          mb: { xs: 2, md: 0 },
-          display: "flex",
-          flexDirection: "column",
-          height: "auto",
-          overflowY: "auto",
-          flex: { xs: "none", md: 1 },
-          px: { xs: 1, sm: 2, md: 3 }, // Réduit le padding horizontal
-          pt: { xs: 2, md: 4 },
-          mr: { xs: 0, sm: 1, md: 2, lg: 0 }, // Réduit la marge droite
-          backgroundColor: (theme) =>
-            theme.palette.mode === "dark" ? "#424242" : "background.paper",
-          border: "2px solid", // Blue border
+          backgroundColor: "secondary.main",
           borderColor: "primary.main",
-          borderRadius: 2, // Rounded corners
-          boxShadow: 3, // Consistent shadow
+          borderWidth: 2,
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
+        padding={3}
+        rowGap={3}
+        style={{ maxWidth: "420px" }}
       >
         {/* Centered container for title and buttons */}
         <Box
