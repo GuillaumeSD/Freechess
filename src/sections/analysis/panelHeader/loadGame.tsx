@@ -12,6 +12,8 @@ import { useGameDatabase } from "@/hooks/useGameDatabase";
 import { useAtomValue, useSetAtom } from "jotai";
 import { Chess } from "chess.js";
 import { useRouter } from "next/router";
+import { decodeBase64 } from "@/lib/helpers";
+import { Game } from "@/types/game";
 
 export default function LoadGame() {
   const router = useRouter();
@@ -25,32 +27,56 @@ export default function LoadGame() {
 
   const resetAndSetGamePgn = useCallback(
     (pgn: string) => {
-      resetBoard(pgn);
+      resetBoard();
       setEval(undefined);
       setGamePgn(pgn);
     },
     [resetBoard, setGamePgn, setEval]
   );
 
-  useEffect(() => {
-    const loadGame = async () => {
-      if (!gameFromUrl) return;
+  const { pgn: pgnParam, orientation: orientationParam } = router.query;
 
+  useEffect(() => {
+    const loadGameFromIdParam = (gameUrl: Game) => {
       const gamefromDbChess = new Chess();
-      gamefromDbChess.loadPgn(gameFromUrl.pgn);
+      gamefromDbChess.loadPgn(gameUrl.pgn);
       if (game.history().join() === gamefromDbChess.history().join()) return;
 
-      resetAndSetGamePgn(gameFromUrl.pgn);
-      setEval(gameFromUrl.eval);
+      resetAndSetGamePgn(gameUrl.pgn);
+      setEval(gameUrl.eval);
       setBoardOrientation(
-        gameFromUrl.black.name === "You" && gameFromUrl.site === "Chesskit.org"
+        gameUrl.black.name === "You" && gameUrl.site === "Chesskit.org"
           ? false
           : true
       );
     };
 
-    loadGame();
-  }, [gameFromUrl, game, resetAndSetGamePgn, setEval, setBoardOrientation]);
+    const loadGameFromPgnParam = (encodedPgn: string) => {
+      const decodedPgn = decodeBase64(encodedPgn);
+      if (!decodedPgn) return;
+
+      const gameFromPgnParam = new Chess();
+      gameFromPgnParam.loadPgn(decodedPgn || "");
+      if (game.history().join() === gameFromPgnParam.history().join()) return;
+
+      resetAndSetGamePgn(decodedPgn);
+      setBoardOrientation(orientationParam !== "black");
+    };
+
+    if (gameFromUrl) {
+      loadGameFromIdParam(gameFromUrl);
+    } else if (typeof pgnParam === "string") {
+      loadGameFromPgnParam(pgnParam);
+    }
+  }, [
+    gameFromUrl,
+    pgnParam,
+    orientationParam,
+    game,
+    resetAndSetGamePgn,
+    setEval,
+    setBoardOrientation,
+  ]);
 
   const isGameLoaded =
     gameFromUrl !== undefined ||
