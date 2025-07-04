@@ -1,4 +1,4 @@
-import { italianGameVariations } from "../data/openings to learn/italian";
+import { italianGameVariations } from "../data/openings_to_learn/italian";
 import { Box } from "@mui/material";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Board from "../components/board";
