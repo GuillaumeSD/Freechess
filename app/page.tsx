@@ -83,7 +83,7 @@ export default function ChessKitLanding() {
             >
               Community
             </Link>
-            <Button asChild className="bg-[#3b9ac6] hover:bg-[#3b9ac6]/90">
+            <Button asChild className="text-white bg-[#3b9ac6] hover:bg-[#3b9ac6]/90">
               <Link href="/analysis">Get Started</Link>
             </Button>
           </nav>
