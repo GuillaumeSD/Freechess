@@ -9,7 +9,6 @@ import { Color, EngineName } from "../types/enums";
 import { CurrentPosition } from "../types/eval";
 import OpeningProgress from "../components/OpeningProgress";
 import { useScreenSize } from "../hooks/useScreenSize";
-import EvaluationBar from "../components/board/evaluationBar";
 import { useEngine } from "../hooks/useEngine";
 import OpeningControls from "../components/OpeningControls";
 import VariationHeader from "../components/VariationHeader";
@@ -295,19 +294,14 @@ export default function OpeningPage() {
   }, [lastMistakeVisible, lastMoveSquare]);
 
   const screenSize = useScreenSize();
-  // Responsive constants
-  const evalBarWidth = 32; // px
-  const evalBarGap = 8; // px
 
   // Dynamic board size calculation
   const boardSize = useMemo(() => {
     const { width, height } = screenSize;
-    let maxBoardWidth = width - 300 - evalBarWidth;
     if (typeof window !== "undefined" && window.innerWidth < 900) {
-      maxBoardWidth = width - evalBarWidth - 24;
-      return Math.max(180, Math.min(maxBoardWidth, height - 150));
+      return Math.max(180, Math.min(width, height - 150));
     }
-    return Math.max(240, Math.min(maxBoardWidth, height * 0.83));
+    return Math.max(240, Math.min(width - 300, height * 0.83));
   }, [screenSize]);
 
   // Handler for skip variation
@@ -361,75 +355,21 @@ export default function OpeningPage() {
         }}
       >
         {selectedVariation && !allDone && game && (
-          <Box
-            sx={{
-              width: boardSize,
-              height: boardSize,
-              maxWidth: 600,
-              maxHeight: 600,
-              minWidth: { xs: 260, sm: 340, md: 400 },
-              minHeight: { xs: 260, sm: 340, md: 400 },
-              mx: "auto",
-              position: "relative",
-              aspectRatio: "1",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              mr: 0, // Supprime la margin-right supplémentaire pour éviter le débordement
-              boxShadow: 4, // Ajout : ombre légère sur le board
-            }}
-          >
-            {/* Evaluation bar on the left, vertically centered */}
-            <Box
-              sx={{
-                height: boardSize,
-                width: evalBarWidth,
-                minWidth: evalBarWidth,
-                maxWidth: evalBarWidth,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                mr: `${evalBarGap}px`,
-                position: "relative",
-                zIndex: 1,
-              }}
-            >
-              <EvaluationBar
-                height={boardSize}
-                boardOrientation={learningColor}
-                currentPositionAtom={currentPositionAtom}
-              />
-            </Box>
-            {/* Chessboard */}
-            <Box
-              sx={{
-                flex: "none",
-                height: boardSize,
-                minHeight: boardSize,
-                maxHeight: boardSize,
-                display: "flex",
-                alignItems: "center",
-                p: 0,
-                m: 0,
-              }}
-            >
-              <Board
-                id="LearningBoard"
-                canPlay
-                gameAtom={gameAtomInstance}
-                boardSize={boardSize}
-                whitePlayer={{ name: "White" }}
-                blackPlayer={{ name: "Black" }}
-                showBestMoveArrow={!trainingMode && !!bestMoveUci && isUserTurn}
-                bestMoveUci={bestMoveUci}
-                currentPositionAtom={currentPositionAtom}
-                boardOrientation={learningColor}
-                trainingFeedback={trainingFeedback}
-                hidePlayerHeaders={true}
-              />
-            </Box>
-          </Box>
+          <Board
+            id="LearningBoard"
+            canPlay
+            gameAtom={gameAtomInstance}
+            boardSize={boardSize}
+            whitePlayer={{ name: "White" }}
+            blackPlayer={{ name: "Black" }}
+            showBestMoveArrow={!trainingMode && !!bestMoveUci && isUserTurn}
+            bestMoveUci={bestMoveUci}
+            currentPositionAtom={currentPositionAtom}
+            boardOrientation={learningColor}
+            trainingFeedback={trainingFeedback}
+            hidePlayerHeaders={true}
+            showEvaluationBar={true}
+          />
         )}
       </Grid>
 
@@ -450,6 +390,8 @@ export default function OpeningPage() {
         padding={3}
         rowGap={3}
         style={{ maxWidth: "420px" }}
+        size={{ xs: 12, md: "grow" }}
+
       >
         {/* Centered container for title and buttons */}
         <Box
