@@ -118,7 +118,7 @@ export default function GameDatabase() {
               }
               label="Open Evaluation"
               onClick={() =>
-                router.push({ pathname: "/", query: { gameId: id } })
+                router.push({ pathname: "/analysis", query: { gameId: id } })
               }
               color="inherit"
               key={`${id}-open-eval-button`}

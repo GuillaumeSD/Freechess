@@ -29,7 +29,13 @@
     "react-chessboard": "^4.7.3",
     "react-dom": "18.3.1",
     "recharts": "^2.15.0",
-    "tinycolor2": "^1.6.0"
+    "tinycolor2": "^1.6.0",
+    "clsx": "^2.1.1",
+    "class-variance-authority": "^0.7.1",
+    "tailwind-merge": "^2.5.5",
+    "lucide-react": "^0.454.0",
+    "tailwindcss-animate": "^1.0.7",
+    "@radix-ui/react-slot": "1.1.1"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.74.7",
@@ -48,6 +54,9 @@
     "eslint-plugin-deprecation": "^3.0.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "tailwindcss": "^3.4.17",
+    "postcss": "^8.5",
+    "autoprefixer": "^10.4.20"
   }
 }
