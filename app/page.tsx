@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   title:
     "Chesskit - Free Chess Game Analysis | Analyze Chess.com & Lichess Games",
   description:
-    "Analyze your chess games for free with Chesskit. Support for Chess.com, Lichess, and PGN files. No ads, no subscriptions, open-source and privacy-focused.",
+    "Analyze your chess games for free with Chesskit. Support for Chess.com, Lichess, and PGN / FEN. No ads, no subscriptions, open-source and privacy-focused.",
   keywords:
     "chess analysis, free chess analyzer, chess.com analysis, lichess analysis, PGN analysis, chess improvement, chess tools, open source chess",
   authors: [{ name: "Chesskit Team" }],
@@ -97,7 +97,7 @@ export default function ChessKitLanding() {
             <div className="flex justify-center mb-12">
               <Badge
                 variant="secondary"
-                className="bg-[#2e2e30] text-[#3b9ac6] border-[#3b9ac6]/20"
+                className="bg-[#2e2e30] text-[#3b9ac6] border-[#3b9ac6]/20 mb-8"
               >
                 <Star className="w-4 h-4 mr-1" />
                 Free & Open Source
@@ -127,7 +127,7 @@ export default function ChessKitLanding() {
               >
                 Lichess
               </Link>
-              , and PGN files. No ads, no subscriptions, no hidden costs.
+              , FEN, and PGN files. No ads, no subscriptions, no hidden costs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
@@ -203,7 +203,7 @@ export default function ChessKitLanding() {
                     >
                       Stockfish
                     </Link>{" "}
-                    evaluation. No waiting, no delays.
+                    evaluation. 
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -248,7 +248,7 @@ export default function ChessKitLanding() {
                   <CardTitle className="text-white">Privacy First</CardTitle>
                   <CardDescription className="text-gray-400">
                     Your data stays yours. We don't collect personal information
-                    beyond basic monitoring.
+                    beyond monitoring. No account required.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -313,7 +313,7 @@ export default function ChessKitLanding() {
                 </div>
                 <h3 className="text-xl font-semibold mb-4">Import Your Game</h3>
                 <p className="text-gray-400">
-                  Upload a PGN file or paste your game URL from{" "}
+                  Upload a PGN / FEN or paste your game URL from{" "}
                   <Link
                     href="https://www.chess.com"
                     target="_blank"
@@ -428,8 +428,14 @@ export default function ChessKitLanding() {
                   <Github className="w-8 h-8 text-[#3b9ac6] mx-auto mb-2" />
                   <CardTitle className="text-white">Open Source</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Contribute code, report bugs, or suggest new features on our
-                    GitHub repository.
+                    Contribute code, report bugs, or suggest new features on our {" "}
+                    <Link
+                    href="https://github.com/GuillaumeSD/Chesskit"
+                    target="_blank"
+                    className="text-[#3b9ac6] hover:underline"
+                  >
+                    GitHub
+                  </Link> repository.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -441,7 +447,14 @@ export default function ChessKitLanding() {
                   </CardTitle>
                   <CardDescription className="text-gray-400">
                     Get help, share tips, and discuss chess strategy with our
-                    friendly community.
+                    friendly community on {" "}
+                    <Link
+                    href="https://discord.gg/NAtPPqZpFN"
+                    target="_blank"
+                    className="text-[#3b9ac6] hover:underline"
+                  >
+                    Discord
+                  </Link>.
                   </CardDescription>
                 </CardHeader>
               </Card>
