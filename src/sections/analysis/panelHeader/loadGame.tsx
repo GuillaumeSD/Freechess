@@ -27,7 +27,7 @@ export default function LoadGame() {
 
   const resetAndSetGamePgn = useCallback(
     (pgn: string) => {
-      resetBoard();
+      resetBoard(pgn);
       setEval(undefined);
       setGamePgn(pgn);
     },
