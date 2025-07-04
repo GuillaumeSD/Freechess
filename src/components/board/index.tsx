@@ -22,6 +22,12 @@ import PlayerHeader from "./playerHeader";
 import { boardHueAtom, pieceSetAtom } from "./states";
 import tinycolor from "tinycolor2";
 
+export interface TrainingFeedback {
+  square: string; // ex: 'e4'
+  icon: string; // chemin de l'icône
+  alt: string; // texte alternatif
+}
+
 export interface Props {
   id: string;
   canPlay?: Color | boolean;
@@ -34,6 +40,9 @@ export interface Props {
   showBestMoveArrow?: boolean;
   showPlayerMoveIconAtom?: PrimitiveAtom<boolean>;
   showEvaluationBar?: boolean;
+  trainingFeedback?: TrainingFeedback;
+  bestMoveUci?: string;
+  hidePlayerHeaders?: boolean;
 }
 
 export default function Board({
@@ -48,6 +57,9 @@ export default function Board({
   showBestMoveArrow = false,
   showPlayerMoveIconAtom,
   showEvaluationBar = false,
+  trainingFeedback,
+  bestMoveUci,
+  hidePlayerHeaders = false,
 }: Props) {
   const boardRef = useRef<HTMLDivElement>(null);
   const game = useAtomValue(gameAtom);
@@ -208,9 +220,21 @@ export default function Board({
   );
 
   const customArrows: Arrow[] = useMemo(() => {
+    if (bestMoveUci && showBestMoveArrow) {
+      // Priorité à la flèche d'ouverture
+      return [
+        [
+          bestMoveUci.slice(0, 2),
+          bestMoveUci.slice(2, 4),
+          tinycolor(CLASSIFICATION_COLORS[MoveClassification.Best])
+            .spin(-boardHue)
+            .toHexString(),
+        ] as Arrow,
+      ];
+    }
+    // Fallback moteur
     const bestMove = position?.lastEval?.bestMove;
     const moveClassification = position?.eval?.moveClassification;
-
     if (
       bestMove &&
       showBestMoveArrow &&
@@ -226,12 +250,10 @@ export default function Board({
           .spin(-boardHue)
           .toHexString(),
       ] as Arrow;
-
       return [bestMoveArrow];
     }
-
     return [];
-  }, [position, showBestMoveArrow, boardHue]);
+  }, [bestMoveUci, position, showBestMoveArrow, boardHue]);
 
   const SquareRenderer: CustomSquareRenderer = useMemo(() => {
     return getSquareRenderer({
@@ -239,12 +261,14 @@ export default function Board({
       clickedSquaresAtom,
       playableSquaresAtom,
       showPlayerMoveIconAtom,
+      trainingFeedback, // nouvelle prop transmise
     });
   }, [
     currentPositionAtom,
     clickedSquaresAtom,
     playableSquaresAtom,
     showPlayerMoveIconAtom,
+    trainingFeedback,
   ]);
 
   const customPieces = useMemo(
@@ -306,11 +330,16 @@ export default function Board({
         paddingLeft={showEvaluationBar ? 2 : 0}
         size="grow"
       >
-        <PlayerHeader
-          color={boardOrientation === Color.White ? Color.Black : Color.White}
-          gameAtom={gameAtom}
-          player={boardOrientation === Color.White ? blackPlayer : whitePlayer}
-        />
+        {/* Enlève l'affichage des PlayerHeader si hidePlayerHeaders est true */}
+        {!hidePlayerHeaders && (
+          <PlayerHeader
+            color={boardOrientation === Color.White ? Color.Black : Color.White}
+            gameAtom={gameAtom}
+            player={
+              boardOrientation === Color.White ? blackPlayer : whitePlayer
+            }
+          />
+        )}
 
         <Grid
           container
@@ -342,11 +371,15 @@ export default function Board({
           />
         </Grid>
 
-        <PlayerHeader
-          color={boardOrientation}
-          gameAtom={gameAtom}
-          player={boardOrientation === Color.White ? whitePlayer : blackPlayer}
-        />
+        {!hidePlayerHeaders && (
+          <PlayerHeader
+            color={boardOrientation}
+            gameAtom={gameAtom}
+            player={
+              boardOrientation === Color.White ? whitePlayer : blackPlayer
+            }
+          />
+        )}
       </Grid>
     </Grid>
   );

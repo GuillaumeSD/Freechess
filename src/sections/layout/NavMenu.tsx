@@ -1,4 +1,4 @@
-import NavLink from "@/components/NavLink";
+import NavLink from "../../components/NavLink";
 import { Icon } from "@iconify/react";
 import {
   Box,
@@ -18,6 +18,11 @@ const MenuOptions = [
     text: "Database",
     icon: "streamline:database",
     href: "/database",
+  },
+  {
+    text: "Opening Trainer",
+    icon: "mdi:book-open-variant",
+    href: "/choose-opening", // Redirige désormais vers la page de choix d'ouverture
   },
 ];
 
