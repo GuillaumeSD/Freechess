@@ -35,7 +35,7 @@ export default function GameRecap() {
     });
     const gameId = await addGame(gameToAnalysis);
 
-    router.push({ pathname: "/", query: { gameId } });
+    router.push({ pathname: "/analysis", query: { gameId } });
   };
 
   return (
