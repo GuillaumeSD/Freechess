@@ -16,3 +16,13 @@ export const isInViewport = (element: HTMLElement) => {
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export const decodeBase64 = (encoded: string | null): string | null => {
+  if (!encoded) return null;
+  try {
+    return atob(encoded);
+  } catch (err) {
+    console.error("Error decoding base64:", err);
+    return null;
+  }
+};
