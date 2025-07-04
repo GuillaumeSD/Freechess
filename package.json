@@ -2,6 +2,9 @@
   "name": "chesskit",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.11"
+  },
   "license": "AGPL-3.0-only",
   "scripts": {
     "dev": "next dev --turbo",
