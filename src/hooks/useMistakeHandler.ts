@@ -49,9 +49,14 @@ export function useMistakeHandler({
     }
     const expected = expectedMove.move(selectedVariation.moves[moveIdx]);
     if (!expected || last.from !== expected.from || last.to !== expected.to) {
-      const mistakeType = (last.captured || last.san.includes("#")) ? "Blunder" : "Mistake";
+      const mistakeType =
+        last.captured || last.san.includes("#") ? "Blunder" : "Mistake";
       setTimeout(() => {
-        setLastMistakeVisible({ from: last.from, to: last.to, type: mistakeType });
+        setLastMistakeVisible({
+          from: last.from,
+          to: last.to,
+          type: mistakeType,
+        });
         setTimeout(() => {
           undoMove();
           setLastMistakeVisible(null);
@@ -60,6 +65,13 @@ export function useMistakeHandler({
     } else {
       setMoveIdx(moveIdx + 1);
     }
-  }, [selectedVariation, game, moveIdx, isUserTurn, setMoveIdx, setLastMistakeVisible, undoMove]);
+  }, [
+    selectedVariation,
+    game,
+    moveIdx,
+    isUserTurn,
+    setMoveIdx,
+    setLastMistakeVisible,
+    undoMove,
+  ]);
 }
-

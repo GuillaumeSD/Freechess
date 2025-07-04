@@ -46,13 +46,15 @@ function OpeningProgress({ total, completed }: OpeningProgressProps) {
       }}
     >
       <Box minWidth={48}>
-        <span style={{ fontSize: 14, color: theme.palette.text.secondary }}>{label}</span>
+        <span style={{ fontSize: 14, color: theme.palette.text.secondary }}>
+          {label}
+        </span>
       </Box>
       <Box flex={1} minWidth={0}>
         <LinearProgressBar value={percent} label={""} />
       </Box>
     </Box>
   );
-};
+}
 
 export default memo(OpeningProgress);

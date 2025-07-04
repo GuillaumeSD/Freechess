@@ -24,8 +24,8 @@ import tinycolor from "tinycolor2";
 
 export interface TrainingFeedback {
   square: string; // ex: 'e4'
-  icon: string;   // chemin de l'icône
-  alt: string;    // texte alternatif
+  icon: string; // chemin de l'icône
+  alt: string; // texte alternatif
 }
 
 export interface Props {
@@ -222,13 +222,15 @@ export default function Board({
   const customArrows: Arrow[] = useMemo(() => {
     if (bestMoveUci && showBestMoveArrow) {
       // Priorité à la flèche d'ouverture
-      return [[
-        bestMoveUci.slice(0, 2),
-        bestMoveUci.slice(2, 4),
-        tinycolor(CLASSIFICATION_COLORS[MoveClassification.Best])
-          .spin(-boardHue)
-          .toHexString(),
-      ] as Arrow];
+      return [
+        [
+          bestMoveUci.slice(0, 2),
+          bestMoveUci.slice(2, 4),
+          tinycolor(CLASSIFICATION_COLORS[MoveClassification.Best])
+            .spin(-boardHue)
+            .toHexString(),
+        ] as Arrow,
+      ];
     }
     // Fallback moteur
     const bestMove = position?.lastEval?.bestMove;
@@ -333,7 +335,9 @@ export default function Board({
           <PlayerHeader
             color={boardOrientation === Color.White ? Color.Black : Color.White}
             gameAtom={gameAtom}
-            player={boardOrientation === Color.White ? blackPlayer : whitePlayer}
+            player={
+              boardOrientation === Color.White ? blackPlayer : whitePlayer
+            }
           />
         )}
 
@@ -371,7 +375,9 @@ export default function Board({
           <PlayerHeader
             color={boardOrientation}
             gameAtom={gameAtom}
-            player={boardOrientation === Color.White ? whitePlayer : blackPlayer}
+            player={
+              boardOrientation === Color.White ? whitePlayer : blackPlayer
+            }
           />
         )}
       </Grid>

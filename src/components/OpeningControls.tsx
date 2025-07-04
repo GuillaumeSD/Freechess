@@ -1,4 +1,3 @@
-
 import { Button, Stack } from "@mui/material";
 import { memo } from "react";
 
@@ -23,12 +22,14 @@ function OpeningControls({
   disabled = false,
 }: OpeningControlsProps) {
   return (
-    <Stack direction="row" spacing={2} sx={{ width: '100%' }}>
+    <Stack direction="row" spacing={2} sx={{ width: "100%" }}>
       <Button
         variant="outlined"
         color="primary"
         fullWidth
-        disabled={moveIdx >= selectedVariationMovesLength || allDone || disabled}
+        disabled={
+          moveIdx >= selectedVariationMovesLength || allDone || disabled
+        }
         onClick={onSkip}
       >
         Skip variation

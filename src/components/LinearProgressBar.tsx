@@ -60,6 +60,6 @@ function LinearProgressBar({ value, label, ...rest }: LinearProgressBarProps) {
       </Grid>
     </Grid>
   );
-};
+}
 
 export default LinearProgressBar;

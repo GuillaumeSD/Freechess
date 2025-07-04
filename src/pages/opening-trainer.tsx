@@ -1,18 +1,16 @@
 import { italianGameVariations } from "../data/openings_to_learn/italian";
-import { Box } from "@mui/material";
+import { Box, Grid2 as Grid } from "@mui/material";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Board from "../components/board";
 import { Chess } from "chess.js";
 import { atom, useAtom } from "jotai";
 import { useChessActions } from "../hooks/useChessActions";
-import { Color } from "../types/enums";
+import { Color, EngineName } from "../types/enums";
 import { CurrentPosition } from "../types/eval";
 import OpeningProgress from "../components/OpeningProgress";
-import { Grid2 as Grid } from "@mui/material";
 import { useScreenSize } from "../hooks/useScreenSize";
 import EvaluationBar from "../components/board/evaluationBar";
 import { useEngine } from "../hooks/useEngine";
-import { EngineName } from "../types/enums";
 import OpeningControls from "../components/OpeningControls";
 import VariationHeader from "../components/VariationHeader";
 import { useMistakeHandler } from "../hooks/useMistakeHandler";
@@ -33,7 +31,9 @@ export default function OpeningPage() {
   const [currentVariantIdx, setCurrentVariantIdx] = useState<number>(0);
   const [moveIdx, setMoveIdx] = useState<number>(0);
   const [trainingMode, setTrainingMode] = useState<boolean>(false);
-  const [lastMistakeVisible, setLastMistakeVisible] = useState<Mistake | null>(null);
+  const [lastMistakeVisible, setLastMistakeVisible] = useState<Mistake | null>(
+    null
+  );
   // Atom Jotai for game state
   const [gameAtomInstance] = useState(() => atom(new Chess()));
   const [game, setGame] = useAtom(gameAtomInstance);
@@ -59,30 +59,32 @@ export default function OpeningPage() {
 
   // Generate the expected move in UCI format for the arrow (only if it's the user's turn to play)
   const bestMoveUci = useMemo(() => {
-    if (
-      selectedVariation &&
-      game &&
-      moveIdx < selectedVariation.moves.length
-    ) {
+    if (selectedVariation && game && moveIdx < selectedVariation.moves.length) {
       const chess = new Chess(game.fen());
       const san = selectedVariation.moves[moveIdx];
       const moves = chess.moves({ verbose: true });
       const moveObj = moves.find((m) => m.san === san);
       if (moveObj) {
-        return moveObj.from + moveObj.to + (moveObj.promotion ? moveObj.promotion : "");
+        return (
+          moveObj.from +
+          moveObj.to +
+          (moveObj.promotion ? moveObj.promotion : "")
+        );
       }
     }
     return undefined;
-  }, [selectedVariation, game, moveIdx, isUserTurn]);
+  }, [selectedVariation, game, moveIdx]);
 
   // Writable atom for currentPosition (read/write)
   // Instead of a local atom, use the engine evaluation mechanism already present in the project
   // (see useEngine, useGameData, or similar hooks if available)
   // Here, we use a simple effect to update the evaluation after each move using the engine
-  const [currentPositionAtom, setCurrentPositionAtom] = useState(() => atom<CurrentPosition>({
-    lastEval: { lines: [] },
-    eval: { moveClassification: undefined, lines: [] },
-  }));
+  const [currentPositionAtom, setCurrentPositionAtom] = useState(() =>
+    atom<CurrentPosition>({
+      lastEval: { lines: [] },
+      eval: { moveClassification: undefined, lines: [] },
+    })
+  );
 
   // Engine integration for real-time evaluation
   const engine = useEngine(EngineName.Stockfish17Lite);
@@ -100,10 +102,12 @@ export default function OpeningPage() {
         multiPv: 2,
         setPartialEval: (evalResult) => {
           if (!cancelled) {
-            setCurrentPositionAtom(atom<CurrentPosition>({
-              lastEval: evalResult,
-              eval: evalResult,
-            }));
+            setCurrentPositionAtom(
+              atom<CurrentPosition>({
+                lastEval: evalResult,
+                eval: evalResult,
+              })
+            );
           }
         },
       });
@@ -126,51 +130,26 @@ export default function OpeningPage() {
         if (!result) break; // Stop if invalid move
       }
       setGame(chess);
-    } catch (e) {
+    } catch {
       // Error handling: avoid crash
       setGame(new Chess());
     }
   }, [selectedVariation, moveIdx, setGame]);
 
-  // Validate user move: if wrong move, undo and annotate
+  // Validate user move using the custom mistake handler
+  const checkMistake = useMistakeHandler({
+    selectedVariation,
+    game,
+    moveIdx,
+    isUserTurn,
+    setMoveIdx,
+    setLastMistakeVisible,
+    undoMove,
+  });
+
   useEffect(() => {
-    if (!selectedVariation || !game) return;
-    if (moveIdx >= selectedVariation.moves.length) return;
-    if (!isUserTurn) return; // Only validate user moves
-    let mistakeTimeout: NodeJS.Timeout | null = null;
-    let undoTimeout: NodeJS.Timeout | null = null;
-    try {
-      const history = game.history({ verbose: true });
-      if (history.length !== moveIdx + 1) return;
-      const last = history[history.length - 1];
-      const expectedMove = new Chess();
-      for (let i = 0; i < moveIdx; i++) expectedMove.move(selectedVariation.moves[i]);
-      const expected = expectedMove.move(selectedVariation.moves[moveIdx]);
-      if (!expected || last.from !== expected.from || last.to !== expected.to) {
-        // Wrong move: wait 200ms before showing error icon, then undo after 1.5s
-        let mistakeType = "Mistake";
-        if (last.captured || last.san.includes("#")) mistakeType = "Blunder";
-        // Do NOT set lastMistakeVisible immediately
-        mistakeTimeout = setTimeout(() => {
-          setLastMistakeVisible({ from: last.from, to: last.to, type: mistakeType });
-        }, 200);
-        undoTimeout = setTimeout(() => {
-          setLastMistakeVisible(null);
-          undoMove();
-        }, 1500);
-      } else {
-        setLastMistakeVisible(null);
-        setMoveIdx((idx) => idx + 1);
-      }
-    } catch (e) {
-      setLastMistakeVisible(null);
-    }
-    return () => {
-      if (mistakeTimeout) clearTimeout(mistakeTimeout);
-      if (undoTimeout) clearTimeout(undoTimeout);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [game.history().length, trainingMode, selectedVariation, isUserTurn]);
+    checkMistake();
+  }, [checkMistake]);
 
   // Automatically advance opponent moves after a correct user move
   useEffect(() => {
@@ -181,7 +160,10 @@ export default function OpeningPage() {
       // Play all opponent moves until the next user move or end of sequence
       let nextIdx = moveIdx;
       let colorToPlay = nextIdx % 2 === 0 ? Color.White : Color.Black;
-      while (nextIdx < selectedVariation.moves.length && colorToPlay !== learningColor) {
+      while (
+        nextIdx < selectedVariation.moves.length &&
+        colorToPlay !== learningColor
+      ) {
         nextIdx++;
         colorToPlay = nextIdx % 2 === 0 ? Color.White : Color.Black;
       }
@@ -213,15 +195,17 @@ export default function OpeningPage() {
   const openingKey = "italian";
   const progressMode = trainingMode ? "training" : "learning";
   const progressStorageKey = `${openingKey}-progress-${progressMode}`;
-  const [completedVariations, setCompletedVariations] = useState<number[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const raw = localStorage.getItem(progressStorageKey);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
+  const [completedVariations, setCompletedVariations] = useState<number[]>(
+    () => {
+      if (typeof window === "undefined") return [];
+      try {
+        const raw = localStorage.getItem(progressStorageKey);
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
     }
-  });
+  );
 
   // Mark a variation as completed
   useEffect(() => {
@@ -233,28 +217,41 @@ export default function OpeningPage() {
         localStorage.setItem(progressStorageKey, JSON.stringify(updated));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [moveIdx, selectedVariation, currentVariantIdx, progressMode]);
+  }, [
+    moveIdx,
+    selectedVariation,
+    currentVariantIdx,
+    progressStorageKey,
+    completedVariations,
+  ]);
 
   // When loading, if there is a completed variation, jump to the first incomplete one
   useEffect(() => {
-    if (completedVariations.length > 0 && completedVariations.length < variations.length) {
+    if (
+      completedVariations.length > 0 &&
+      completedVariations.length < variations.length
+    ) {
       // Find the first incomplete variation
-      const firstIncomplete = variations.findIndex((_, idx) => !completedVariations.includes(idx));
+      const firstIncomplete = variations.findIndex(
+        (_, idx) => !completedVariations.includes(idx)
+      );
       if (firstIncomplete !== -1 && currentVariantIdx !== firstIncomplete) {
         setCurrentVariantIdx(firstIncomplete);
         setMoveIdx(0);
         setLastMistakeVisible(null);
         setGame(new Chess());
       }
-    } else if (completedVariations.length === variations.length && currentVariantIdx !== variations.length) {
+    } else if (
+      completedVariations.length === variations.length &&
+      currentVariantIdx !== variations.length
+    ) {
       // All done, move to the end
       setCurrentVariantIdx(variations.length - 1); // Correction: do not exceed max index
       setMoveIdx(0);
       setLastMistakeVisible(null);
       setGame(new Chess());
     }
-  }, [completedVariations, variations.length, currentVariantIdx, setGame]);
+  }, [completedVariations, variations, currentVariantIdx, setGame]);
 
   // Reset progress
   const handleResetProgress = useCallback(() => {
@@ -264,7 +261,14 @@ export default function OpeningPage() {
     setMoveIdx(0);
     setLastMistakeVisible(null);
     setGame(new Chess());
-  }, [setCompletedVariations, setCurrentVariantIdx, setMoveIdx, setLastMistakeVisible, setGame]);
+  }, [
+    setCompletedVariations,
+    setCurrentVariantIdx,
+    setMoveIdx,
+    setLastMistakeVisible,
+    setGame,
+    progressStorageKey,
+  ]);
 
   // Determine the target square of the last move played (for overlay)
   const lastMoveSquare = useMemo(() => {
@@ -280,7 +284,11 @@ export default function OpeningPage() {
     if (!lastMoveSquare) return undefined;
     // Show red cross icon if the last move was incorrectly played by the human
     if (lastMistakeVisible && lastMistakeVisible.to === lastMoveSquare) {
-      return { square: lastMoveSquare, icon: "/icons/mistake.png", alt: "Incorrect move" };
+      return {
+        square: lastMoveSquare,
+        icon: "/icons/mistake.png",
+        alt: "Incorrect move",
+      };
     }
     // Show nothing if the move is correct
     return undefined;
@@ -311,7 +319,7 @@ export default function OpeningPage() {
       localStorage.setItem(progressStorageKey, JSON.stringify(newCompleted));
     }
     if (currentVariantIdx < variations.length - 1) {
-      setCurrentVariantIdx(idx => idx + 1);
+      setCurrentVariantIdx((idx) => idx + 1);
       setMoveIdx(0);
       setLastMistakeVisible(null);
       setGame(new Chess());
@@ -320,18 +328,17 @@ export default function OpeningPage() {
       setLastMistakeVisible(null);
       setGame(new Chess());
     }
-  }, [completedVariations, currentVariantIdx, setCompletedVariations, setCurrentVariantIdx, setMoveIdx, setLastMistakeVisible, setGame, variations.length]);
-
-  // Use mistake handler hook
-  useMistakeHandler({
-    selectedVariation,
-    game,
-    moveIdx,
-    isUserTurn,
+  }, [
+    completedVariations,
+    currentVariantIdx,
+    setCompletedVariations,
+    setCurrentVariantIdx,
     setMoveIdx,
     setLastMistakeVisible,
-    undoMove,
-  });
+    setGame,
+    variations.length,
+    progressStorageKey,
+  ]);
 
   return (
     <Grid
@@ -448,7 +455,8 @@ export default function OpeningPage() {
           px: { xs: 1, sm: 2, md: 3 }, // Réduit le padding horizontal
           pt: { xs: 2, md: 4 },
           mr: { xs: 0, sm: 1, md: 2, lg: 0 }, // Réduit la marge droite
-          backgroundColor: (theme) => theme.palette.mode === "dark" ? "#424242" : "background.paper",
+          backgroundColor: (theme) =>
+            theme.palette.mode === "dark" ? "#424242" : "background.paper",
           border: "2px solid", // Blue border
           borderColor: "primary.main",
           borderRadius: 2, // Rounded corners
@@ -458,47 +466,49 @@ export default function OpeningPage() {
         {/* Centered container for title and buttons */}
         <Box
           sx={{
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        gap: 2,
-        pt: 2,
-        pb: 2,
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            gap: 2,
+            pt: 2,
+            pb: 2,
           }}
         >
           <VariationHeader
-        variationName={selectedVariation?.name}
-        trainingMode={trainingMode}
-        onSetTrainingMode={setTrainingMode}
-        variationComplete={moveIdx >= (selectedVariation?.moves.length || 0)}
+            variationName={selectedVariation?.name}
+            trainingMode={trainingMode}
+            onSetTrainingMode={setTrainingMode}
+            variationComplete={
+              moveIdx >= (selectedVariation?.moves.length || 0)
+            }
           />
         </Box>
 
         {/* Progress bar at the bottom right, always visible */}
         <Box
           sx={{
-        mt: "auto",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 2,
-        pb: 2,
+            mt: "auto",
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 2,
+            pb: 2,
           }}
         >
           <OpeningProgress
-        total={variations.length}
-        completed={completedVariations}
+            total={variations.length}
+            completed={completedVariations}
           />
           <OpeningControls
-        moveIdx={moveIdx}
-        selectedVariationMovesLength={selectedVariation?.moves.length || 0}
-        allDone={allDone}
-        onSkip={handleSkipVariation}
-        onReset={handleResetProgress}
+            moveIdx={moveIdx}
+            selectedVariationMovesLength={selectedVariation?.moves.length || 0}
+            allDone={allDone}
+            onSkip={handleSkipVariation}
+            onReset={handleResetProgress}
           />
         </Box>
       </Grid>
